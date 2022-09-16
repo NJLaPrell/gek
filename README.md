@@ -2,6 +2,12 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.1.1.
 
+
+## How
+
+* Node Google API support in Angular - https://medium.com/angular-in-depth/google-apis-with-angular-214fadb8fbc5
+
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
