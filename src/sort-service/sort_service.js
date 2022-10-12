@@ -41,13 +41,13 @@ const SCOPES = [
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
-const TOKEN_PATH = path.join(process.cwd(), 'token.json');
-const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
-const SUBSCRIPTIONS_PATH = path.join(process.cwd(), 'subscriptions.json');
-const PLAYLISTS_PATH = path.join(process.cwd(), 'playlists.json');
-const HISTORY_PATH = path.join(process.cwd(), 'history.json');
-const RULES_PATH = path.join(process.cwd(), 'rules.json');
-const CACHED_VIDEOS_PATH = path.join(process.cwd(), 'videos.json');
+const TOKEN_PATH = path.join(process.cwd(), 'src/sort-service/token.json');
+const CREDENTIALS_PATH = path.join(process.cwd(), 'src/sort-service/credentials.json');
+const SUBSCRIPTIONS_PATH = path.join(process.cwd(), 'src/sort-service/state/subscriptions.json');
+const PLAYLISTS_PATH = path.join(process.cwd(), 'src/sort-service/state/playlists.json');
+const HISTORY_PATH = path.join(process.cwd(), 'src/sort-service/state/history.json');
+const RULES_PATH = path.join(process.cwd(), 'src/sort-service/state/rules.json');
+const CACHED_VIDEOS_PATH = path.join(process.cwd(), 'src/sort-service/state/videos.json');
 
 /**
  * Reads previously authorized credentials from the save file.
