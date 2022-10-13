@@ -7,6 +7,7 @@ const {google} = require('googleapis');
 const youtube = google.youtube('v3');
 const https = require('https');
 const { resolve } = require('path');
+const { loadResource } = require('./lib/resources');
 
 const USE_SUBSCRIPTION_CACHE = true;
 const SUBSCRIPTION_CACHE_EXPIRE = 43200000; // 12 Hours
@@ -41,13 +42,13 @@ const SCOPES = [
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
-const TOKEN_PATH = path.join(process.cwd(), 'src/sort-service/token.json');
-const CREDENTIALS_PATH = path.join(process.cwd(), 'src/sort-service/credentials.json');
-const SUBSCRIPTIONS_PATH = path.join(process.cwd(), 'src/sort-service/state/subscriptions.json');
-const PLAYLISTS_PATH = path.join(process.cwd(), 'src/sort-service/state/playlists.json');
-const HISTORY_PATH = path.join(process.cwd(), 'src/sort-service/state/history.json');
-const RULES_PATH = path.join(process.cwd(), 'src/sort-service/state/rules.json');
-const CACHED_VIDEOS_PATH = path.join(process.cwd(), 'src/sort-service/state/videos.json');
+const TOKEN_PATH = path.join(process.cwd(), 'sort-service/token.json');
+const CREDENTIALS_PATH = path.join(process.cwd(), 'sort-service/credentials.json');
+const SUBSCRIPTIONS_PATH = path.join(process.cwd(), 'sort-service/state/subscriptions.json');
+const PLAYLISTS_PATH = path.join(process.cwd(), 'sort-service/state/playlists.json');
+const HISTORY_PATH = path.join(process.cwd(), 'sort-service/state/history.json');
+const RULES_PATH = path.join(process.cwd(), 'sort-service/state/rules.json');
+const CACHED_VIDEOS_PATH = path.join(process.cwd(), 'sort-service/state/videos.json');
 
 /**
  * Reads previously authorized credentials from the save file.
@@ -94,25 +95,6 @@ async function saveSubscriptions(items) {
     }
     const payload = JSON.stringify(data);
     await fs.writeFile(SUBSCRIPTIONS_PATH, payload);
-}
-
-async function getSubscriptionsFromCache() {
-    if (!USE_SUBSCRIPTION_CACHE) {
-        console.log('  Bypassing subscription cache.');
-        return [];
-    }
-    try {
-        const content = await fs.readFile(SUBSCRIPTIONS_PATH);
-        const data = JSON.parse(content);
-        if (Date.now() - data.lastUpdated < SUBSCRIPTION_CACHE_EXPIRE) {
-            console.log('  Subscriptions retrieved from cache.');
-            return data.items;
-        } else {
-            return [];
-        }
-    } catch (err) {
-        return [];
-    }
 }
 
 async function savePlaylists(items) {
@@ -223,17 +205,16 @@ async function authorize() {
 
 async function getSubscriptions() {
     console.log('Getting subscriptions...');
-    subscriptionList = await getSubscriptionsFromCache();
 
-    if (!subscriptionList.length) {
-        
+    cachedSubscriptions = await loadResource('subscriptions', USE_SUBSCRIPTION_CACHE, SUBSCRIPTION_CACHE_EXPIRE);
+
+    if (cachedSubscriptions) {
+        subscriptionList = cachedSubscriptions.items;
+    } else {
         await getSubscriptionPage();
         await saveSubscriptions(subscriptionList);
     }
-
     console.log('');
-    
-    return subscriptionList;
 };
 
 async function getSubscriptionPage(pageToken = '') {
@@ -247,7 +228,6 @@ async function getSubscriptionPage(pageToken = '') {
         pageToken: pageToken
     });
     subscriptionList = subscriptionList.concat(response.data.items);
-    //console.log(response);
     const nextPageToken = response.data.nextPageToken;
     if (nextPageToken) {
         await getSubscriptionPage(nextPageToken);
