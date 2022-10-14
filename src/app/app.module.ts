@@ -13,12 +13,22 @@ import { authReducer } from './state/reducers/auth.reducer';
 import { metaReducers, reducers } from './state';
 import { InitializerService } from './initializer.service';
 import { HttpClientModule } from '@angular/common/http';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { TopBarComponent } from './top-bar/top-bar.component';
+import { SideBarComponent } from './side-bar/side-bar.component';
+import { PlayerComponent } from './player/player.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { PlaylistsComponent } from './side-bar/playlists/playlists.component';
 
 export const initApp = (provider: InitializerService) => () => provider.init();
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    TopBarComponent,
+    SideBarComponent,
+    PlayerComponent,
+    PlaylistsComponent
   ],
   imports: [
     BrowserModule,
@@ -39,7 +49,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
       PlaylistsEffects
     ]),
     HttpClientModule,
-    
+    NgbModule,
+    FontAwesomeModule  
   ],
   providers: [
     {

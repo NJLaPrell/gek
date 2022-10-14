@@ -1,6 +1,23 @@
-<div>
-  <button type="button" (click)="doAuth()">TEST</button>
-  <button type="button" (click)="logOauth()">LOG</button>
+<div id="app" class="d-flex flex-column overflow-y-none">
+  <div class="d-flex position-relative"></div>
+
+  <div id="top-bar">
+    <app-top-bar></app-top-bar>
+  </div>
+
+  <div class="d-flex flex-row flex-grow-1 overflow-y-none">
+
+    <div id="side-bar" class="d-flex flex-column overflow-y-none">
+      <div id="side-bar-content" class="overflow-y-auto">
+        <app-side-bar></app-side-bar>
+      </div>
+    </div>
+
+    <div id="body" class="flex-grow-1 overflow-y-auto">
+      <router-outlet></router-outlet>
+    </div>
+
+  </div>
 </div>
 
-<router-outlet></router-outlet>
+

@@ -1,0 +1,28 @@
+
+#app {
+    background-color: #1E1E1E;
+    color: #F0F0F0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#body {
+    background-color: #111111;
+    color: #FFFFFF;
+    flex-grow: 1;
+}
+
+#side-bar {
+    overflow: hidden;
+    #side-bar-content {
+        height: calc(100% - 370px);
+        overflow:auto;
+    }
+}
+
+:host::ng-deep router-outlet + standalone-viewer {
+    height: 100%;
+    display: flex;
+  }

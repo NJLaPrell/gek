@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { Auth } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { selectPlaylists } from './state/selectors/playlists.selectors';
 
@@ -16,7 +16,8 @@ export class AppComponent implements OnInit {
   constructor(
     private oauth2Client: OAuth2Client,
     private route: ActivatedRoute,
-    private store: Store
+    private store: Store,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -31,11 +32,11 @@ export class AppComponent implements OnInit {
     });
 
     this.route.queryParams.subscribe(params => {
-      console.log('params')
       const code = params['code'];
-      console.log(code);
+
       if (code) {
-        this.oauth2Client.getToken(code).then(resp => console.log(resp)).catch(e => console.error(e));
+      //  this.oauth2Client.getToken(code).then(resp => console.log(resp)).catch(e => console.error(e));
+        this.router.navigate(['']);
       }
       
     });
