@@ -9,7 +9,7 @@ import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
 import { PlaylistsEffects } from './state/effects/playlist.effects';
-import { authReducer } from './state/reducers/auth.reducer';
+import { VideoEffects } from './state/effects/video.effects';
 import { metaReducers, reducers } from './state';
 import { InitializerService } from './initializer.service';
 import { HttpClientModule } from '@angular/common/http';
@@ -46,7 +46,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     }),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: false}),
     EffectsModule.forRoot([
-      PlaylistsEffects
+      PlaylistsEffects,
+      VideoEffects
     ]),
     HttpClientModule,
     NgbModule,

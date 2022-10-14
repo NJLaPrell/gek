@@ -1,0 +1,73 @@
+.video-card {
+    cursor: pointer;
+    display: inline-block;
+    width: 260px;
+    height: 300px;
+    overflow: hidden;
+    margin: 6px;
+    position: relative;
+
+    .videoThumbnail {
+        max-width: 260px;
+        object-fit: contain;
+    }
+
+    .video-link {
+        float:right;
+        color: #FFF;
+        opacity: 0;
+        position: absolute ;
+        top: 10px;
+        right: 10px;
+
+        &:hover {
+            color: #CBC660;
+        }
+    }
+
+    .channel-link {
+        color: #FFF;
+        text-decoration: none;
+        font-size: 0.8em;
+        font-weight: 700;
+
+        &:hover {
+            color: #CBC660;
+            text-decoration: underline;
+        }
+    }
+
+    .video-card-body {
+
+        .video-card-title {
+            font-size: 0.8em;
+        }
+
+        .video-card-text {
+
+        }
+    }
+
+    &:hover {
+        background-color: #333333;
+        
+        .videoThumbnail {
+            opacity: 0.5;
+        }
+
+        .video-link {
+            opacity: 1;
+        }
+    }
+}
+
+.no-videos {
+    text-align: center;
+    font-size: 1.6em;
+    font-style: italic;
+    margin: 20px;
+}
+
+
+
+

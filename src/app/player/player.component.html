@@ -1,1 +1,23 @@
-<p>player works!</p>
+<div *ngIf="loading" class="text-center">
+    <div class="spinner-border" role="status"></div>
+    <div>Loading...</div>
+</div>
+
+<div *ngIf="!loading && !videoList.length" class="no-videos">No videos to display.</div>
+
+<div *ngIf="!videoId">
+    <div *ngFor="let video of videoList" class="video-card">
+        
+        <img class="videoThumbnail" [src]="video.thumbnail" (click)="videoClicked($any(video.id))" />
+        <a [href]="video.link" target="_blank" class="video-link"><fa-icon [icon]="faArrowUpRightFromSquare"></fa-icon></a>
+        <div class="video-card-body">
+            <a class="channel-link" [href]="video.channelLink" target="_blank">{{ video.channelName }}</a>
+            <h3 class="video-card-title" (click)="videoClicked($any(video.id))">{{ video.title }}</h3>
+            <p class="video-card-text" (click)="videoClicked($any(video.id))">DESCRIPTION</p>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="videoId">
+    VIDEO
+</div>

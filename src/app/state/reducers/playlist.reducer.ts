@@ -13,8 +13,5 @@ export const playlistReducer = createReducer(
     initialState,
     on(PlaylistActions.getPlaylists, state => ({ ...initialState })),
     on(PlaylistActions.getPlaylistsFail, state => ({ ...initialState })),
-    on(PlaylistActions.getPlaylistsSuccess, (state, action) => {
-        console.log(new PlaylistsHelper(action.response).get());
-        return { ...(new PlaylistsHelper(action.response).get()) }
-    })
+    on(PlaylistActions.getPlaylistsSuccess, (state, action) => ({ ...(new PlaylistsHelper(action.response).get()) }))
   );

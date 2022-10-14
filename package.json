@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "sort": "node src/sort-service/sort_service.js",
+    "sort": "node sort-service/sort_service.js",
     "start-server": "node server",
     "start-frontend": "ng serve --proxy-config proxy.config.json"
   },

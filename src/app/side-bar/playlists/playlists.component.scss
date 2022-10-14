@@ -1,16 +1,19 @@
-#playlist-list {
-    padding: 0px;
-    list-style-type: none;
+#playlist-panel {
 
-    .playlist-item {
-        cursor: pointer;
-        padding-left: 20px;
-        padding-right: 20px;
-        padding-top: 12px;
-        padding-bottom: 12px;
-        border-bottom: 1px solid #333333;
-        &:hover {
-            background-color: #353535;
+    #playlist-list {
+        padding: 0px;
+        list-style-type: none;
+
+        .playlist-item {
+            cursor: pointer;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-top: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #333333;
+            &:hover {
+                background-color: #353535;
+            }
         }
     }
 }

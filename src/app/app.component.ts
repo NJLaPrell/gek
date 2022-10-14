@@ -3,7 +3,7 @@ import { Auth } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { selectPlaylists } from './state/selectors/playlists.selectors';
+import { faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +11,10 @@ import { selectPlaylists } from './state/selectors/playlists.selectors';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'ytlist';
+  faCircleChevronLeft = faCircleChevronLeft;
+
+  pageTitle = 'TEST';
+  showSidebar = true;
 
   constructor(
     private oauth2Client: OAuth2Client,
@@ -40,10 +43,6 @@ export class AppComponent implements OnInit {
       }
       
     });
-
-    this.store.select(selectPlaylists).pipe().subscribe(r => console.log(r));
-
-    
   };
 
   doAuth = () => {
@@ -66,5 +65,13 @@ export class AppComponent implements OnInit {
 
   logOauth() {
     console.log(this.oauth2Client);
+  }
+
+  toggleSidebar() {
+    this.showSidebar = !this.showSidebar;
+  }
+
+  pageTitleChange(title: string): void {
+    this.pageTitle = title;
   }
 }

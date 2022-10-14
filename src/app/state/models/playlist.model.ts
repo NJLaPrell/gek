@@ -13,13 +13,13 @@ export class PlaylistsHelper {
             publishedDate: new Date(pl.snippet.publishedAt),
             title: pl.snippet.title,
             description: pl.snippet.description,
-            thumbnail: pl.snippet.thumbnails.standard.url
+            thumbnail: pl.snippet.thumbnails.standard?.url || pl.snippet.thumbnails.default?.url || 'https://i.ytimg.com/img/no_thumbnail.jpg' 
         }));
     }
 
     get = (): Playlists => (<Playlists>{
         lastUpdated: this.lastUpdated,
-        items: this.playlists
+        items: this.playlists.sort((a, b) => a.title.localeCompare(b.title))
     });
 
 }
