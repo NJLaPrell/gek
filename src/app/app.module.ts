@@ -19,6 +19,9 @@ import { SideBarComponent } from './side-bar/side-bar.component';
 import { PlayerComponent } from './player/player.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PlaylistsComponent } from './side-bar/playlists/playlists.component';
+import { YouTubePlayerModule } from '@angular/youtube-player';
+import { ErrorBufferComponent } from './modals/error-buffer/error-buffer.component';
+import { SafeHtmlPipe } from './pipes';
 
 export const initApp = (provider: InitializerService) => () => provider.init();
 
@@ -28,7 +31,9 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     TopBarComponent,
     SideBarComponent,
     PlayerComponent,
-    PlaylistsComponent
+    PlaylistsComponent,
+    ErrorBufferComponent,
+    SafeHtmlPipe
   ],
   imports: [
     BrowserModule,
@@ -51,7 +56,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     ]),
     HttpClientModule,
     NgbModule,
-    FontAwesomeModule  
+    FontAwesomeModule,
+    YouTubePlayerModule
   ],
   providers: [
     {

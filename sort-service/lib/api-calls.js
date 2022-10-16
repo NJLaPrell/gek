@@ -105,8 +105,8 @@ const getFeed = async (type, id, fromTime = false) => httpsRequest({ host: 'www.
         link: e.link['@_href'],
         description: e['media:group']['media:description'],
         thumbnail: e['media:group']['media:thumbnail']['@_url'],
-        //viewCount: e['media:community']['media:statistics']['@_views'],
-        //thumbCount: e['media:community']['media:starRating']['@_count']
+        viewCount: e['media:group']['media:community']['media:statistics']['@_views'],
+        thumbCount: e['media:group']['media:community']['media:starRating']['@_count']
         
     }));
 }).catch(e => {
