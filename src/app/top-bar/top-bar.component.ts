@@ -3,6 +3,7 @@ import { faList, faClapperboard, faRotate, faHandSparkles, faTrashCan, faBomb, f
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ErrorBufferComponent } from '../modals/error-buffer/error-buffer.component';
 import { UnsortedComponent } from '../modals/unsorted/unsorted.component';
+import { RulesListComponent } from '../modals/rules-list/rules-list.component';
 
 @Component({
   selector: 'app-top-bar',
@@ -35,6 +36,10 @@ export class TopBarComponent implements OnInit {
 
   openUnsorted() {
     const modalRef = this.modalService.open(UnsortedComponent, { size: 'xl', scrollable: true });
+  }
+
+  openRules() {
+    const modalRef = this.modalService.open(RulesListComponent, { size: 'xl', scrollable: true });
   }
 
 }

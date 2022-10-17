@@ -1,7 +1,9 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from '@angular/common/http';
 import { PlaylistResponse } from "../state/models/playlist.model";
-import { map, Observable, shareReplay } from "rxjs";
+import { RulesResponse } from '../state/models/rules.model';
+import { SubscriptionsResponse } from "../state/models/subscriptions";
+import { Observable, shareReplay } from "rxjs";
 
 
 @Injectable({
@@ -12,11 +14,14 @@ export class ResourcesService {
         private http: HttpClient
     ) { }
 
-    getPlaylists(): Observable<PlaylistResponse> {
-        return this.getResource('playlists');
-    }
+    getPlaylists = (): Observable<PlaylistResponse> => this.getResource('playlists');
 
-    getResource(resource: string): Observable<PlaylistResponse> {
-        return this.http.get<PlaylistResponse>(`/api/getResource/${resource}`).pipe(shareReplay());
-    }
+    getRules = (): Observable<RulesResponse> => this.getResource('rules');
+
+    getSubscriptions = (): Observable<SubscriptionsResponse> => this.getResource('subscriptions');
+
+    getResource = (resource: string): Observable<any> => this.http.get<any>(`/api/getResource/${resource}`).pipe(shareReplay());
+
+    
+
 }

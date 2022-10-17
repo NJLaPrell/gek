@@ -2,6 +2,8 @@
     "rules": [
         
         {
+            "id": "1",
+            "name": "1",
             "type": "and",
             "channelMatch": "UCbwfUqs5Y6_jblWJwMIfRzA",
             "titleMatch": "",
@@ -9,6 +11,8 @@
             "playlistId": "PLLFJ6m60CtDzUEYsdzy3TI0glH0eKfVmH"
         },
         {
+            "id": "2",
+            "name": "2",
             "type": "and",
             "channelMatch": "UCjkGAyhG0Q6H4_gzdfTMg-g",
             "titleMatch": "",
@@ -16,6 +20,8 @@
             "playlistId": "PLLFJ6m60CtDz_mfeg_URD0GEuwrwRclrN"
         },
         {
+            "id": "3",
+            "name": "3",
             "type": "and",
             "channelMatch": "UCPRuDp5qn2_Q41sE-bfP4uA",
             "titleMatch": "",
@@ -23,6 +29,8 @@
             "playlistId": "PLLFJ6m60CtDz_mfeg_URD0GEuwrwRclrN"
         },
         {
+            "id": "4",
+            "name": "4",
             "type": "and",
             "channelMatch": "UCbC5HMiQz7OcVJ5UhcpKZ3A",
             "titleMatch": "",
@@ -30,6 +38,8 @@
             "playlistId": "PLLFJ6m60CtDxQssYjQexIV35bM_GbbPCQ"
         },
         {
+            "id": "5",
+            "name": "5",
             "type": "and",
             "channelMatch": "UCMGZ8pfQHgZ6Yj0-92PMENg",
             "titleMatch": "",
@@ -37,6 +47,8 @@
             "playlistId": "PLLFJ6m60CtDxQssYjQexIV35bM_GbbPCQ"
         },
         {
+            "id": "6",
+            "name": "6",
             "type": "and",
             "channelMatch": "UChLKlIDycUMpEKsxKMMcXsQ",
             "titleMatch": "",

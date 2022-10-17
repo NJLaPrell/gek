@@ -1,5 +1,6 @@
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -11,6 +12,8 @@ import { EffectsModule } from '@ngrx/effects';
 import { PlaylistsEffects } from './state/effects/playlist.effects';
 import { VideoEffects } from './state/effects/video.effects';
 import { HistoryEffects } from './state/effects/history.effects';
+import { RulesEffects } from './state/effects/rules.effects';
+import { SubscriptionsEffects } from './state/effects/subscriptions.effects';
 import { metaReducers, reducers } from './state';
 import { InitializerService } from './initializer.service';
 import { HttpClientModule } from '@angular/common/http';
@@ -24,6 +27,7 @@ import { YouTubePlayerModule } from '@angular/youtube-player';
 import { ErrorBufferComponent } from './modals/error-buffer/error-buffer.component';
 import { SafeHtmlPipe } from './pipes';
 import { UnsortedComponent } from './modals/unsorted/unsorted.component';
+import { RulesListComponent } from './modals/rules-list/rules-list.component';
 
 export const initApp = (provider: InitializerService) => () => provider.init();
 
@@ -36,7 +40,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     PlaylistsComponent,
     ErrorBufferComponent,
     SafeHtmlPipe,
-    UnsortedComponent
+    UnsortedComponent,
+    RulesListComponent
   ],
   imports: [
     BrowserModule,
@@ -56,12 +61,15 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     EffectsModule.forRoot([
       PlaylistsEffects,
       VideoEffects,
-      HistoryEffects
+      HistoryEffects,
+      RulesEffects,
+      SubscriptionsEffects
     ]),
     HttpClientModule,
     NgbModule,
     FontAwesomeModule,
-    YouTubePlayerModule
+    YouTubePlayerModule,
+    FormsModule
   ],
   providers: [
     {
