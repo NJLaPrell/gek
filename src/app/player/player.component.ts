@@ -6,6 +6,7 @@ import { Video, initialVideoState } from 'src/app/state/models/video.model';
 import { getPlaylistVideos } from '../state/actions/video.actions';
 import { selectPlaylistVideos } from '../state/selectors/video.selectors';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-player',
@@ -25,6 +26,8 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   faArrowUpRightFromSquare = faArrowUpRightFromSquare;
 
   loading = false;
+
+  moment = moment;
 
   constructor(
     private activatedRoute: ActivatedRoute,
