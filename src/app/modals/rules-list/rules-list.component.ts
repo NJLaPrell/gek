@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { Rule } from 'src/app/state/models/rules.model';
+import { updateRule, addRule, deleteRule } from 'src/app/state/actions/rules.actions';
 import { selectRules } from 'src/app/state/selectors/rules.selectors';
 import { selectSubscriptions } from 'src/app/state/selectors/subscriptions.selector';
 import { selectPlaylists } from 'src/app/state/selectors/playlists.selectors';
 import { faTrash, faEdit, faCircleCheck, faXmarkCircle, faSquarePlus } from '@fortawesome/free-solid-svg-icons'
 import { v4 as uuid } from 'uuid';
+import { ConfirmPromptComponent } from '../confirm-prompt/confirm-prompt.component';
 
 @Component({
   selector: 'app-rules-list',
@@ -28,7 +30,8 @@ export class RulesListComponent implements OnInit {
 
   constructor(
     public activeModal: NgbActiveModal,
-    private store: Store
+    private store: Store,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit(): void {
@@ -51,7 +54,12 @@ export class RulesListComponent implements OnInit {
 
   updateRule(r: any) {
     r.edit = false;
-    console.log(r);
+    if (r.id) {
+      this.store.dispatch(updateRule({rule:r}));
+    } else {
+      r.id = uuid();
+      this.store.dispatch(addRule({rule:r}));
+    }
   }
 
   subTitleById(id: string): string {
@@ -63,7 +71,13 @@ export class RulesListComponent implements OnInit {
   }
 
   addRule(): void {
-    this.rules.unshift({ id: uuid(), name: '', type: 'and', channelMatch: '', descriptionMatch: '', titleMatch: '', playlistId: '', edit: true })
+    this.rules.unshift({ id: '', name: '', type: 'and', channelMatch: '', descriptionMatch: '', titleMatch: '', playlistId: '', edit: true })
+  }
+
+  confirmDelete(id: string) {
+    const modalRef = this.modalService.open(ConfirmPromptComponent);
+    modalRef.componentInstance.prompt = 'Are you sure you wish to delete this rule?';
+    modalRef.closed.subscribe(c => c === 'Continue click' ? this.store.dispatch(deleteRule({ id })) : null);
   }
 
 

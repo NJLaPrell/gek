@@ -28,6 +28,7 @@ import { ErrorBufferComponent } from './modals/error-buffer/error-buffer.compone
 import { SafeHtmlPipe } from './pipes';
 import { UnsortedComponent } from './modals/unsorted/unsorted.component';
 import { RulesListComponent } from './modals/rules-list/rules-list.component';
+import { ConfirmPromptComponent } from './modals/confirm-prompt/confirm-prompt.component';
 
 export const initApp = (provider: InitializerService) => () => provider.init();
 
@@ -41,7 +42,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     ErrorBufferComponent,
     SafeHtmlPipe,
     UnsortedComponent,
-    RulesListComponent
+    RulesListComponent,
+    ConfirmPromptComponent
   ],
   imports: [
     BrowserModule,

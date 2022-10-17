@@ -1,10 +1,15 @@
 const express = require('express')
-const { loadResource, purgeUnsorted } = require('../sort-service/lib/resources');
+const { loadResource, purgeUnsorted, addRule, updateRule, deleteRule } = require('../sort-service/lib/resources');
 const { getChannelFeed, getPlaylistFeed } = require('../sort-service/lib/api-calls');
 const app = express()
 const port = 3000
 
+const bodyParser = require('body-parser');
+app.use(bodyParser.json({ extended: true }));
+//app.use(express.json());
+
 app.get('/api/getResource/:resource', (req, res) => {
+    console.log('GET: /api/getResource/:resource');
     const resource = req.params.resource;
     const response = loadResource(resource)
         .then(contents => {
@@ -18,6 +23,7 @@ app.get('/api/getResource/:resource', (req, res) => {
 });
 
 app.get('/api/getChannelFeed/:id', (req, res) => {
+    console.log('GET: /api/getChannelFeed/:id');
     const id = req.params.id;
     const response = getChannelFeed(id)
         .then(contents => {
@@ -31,6 +37,7 @@ app.get('/api/getChannelFeed/:id', (req, res) => {
 });
 
 app.get('/api/getPlaylistFeed/:id', (req, res) => {
+    console.log('GET: /api/getPlaylistFeed/:id');
     const id = req.params.id;
     const response = getPlaylistFeed(id)
         .then(contents => {
@@ -43,7 +50,43 @@ app.get('/api/getPlaylistFeed/:id', (req, res) => {
         .catch(e => res.status(404).json({ error: e }));
 });
 
+app.put('/api/resources/updateRule', (req, res) => {
+    console.log('PUT: /api/resources/updateRule');
+    const response = updateRule(req.body)
+        .then(success => {
+            if (success) {
+                res.status(204).send();
+            } else {
+                res.status(404).json({ error: `No rule found with id: ${rule.id}.` });
+            }
+        })
+        .catch(e => res.status(e.code).json({ error: e.message }));
+});
+app.delete('/api/resources/deleteRule/:id', (req, res) => {
+    console.log('DELETE: /api/resources/deleteRule/:id');
+    const id = req.params.id;
+    const response = deleteRule(id)
+        .then(success => {
+            if (success) {
+                res.status(204).send();
+            } else {
+                res.status(404).json({ error: `No rule found with id: ${rule.id}.` });
+            }
+        })
+        .catch(e => res.status(e.code).json({ error: e.message }));
+});
+
+app.post('/api/resources/addRule', (req, res) => {
+    console.log('POST: /api/resources/addRule');
+    const response = addRule(req.body)
+        .then(contents => {
+            res.status(201).send();
+        })
+        //.catch(e => res.status(e.code).json({ error: e.message }));
+});
+
 app.post('/api/history/purgeUnsorted', (req, res) => {
+    console.log('POST: /api/history/purgeUnsorted');
     const response = purgeUnsorted().then(res.status(204).send()).catch(e => res.status(e.code).json({ error: e.message }));
 });
 

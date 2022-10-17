@@ -122,12 +122,39 @@ const cacheResource = async(resourceName, data, addTimestamp = true, loadProtect
 const purgeUnsorted = async() => {
     let history = await loadResource('history');
     history.unsorted = [];
-    cacheResource('history', history);
+    await cacheResource('history', history);
     return true;
 };
 
+const deleteRule = async(id) => {
+    let rules = await loadResource('rules');
+    let ix = await rules.rules.findIndex(r => r.id == id);
+    if (ix >= 0) {
+        rules.rules.splice(ix, 1);
+        await cacheResource('rules', rules);
+        return true;
+    } else {
+        return false;
+    }
+}
 
+const updateRule = async(rule) => {
+    let rules = await loadResource('rules');
+    let ix =await  rules.rules.findIndex(r => r.id === rule.id);
+    if (ix >= 0) {
+        rules.rules[ix] = rule;
+        await cacheResource('rules', rules);
+        return true;
+    } else {
+        return false;
+    }
+}
 
+const addRule = async(rule) => {
+    let rules = await loadResource('rules');
+    rules.rules.push(rule);
+    await cacheResource('rules', rules);
+    return true;
+}
 
-
-module.exports = { loadResource, cacheResource, purgeUnsorted };
+module.exports = { loadResource, cacheResource, purgeUnsorted, updateRule, deleteRule, addRule };

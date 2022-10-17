@@ -6,13 +6,58 @@ export const getRules = createAction(
 );
 
 export const getRulesSuccess = createAction(
-    '[Rules] Get Rules Success',
-    props<{ response: Rule[] }>()
-  );
+  '[Rules] Get Rules Success',
+  props<{ response: Rule[] }>()
+);
 
-  export const getRulesFail = createAction(
-    '[Rules] Get Rules Fail',
-    props<{ error: string }>()
-  );
+export const getRulesFail = createAction(
+  '[Rules] Get Rules Fail',
+  props<{ error: string }>()
+);
+
+export const addRule = createAction(
+  '[Rules] Add Rule',
+  props<{ rule:Rule }>()
+);
+
+export const addRuleSuccess = createAction(
+  '[Rules] Add Rule Success',
+  props<{ rule:Rule }>()
+);
+
+export const addRuleFail = createAction(
+  '[Rules] Add Rule Fail',
+  props<{ error: string }>()
+);
+
+export const updateRule = createAction(
+  '[Rules] Update Rule',
+  props<{ rule:Rule }>()
+);
+
+export const updateRuleSuccess = createAction(
+  '[Rules] Update Rule Success',
+  props<{ rule:Rule }>()
+);
+
+export const updateRuleFail = createAction(
+  '[Rules] Update Rule Fail',
+  props<{ error: string }>()
+);
+
+export const deleteRule = createAction(
+  '[Rules] Delete Rule',
+  props<{ id: string }>()
+);
+
+export const deleteRuleSuccess = createAction(
+  '[Rules] Delete Rule Success',
+  props<{ id: string }>()
+);
+
+export const deleteRuleFail = createAction(
+  '[Rules] Delete Rule Fail',
+  props<{ error: string }>()
+);
 
 

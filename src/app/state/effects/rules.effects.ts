@@ -18,6 +18,30 @@ export class RulesEffects {
         ))
     ));
 
+    addRule$= createEffect(() => this.actions$.pipe(
+        ofType(RulesActions.addRule),
+        mergeMap((action) => this.resourceService.addRule({...action.rule}).pipe(
+            map(() => RulesActions.addRuleSuccess({ rule: action.rule })),
+            catchError((error: HttpErrorResponse) => of(RulesActions.addRuleFail({ error: error.message })))
+        ))
+    ));
+
+    updateRule$= createEffect(() => this.actions$.pipe(
+        ofType(RulesActions.updateRule),
+        mergeMap((action) => this.resourceService.updateRule({...action.rule}).pipe(
+            map(() => RulesActions.updateRuleSuccess({ rule: action.rule })),
+            catchError((error: HttpErrorResponse) => of(RulesActions.updateRuleFail({ error: error.message })))
+        ))
+    ));
+
+    deleteRule$= createEffect(() => this.actions$.pipe(
+        ofType(RulesActions.deleteRule),
+        mergeMap((action) => this.resourceService.deleteRule(action.id).pipe(
+            map(() => RulesActions.deleteRuleSuccess({ id: action.id })),
+            catchError((error: HttpErrorResponse) => of(RulesActions.deleteRuleFail({ error: error.message })))
+        ))
+    ));
+
     constructor(
         private actions$: Actions,
         private resourceService: ResourcesService
