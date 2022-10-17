@@ -1,7 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { faList, faClapperboard, faRotate, faHandSparkles, faTrashCan, faBomb } from '@fortawesome/free-solid-svg-icons';
+import { faList, faClapperboard, faRotate, faHandSparkles, faTrashCan, faBomb, faArrowUpShortWide } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ErrorBufferComponent } from '../modals/error-buffer/error-buffer.component';
+import { UnsortedComponent } from '../modals/unsorted/unsorted.component';
 
 @Component({
   selector: 'app-top-bar',
@@ -15,6 +16,7 @@ export class TopBarComponent implements OnInit {
   faHandSparkles = faHandSparkles;
   faTrashCan = faTrashCan;
   faBomb = faBomb;
+  faArrowUpShortWide = faArrowUpShortWide;
 
   @Output() onPlaylistsClicked: EventEmitter<void> = new EventEmitter<void>();
 
@@ -29,6 +31,10 @@ export class TopBarComponent implements OnInit {
 
   openErrorBuffer() {
     const modalRef = this.modalService.open(ErrorBufferComponent, { size: 'xl', scrollable: true });
+  }
+
+  openUnsorted() {
+    const modalRef = this.modalService.open(UnsortedComponent, { size: 'xl', scrollable: true });
   }
 
 }

@@ -3,6 +3,7 @@ import { Store } from '@ngrx/store';
 import { concat, Observable, of } from 'rxjs';
 import { AppState } from './state';
 import { getPlaylists } from './state/actions/playlist.actions';
+import { getHistory } from './state/actions/history.actions';
 
 
 @Injectable({
@@ -19,9 +20,15 @@ export class InitializerService {
         return of([]);
     }
 
+    private getHistory(): Observable<any> {
+        this.store.dispatch(getHistory());
+        return of([]);
+    }
+
     init(): Promise<any> {
         return concat(
-            this.getPlaylists()
+            this.getPlaylists(),
+            this.getHistory()
         ).toPromise()
     }
 }

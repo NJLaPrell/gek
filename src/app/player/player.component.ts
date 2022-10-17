@@ -92,8 +92,8 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log(e);
   }
 
-  getViewCount(views: number): string {
-    return ((views > 999) ? (views / 1000).toFixed(1) + 'K' : views) + ' views';
+  getViewCount(views: number | undefined): string {
+    return ((views || 0 > 999) ? ((views || 0) / 1000).toFixed(1) + 'K' : views) + ' views';
   }
 
 }

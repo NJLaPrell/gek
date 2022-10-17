@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import * as VideoActions from '../actions/video.actions';
-import { Video, VideoListHelper, VideoState, initialVideoState } from '../models/video.model';
+import { VideoListHelper, initialVideoState } from '../models/video.model';
 
 export const videoFeatureKey = 'videos';
 

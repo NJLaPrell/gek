@@ -17,9 +17,16 @@ export class HistoryHelper {
 // ## HISTORY MODEL
 // ###################################
 
-export interface FailedVideo extends Video {
+export interface FailedVideo {
+    videoId: string;
+    playlistId: string;
+    video: Video;
+    errors: {
+        message: string;
+        domain: string;
+        reason: string;
+    }[]; 
     failDate: number;
-    error: string;
 }
 
 export interface HistoryState {

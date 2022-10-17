@@ -245,7 +245,14 @@ async function sortNewVideos() {
                 counts.errors++;
                 const req = JSON.parse(e.response.config.body);
                 console.log(`  Failed adding videoId: ${req.snippet.resourceId.videoId} to playlistId: ${req.snippet.playlistId}`);
-                history.errorQueue.push({ videoId: req.snippet.resourceId.videoId, playlistId: req.snippet.playlistId, errors: e.response.errors })
+
+                console.log('~~~~~~~~~~~~~~~')
+                console.log(e.response.data.error.errors);
+                console.log('~~~~~~~~~~~~~~~')
+
+                const video = newVideos.find(v => v.id === req.snippet.resourceId.videoId);
+                console.log(video);
+                history.errorQueue.push({ videoId: req.snippet.resourceId.videoId, playlistId: req.snippet.playlistId, errors: e.response.data.error.errors, video: video, failDate: Date.now() });
             })
         )
     );

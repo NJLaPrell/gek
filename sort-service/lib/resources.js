@@ -119,10 +119,15 @@ const cacheResource = async(resourceName, data, addTimestamp = true, loadProtect
     }
 };
 
+const purgeUnsorted = async() => {
+    let history = await loadResource('history');
+    history.unsorted = [];
+    cacheResource('history', history);
+    return true;
+};
 
 
 
 
 
-
-module.exports = { loadResource, cacheResource };
+module.exports = { loadResource, cacheResource, purgeUnsorted };

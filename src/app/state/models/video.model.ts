@@ -22,19 +22,19 @@ export class VideoListHelper {
 export interface Video {
     id: string;
     processedDate?: number;
-    errorMessage: any;
+    errorMessage?: any;
     channelId: string;
     channelName: string;
     title: string;
     published: string;
     updated: string;
     description: string;
-    link: string;
-    thumbnail: string;
-    authorName: string;
-    channelLink: string;
-    viewCount: number;
-    thumbCount: number;
+    link?: string;
+    thumbnail?: string;
+    authorName?: string;
+    channelLink?: string;
+    viewCount?: number;
+    thumbCount?: number;
 }
 
 export interface VideoState {

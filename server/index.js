@@ -1,5 +1,5 @@
 const express = require('express')
-const { loadResource } = require('../sort-service/lib/resources');
+const { loadResource, purgeUnsorted } = require('../sort-service/lib/resources');
 const { getChannelFeed, getPlaylistFeed } = require('../sort-service/lib/api-calls');
 const app = express()
 const port = 3000
@@ -41,6 +41,10 @@ app.get('/api/getPlaylistFeed/:id', (req, res) => {
             }
         })
         .catch(e => res.status(404).json({ error: e }));
+});
+
+app.post('/api/history/purgeUnsorted', (req, res) => {
+    const response = purgeUnsorted().then(res.status(204).send()).catch(e => res.status(e.code).json({ error: e.message }));
 });
 
 app.listen(port, () => {

@@ -10,6 +10,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
 import { PlaylistsEffects } from './state/effects/playlist.effects';
 import { VideoEffects } from './state/effects/video.effects';
+import { HistoryEffects } from './state/effects/history.effects';
 import { metaReducers, reducers } from './state';
 import { InitializerService } from './initializer.service';
 import { HttpClientModule } from '@angular/common/http';
@@ -22,6 +23,7 @@ import { PlaylistsComponent } from './side-bar/playlists/playlists.component';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 import { ErrorBufferComponent } from './modals/error-buffer/error-buffer.component';
 import { SafeHtmlPipe } from './pipes';
+import { UnsortedComponent } from './modals/unsorted/unsorted.component';
 
 export const initApp = (provider: InitializerService) => () => provider.init();
 
@@ -33,7 +35,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     PlayerComponent,
     PlaylistsComponent,
     ErrorBufferComponent,
-    SafeHtmlPipe
+    SafeHtmlPipe,
+    UnsortedComponent
   ],
   imports: [
     BrowserModule,
@@ -52,7 +55,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: false}),
     EffectsModule.forRoot([
       PlaylistsEffects,
-      VideoEffects
+      VideoEffects,
+      HistoryEffects
     ]),
     HttpClientModule,
     NgbModule,
