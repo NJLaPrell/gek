@@ -1,183 +1,88 @@
-const fs = require('fs').promises;
-const path = require('path');
-const process = require('process');
-const {google} = require('googleapis');
-const youtube = google.youtube('v3');
-const { loadResource } = require('./lib/resources');
-const { authorize, getChannelFeed } = require('./lib/api-calls');
-
+const { loadResource, cacheResource } = require('./lib/resources');
+const { authorize, getChannelFeed, getSubscriptionPage, getPlaylistPage, addToPlaylist } = require('./lib/api-calls');
 
 const USE_SUBSCRIPTION_CACHE = true;
 const SUBSCRIPTION_CACHE_EXPIRE = 43200000; // 12 Hours
 const USE_PLAYLIST_CACHE = true;
 const PLAYLIST_CACHE_EXPIRE = 43200000; // 12 Hours
 const USE_CACHED_VIDEOS = false;
-var subscriptionList = [];
-var playlists = [];
+var subscriptionList = {};
+var playlists = {};
 var history = {};
 var newVideos = [];
 var rules = {};
 var updateQueue = [];
 var counts = { processed: 0, errors: 0, unsorted: 0 };
 
-const SUBSCRIPTIONS_PATH = path.join(process.cwd(), 'sort-service/state/subscriptions.json');
-const PLAYLISTS_PATH = path.join(process.cwd(), 'sort-service/state/playlists.json');
-const HISTORY_PATH = path.join(process.cwd(), 'sort-service/state/history.json');
-const RULES_PATH = path.join(process.cwd(), 'sort-service/state/rules.json');
-const CACHED_VIDEOS_PATH = path.join(process.cwd(), 'sort-service/state/videos.json');
-
-async function saveSubscriptions(items) {
-    console.log('  Caching subscriptions');
-    const content = await fs.readFile(SUBSCRIPTIONS_PATH);
-    const data = {
-        lastUpdated: Date.now(),
-        items: items
-    }
-    const payload = JSON.stringify(data);
-    await fs.writeFile(SUBSCRIPTIONS_PATH, payload);
-}
-
-async function savePlaylists(items) {
-    console.log('  Caching playlists.');
-    const content = await fs.readFile(PLAYLISTS_PATH);
-    const data = {
-        lastUpdated: Date.now(),
-        items: items
-    }
-    const payload = JSON.stringify(data);
-    await fs.writeFile(PLAYLISTS_PATH, payload);
-}
-
-async function getPlaylistsFromCache() {
-    if (!USE_PLAYLIST_CACHE) {
-        console.log('  Bypassing playlist cache.');
-        return false;
-    }
-    try {
-        const content = await fs.readFile(PLAYLISTS_PATH);
-        const data = JSON.parse(content);
-        if (Date.now() - data.lastUpdated < PLAYLIST_CACHE_EXPIRE) {
-            console.log('  Playlists retrieved from cache.');
-            return data.items;
-        } else {
-            return false;
-        }
-    } catch (err) {
-        return false;
-    }
-}
-
-async function getVideoListFromCache() {
-    if (!USE_CACHED_VIDEOS) {
-        return [];
-    }
-    try {
-        const content = await fs.readFile(CACHED_VIDEOS_PATH);
-        return JSON.parse(content);
-    } catch (err) {
-        return [];
-    }
-}
-
-async function cacheVideoList() {
-    console.log('  Caching video list.');
-    const payload = JSON.stringify(newVideos);
-    await fs.writeFile(CACHED_VIDEOS_PATH, payload);
-}
-
-async function loadHistory() {
-    try {
-        const content = await fs.readFile(HISTORY_PATH);
-        history = JSON.parse(content);
-        if (!history.lastRun) {
-            history.lastRun = new Date() - 43200000;
-        }
-        history.errorQueue = history.errorQueue || [];
-        history.unsorted = history.unsorted || [];
-    } catch (err) {
-        history = { lastRun: new Date() - 43200000, errorQueue: [], unsorted: [] };
-    }
-}
-
-async function saveHistory() {
-    console.log('Saving run history.');
-    const payload = JSON.stringify(history);
-    await fs.writeFile(HISTORY_PATH, payload);
-}
-
-async function loadRules() {
-    try {
-        const content = await fs.readFile(RULES_PATH);
-        rules = JSON.parse(content);
-    } catch (err) {
-        rules = {};
-    }
-}
-
+/**
+ * Get subscriptions from cache or API.
+ *
+ */
 async function getSubscriptions() {
     console.log('Getting subscriptions...');
-
-    cachedSubscriptions = await loadResource('subscriptions', USE_SUBSCRIPTION_CACHE, SUBSCRIPTION_CACHE_EXPIRE);
-
-    if (cachedSubscriptions) {
-        subscriptionList = cachedSubscriptions.items;
-    } else {
-        await getSubscriptionPage();
-        await saveSubscriptions(subscriptionList);
+    subscriptionList = await loadResource('subscriptions', USE_SUBSCRIPTION_CACHE, SUBSCRIPTION_CACHE_EXPIRE);
+    if (!subscriptionList) {
+        const subItems = await getSubscriptionPage();
+        subscriptionList = { lastUpdated: Date.now(), items: subItems };
+        await cacheResource('subscriptions', subscriptionList);
     }
     console.log('');
 };
 
-async function getSubscriptionPage(pageToken = '') {
-    console.log('  Calling subscriptions API.');
-    const response = await youtube.subscriptions.list({
-        "part": [
-            "snippet"
-        ],
-        "mine": true,
-        "maxResults": 500,
-        pageToken: pageToken
-    });
-    subscriptionList = subscriptionList.concat(response.data.items);
-    const nextPageToken = response.data.nextPageToken;
-    if (nextPageToken) {
-        await getSubscriptionPage(nextPageToken);
-    }
-}
-
+/**
+ * Get playlists from cache or API.
+ *
+ */
 async function getPlaylists() {
-    console.log('Gettings playlists...')
-    playlists = await getPlaylistsFromCache();
+    console.log('Gettings playlists...');
+    playlists = await loadResource('playlists', USE_PLAYLIST_CACHE, PLAYLIST_CACHE_EXPIRE);
 
     if (!playlists) {
-        console.log('  Calling playlist API.');
-        const response = await youtube.playlists.list({
-            "part": [
-                "snippet"
-            ],
-            "mine": true,
-            "maxResults": 500
-        });
-        playlists = response.data.items;
-        await savePlaylists(playlists);
+        const playItems = await getPlaylistPage();
+        playlists = { lastUpdated: Date.now(), items: playItems };
+        await cacheResource('playlists', playlists)
     }
 
     console.log('');
-    
-    return playlists;
 };
+
+/**
+ * Load the history resource
+ *
+ */
+async function loadHistory() {
+    console.log('Loading history...')
+    history = await loadResource('history');
+    if (!history) {
+        history = { lastRun: new Date() - 43200000, errorQueue: [], unsorted: [] };
+    }
+    history.errorQueue = history.errorQueue || [];
+    history.unsorted = history.unsorted || [];
+    history.runHistory = history.runHistory || [];
+    console.log('');
+}
+/**
+ * Load the rules resource
+ *
+ */
+async function loadRules() {
+    rules = await loadResource('rules');
+    if (!rules) {
+        rules = { rules: [] };
+    }
+}
 
 /**
  * Adds all videos from each subscription published after history.lastRun to the newVideos list.
  *
  */
-async function getNewVideos() {
+ async function getNewVideos() {
     const fromTime = new Date(history.lastRun).toISOString();
     console.log(`Getting new videos (Since ${fromTime})...`);
 
     // Pull the video list form cache. Only used for debugging.
-    newVideos = await getVideoListFromCache();
-    if (newVideos.length) {
+    if (USE_CACHED_VIDEOS) {
+        newVideos = await loadResource('videos');
         console.log('  Using video cache file.');
         console.log('');
         return;
@@ -185,26 +90,50 @@ async function getNewVideos() {
 
     // Get new videos for each item in the subscriptionList.
     await Promise.all(
-        subscriptionList.map(i => {
+        subscriptionList.items.map(i => {
             const title = i.snippet.title;
             const id = i.snippet.resourceId.channelId;
             return getChannelFeed(id, history.lastRun);
         })
     ).then((feeds) => {
         feeds.forEach(f => newVideos = newVideos.concat(f));
-        cacheVideoList();
+        cacheResource('videos', newVideos);
         console.log('');
         console.log(`${newVideos.length} new videos since ${new Date(history.lastRun).toISOString()}.`);
         console.log('');
     });
 };
 
+/**
+ * Sorts each new video into a playlist based on the rules.
+ *
+ */
 async function sortNewVideos() {
-    if (!newVideos.length) {
+    console.log('Sorting new videos...');
+    return await sortVideos(newVideos);
+}
+
+/**
+ * Sorts each new video into a playlist based on the rules.
+ *
+ */
+ async function sortUnsorted() {
+    const unsortedVideos = [...history.unsorted];
+    history.unsorted = [];
+    console.log('Sorting previously unsorted videos...');
+    return await sortVideos(unsortedVideos);
+}
+
+/**
+ * Sorts each from the given list into a playlist based on the rules.
+ *
+ */
+ async function sortVideos(videos) {
+    if (!videos.length) {
+        console.log('  No new videos to sort.');
         return true;
     }
-    console.log('Sorting new videos...');
-    newVideos.forEach(v => {
+    videos.forEach(v => {
         const playlistId = rules.rules.find(r => {
             const appliedRules = [];
             if (r.channelMatch !== '') {
@@ -228,20 +157,9 @@ async function sortNewVideos() {
     });
 
     await Promise.all(
-        updateQueue.map(q => youtube.playlistItems.insert({
-                part: [
-                    "snippet"
-                ],
-                resource: {
-                    snippet: {
-                        playlistId: q.playlistId,
-                        resourceId: {
-                            kind: "youtube#video",
-                            videoId: q.videoId
-                        }
-                    }
-                }
-            }).then(() => counts.processed++).catch(e => {
+        updateQueue.map(q => addToPlaylist(q.playlistId, q.videoId)
+            .then(() => counts.processed++)
+            .catch(e => {
                 counts.errors++;
                 const req = JSON.parse(e.response.config.body);
                 console.log(`  Failed adding videoId: ${req.snippet.resourceId.videoId} to playlistId: ${req.snippet.playlistId}`);
@@ -258,17 +176,27 @@ async function sortNewVideos() {
     );
     
     console.log('');
-    return true;
 }
 
+/**
+ * Save the history and log the results.
+ *
+ */
 async function cleanup() {
+    console.log('Saving run history.');
     history.lastRun = Date.now();
-    await saveHistory();
+    history.runHistory.push({
+        runDate: Date.now(),
+        sortedCount: counts.processed,
+        unsortedCound: counts.unsorted,
+        errorCount: counts.errors
+    })
+    cacheResource('history', history);
     console.log('');
     console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
     console.log(`Processed: ${counts.processed + counts.unsorted + counts.errors}`);
     console.log(`Sorted:    ${counts.processed}`);
-    console.log(`Unsorted:  ${counts.processed} (${history.unsorted.length} Total)`);
+    console.log(`Unsorted:  ${counts.unsorted}`);
     console.log(`Errors:    ${counts.errors} (${history.errorQueue.length} Total)`);
     console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
     console.log('');
@@ -280,11 +208,11 @@ console.log('~ Running Sort Service.');
 console.log('~~~~~~~~~~~~~~~~~~~~~~~');
 console.log('');
 authorize()
-    .then(authClient => google.options({auth: authClient}))
     .then(getSubscriptions)
     .then(getPlaylists)
     .then(loadHistory)
     .then(loadRules)
+    .then(sortUnsorted)
     .then(getNewVideos)
     .then(sortNewVideos)
     .then(cleanup)

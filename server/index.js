@@ -3,6 +3,8 @@ const { loadResource, purgeUnsorted, addRule, updateRule, deleteRule } = require
 const { getChannelFeed, getPlaylistFeed } = require('../sort-service/lib/api-calls');
 const app = express()
 const port = 3000
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.json({ extended: true }));
@@ -90,6 +92,20 @@ app.post('/api/history/purgeUnsorted', (req, res) => {
     const response = purgeUnsorted().then(res.status(204).send()).catch(e => res.status(e.code).json({ error: e.message }));
 });
 
+app.post('/api/runSort', (req, res) => {
+    console.log('POST: /api/runSort');
+    runSort().then(results => res.status(201).json(results));
+});
+
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`)
 });
+
+async function runSort() {
+    try {
+        const { stdout, stderr } = await exec('npm run sort');
+        return { stdout, stderr};
+    } catch (err) {
+       return { stdout: '', stderr: err };
+    };
+}

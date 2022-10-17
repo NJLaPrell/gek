@@ -117,4 +117,71 @@ const getFeed = async (type, id, fromTime = false) => httpsRequest({ host: 'www.
 const getChannelFeed = async(id, fromTime = false) => getFeed('channel', id, fromTime);
 const getPlaylistFeed = async(id, fromTime = false) => getFeed('playlist', id, fromTime);
 
-module.exports = { authorize, getFeed, getChannelFeed, getPlaylistFeed };
+/**
+ * Load list of subscriptions. Supports paging to get the full list.
+ *
+ * @param {array} subscriptionList - List of subscriptions retrieved.
+ * @param {string} pageToken - Page token received from the previous call.
+ * @return {<Subscription[]>}
+ */
+async function getSubscriptionPage(subscriptionList = [], pageToken = '') {
+    console.log('  Calling subscriptions API.');
+    const response = await youtube.subscriptions.list({
+        "part": [
+            "snippet"
+        ],
+        "mine": true,
+        "maxResults": 500,
+        pageToken: pageToken
+    });
+    subscriptionList = subscriptionList.concat(response.data.items);
+    const nextPageToken = response.data.nextPageToken;
+    if (nextPageToken) {
+        subscriptionList = await getSubscriptionPage(subscriptionList, nextPageToken);
+    }
+    return subscriptionList
+}
+
+/**
+ * Load list of playlists. Supports paging to get the full list.
+ *
+ * @param {array} playlistList - List of playlists retrieved.
+ * @param {string} pageToken - Page token received from the previous call.
+ * @return {<Subscription[]>}
+ */
+async function getPlaylistPage(playlistList = [], pageToken = '') {
+    console.log('  Calling playlist API.');
+    const response = await youtube.playlists.list({
+        "part": [
+            "snippet"
+        ],
+        "mine": true,
+        "maxResults": 500,
+        pageToken: pageToken
+    });
+    playlistList = playlistList.concat(response.data.items);
+    const nextPageToken = response.data.nextPageToken;
+    if (nextPageToken) {
+        playlistList = await getPlaylistPage(playlistList, nextPageToken);
+    }
+    return playlistList
+}
+
+function addToPlaylist(playlistId, videoId) {
+    return youtube.playlistItems.insert({
+        part: [
+            "snippet"
+        ],
+        resource: {
+            snippet: {
+                playlistId: playlistId,
+                resourceId: {
+                    kind: "youtube#video",
+                    videoId: videoId
+                }
+            }
+        }
+    })
+}
+
+module.exports = { authorize, getFeed, getChannelFeed, getPlaylistFeed, getSubscriptionPage, getPlaylistPage, addToPlaylist };
