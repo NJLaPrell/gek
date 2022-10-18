@@ -9,7 +9,7 @@ import { Store } from '@ngrx/store';
 import { getHistory } from '../state/actions/history.actions';
 import { getPlaylists } from '../state/actions/playlist.actions';
 import { getSubscriptions } from '../state/actions/subscriptions.actions';
-import { getChannelVideos, getPlaylistVideos } from '../state/actions/video.actions';
+import { selectHistoryState } from '../state/selectors/history.selectors';
 
 @Component({
   selector: 'app-top-bar',
@@ -25,6 +25,9 @@ export class TopBarComponent implements OnInit {
   faBomb = faBomb;
   faArrowUpShortWide = faArrowUpShortWide;
 
+  errorCount = 0;
+  unsortedCount = 0;
+
   @Output() onPlaylistsClicked: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(
@@ -34,6 +37,10 @@ export class TopBarComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.store.select(selectHistoryState).subscribe(h => {
+      this.errorCount = h.errorQueue.length;
+      this.unsortedCount = h.unsorted.length;
+    });
   }
 
   togglePlaylists() {

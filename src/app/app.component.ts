@@ -13,7 +13,7 @@ import { faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons';
 export class AppComponent implements OnInit {
   faCircleChevronLeft = faCircleChevronLeft;
 
-  pageTitle = 'TEST';
+  pageTitle = '';
   showSidebar = true;
 
   constructor(
@@ -71,7 +71,7 @@ export class AppComponent implements OnInit {
     this.showSidebar = !this.showSidebar;
   }
 
-  pageTitleChange(title: string): void {
+  pageTitleChange(title: any): void {
     this.pageTitle = title;
   }
 }

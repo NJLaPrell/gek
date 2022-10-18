@@ -119,6 +119,11 @@ const cacheResource = async(resourceName, data, addTimestamp = true, loadProtect
     }
 };
 
+/**
+ * Empties the history.unsorted array.
+ *
+ * @return {<true>}
+ */
 const purgeUnsorted = async() => {
     let history = await loadResource('history');
     history.unsorted = [];
@@ -126,6 +131,24 @@ const purgeUnsorted = async() => {
     return true;
 };
 
+/**
+ * Empties the history.errorQueue array.
+ *
+ * @return {<true>}
+ */
+const purgeErrors = async() => {
+    let history = await loadResource('history');
+    history.errorQueue = [];
+    await cacheResource('history', history);
+    return true;
+};
+
+/**
+ * Deletes a rule by the specified ID.
+ *
+ * @param {id} string - Rule ID to delete.
+ * @return {<true>}
+ */
 const deleteRule = async(id) => {
     let rules = await loadResource('rules');
     let ix = await rules.rules.findIndex(r => r.id == id);
@@ -138,6 +161,12 @@ const deleteRule = async(id) => {
     }
 }
 
+/**
+ * Updates the given rule.
+ *
+ * @param {rule} Rule - Updated rule object.
+ * @return {<boolean>}
+ */
 const updateRule = async(rule) => {
     let rules = await loadResource('rules');
     let ix =await  rules.rules.findIndex(r => r.id === rule.id);
@@ -150,6 +179,12 @@ const updateRule = async(rule) => {
     }
 }
 
+/**
+ * Adds the given rule.
+ *
+ * @param {rule} Rule - Rule object.
+ * @return {<boolean>}
+ */
 const addRule = async(rule) => {
     let rules = await loadResource('rules');
     rules.rules.push(rule);
@@ -157,4 +192,4 @@ const addRule = async(rule) => {
     return true;
 }
 
-module.exports = { loadResource, cacheResource, purgeUnsorted, updateRule, deleteRule, addRule };
+module.exports = { loadResource, cacheResource, purgeUnsorted, updateRule, deleteRule, addRule, purgeErrors };

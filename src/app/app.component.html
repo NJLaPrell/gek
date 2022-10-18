@@ -1,5 +1,7 @@
 <div id="app" class="d-flex flex-column overflow-y-none">
-  <div class="d-flex position-relative"></div>
+  <div class="d-flex position-relative">
+    <app-toast-container></app-toast-container>
+  </div>
 
   <div id="top-bar">
     <app-top-bar (onPlaylistsClicked)="toggleSidebar()"></app-top-bar>
@@ -12,14 +14,14 @@
         <fa-icon [icon]="faCircleChevronLeft" class="icon-button" style="font-size: 1.3em;" (click)="toggleSidebar()"></fa-icon>
       </div>
       <div id="side-bar-content" class="overflow-y-auto">
-        <app-side-bar (onPageTitleChange)="pageTitleChange($event)"></app-side-bar>
+        <app-side-bar></app-side-bar>
       </div>
     </div>
 
     <div id="body" class="flex-grow-1 overflow-y-none">
       <div id="body-header"><h2 id="page-title">{{ pageTitle }}</h2></div>
       <div id="body-content" class="overflow-y-auto">
-        <router-outlet></router-outlet>
+        <router-outlet (onPageTitleChange)="pageTitleChange($event)"></router-outlet>
       </div>
     </div>
 

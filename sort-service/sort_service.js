@@ -137,7 +137,7 @@ async function sortNewVideos() {
         const playlistId = rules.rules.find(r => {
             const appliedRules = [];
             if (r.channelMatch !== '') {
-                appliedRules.push(r.channelMatch === v.channelId)
+                appliedRules.push(r.channelMatch === v?.channelId)
             }
             if (r.titleMatch !== '') {
                 appliedRules.push(new RegExp(r.titleMatch).test(v.title));
@@ -161,16 +161,19 @@ async function sortNewVideos() {
             .then(() => counts.processed++)
             .catch(e => {
                 counts.errors++;
-                const req = JSON.parse(e.response.config.body);
-                console.log(`  Failed adding videoId: ${req.snippet.resourceId.videoId} to playlistId: ${req.snippet.playlistId}`);
+                try {
+                    const req = JSON.parse(e.response.config.body);
+                    console.log(`  Failed adding videoId: ${req.snippet.resourceId.videoId} to playlistId: ${req.snippet.playlistId}`);
+                    console.log('~~~~~~~~~~~~~~~')
+                    console.log(e.response.data.error.errors);
+                    console.log('~~~~~~~~~~~~~~~')
 
-                console.log('~~~~~~~~~~~~~~~')
-                console.log(e.response.data.error.errors);
-                console.log('~~~~~~~~~~~~~~~')
-
-                const video = newVideos.find(v => v.id === req.snippet.resourceId.videoId);
-                console.log(video);
-                history.errorQueue.push({ videoId: req.snippet.resourceId.videoId, playlistId: req.snippet.playlistId, errors: e.response.data.error.errors, video: video, failDate: Date.now() });
+                    const video = newVideos.find(v => v.id === req.snippet.resourceId.videoId);
+                    console.log(video);
+                    history.errorQueue.push({ videoId: req.snippet.resourceId.videoId, playlistId: req.snippet.playlistId, errors: e.response.data.error.errors, video: video, failDate: Date.now() });
+                } catch(ee) {
+                    console.log(e)
+                }
             })
         )
     );

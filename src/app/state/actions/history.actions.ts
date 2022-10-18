@@ -20,10 +20,25 @@ export const purgeUnsorted = createAction(
 );
 
 export const purgeUnsortedSuccess = createAction(
-    '[History] Purge Unsorted Success'
+    '[History] Purge Unsorted Success',
+    props<{ message: string }>()
 );
 
 export const purgeUnsortedFail = createAction(
     '[History] Purge Unsorted Fail',
+    props<{ error: string }>()
+);
+
+export const purgeErrorBuffer = createAction(
+    '[History] Purge Error Buffer'
+);
+
+export const purgeErrorBufferSuccess = createAction(
+    '[History] Purge Error Buffer Success',
+    props<{ message: string }>()
+);
+
+export const purgeErrorBufferFail = createAction(
+    '[History] Purge Error Buffer Fail',
     props<{ error: string }>()
 );

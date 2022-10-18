@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ChangeDetectorRef, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef, ElementRef, OnDestroy, ViewChild, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { skipWhile } from 'rxjs';
@@ -14,6 +14,7 @@ import * as moment from 'moment';
   styleUrls: ['./player.component.scss']
 })
 export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
+  @Output() onPageTitleChange: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild('player') player: ElementRef<HTMLDivElement> | false = false;
   playlistId: string = '';
   videoId: string = '';
@@ -48,12 +49,10 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.store.select(selectPlaylistVideos).pipe(skipWhile(r => !r || !r[this.playlistId])).subscribe(r => {
-      this.videoList = r[this.playlistId];
+      this.videoList = r[this.playlistId].sort((a, b) => new Date(a.published) > new Date(b.published) ? 1 : -1);
       if (this.videoId) {
-        console.log('foo');
-        console.log(this.videoList);
         this.video = this.videoList.find(v => v.id = this.videoId);
-      }
+      } 
       if(r[this.playlistId].length) {
         this.loading = false;
       } else {

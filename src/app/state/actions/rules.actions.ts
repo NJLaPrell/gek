@@ -22,7 +22,7 @@ export const addRule = createAction(
 
 export const addRuleSuccess = createAction(
   '[Rules] Add Rule Success',
-  props<{ rule:Rule }>()
+  props<{ rule:Rule, message: string }>()
 );
 
 export const addRuleFail = createAction(
@@ -37,7 +37,7 @@ export const updateRule = createAction(
 
 export const updateRuleSuccess = createAction(
   '[Rules] Update Rule Success',
-  props<{ rule:Rule }>()
+  props<{ rule:Rule, message: string }>()
 );
 
 export const updateRuleFail = createAction(
@@ -52,7 +52,7 @@ export const deleteRule = createAction(
 
 export const deleteRuleSuccess = createAction(
   '[Rules] Delete Rule Success',
-  props<{ id: string }>()
+  props<{ id: string, message: string }>()
 );
 
 export const deleteRuleFail = createAction(

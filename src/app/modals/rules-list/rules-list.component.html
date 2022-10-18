@@ -23,7 +23,15 @@
                     <td [class.text-center]="!r.titleMatch">{{ r.titleMatch || '---'}}</td>
                     <td [class.text-center]="!r.descriptionMatch">{{ r.descriptionMatch || '---'}}</td>
                     <td>{{ playlistTitleById(r.playlistId) }}</td>
-                    <td class="text-end"><fa-icon [icon]="faEdit" class="icon-button text-primary" (click)="r.edit = true" ngbTooltip="Edit Rule"></fa-icon> &nbsp;<fa-icon [icon]="faTrash" ngbTooltip="Delete Rule" class="text-danger icon-button" (click)="confirmDelete(r.id)"></fa-icon></td>
+                    <td class="text-end">
+                        <button type="button" class="btn btn-primary btn-sm" (click)="r.edit = true" ngbTooltip="Edit Rule">
+                            <fa-icon [icon]="faEdit"></fa-icon> 
+                        </button>
+                        &nbsp;
+                        <button type="button" class="btn btn-danger btn-sm" ngbTooltip="Delete Rule" (click)="confirmDelete(r.id)">
+                            <fa-icon [icon]="faTrash" ></fa-icon>
+                        </button>
+                    </td>
                 </ng-template>
 
                 <ng-template [ngIf]="r.edit">
@@ -59,7 +67,15 @@
                             </div>
                         </div>
                     </td>
-                    <td class="text-end"><fa-icon [icon]="faCircleCheck" class="icon-button text-success" (click)="updateRule(r)" ngbTooltip="Save Updates"></fa-icon> &nbsp; <fa-icon [icon]="faXmarkCircle" ngbTooltip="Cancel Edit" class="icon-button text-secondary" (click)="r.edit = false"></fa-icon></td>
+                    <td class="text-end">
+                        <button type="button" class="btn btn-success btn-sm" (click)="updateRule(r)" ngbTooltip="Save Updates">
+                            <fa-icon [icon]="faCircleCheck" ></fa-icon>
+                        </button>
+                        &nbsp;
+                        <button type="button" class="btn btn-danger btn-sm" ngbTooltip="Cancel Edit" (click)="r.edit = false">
+                            <fa-icon [icon]="faXmarkCircle"></fa-icon>
+                        </button>
+                    </td>
                 </ng-template>
             </tr>
         </tbody>

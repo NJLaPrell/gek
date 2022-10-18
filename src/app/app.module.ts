@@ -14,6 +14,7 @@ import { VideoEffects } from './state/effects/video.effects';
 import { HistoryEffects } from './state/effects/history.effects';
 import { RulesEffects } from './state/effects/rules.effects';
 import { SubscriptionsEffects } from './state/effects/subscriptions.effects';
+import { NotificationEffects } from './state/effects/notification.effects';
 import { metaReducers, reducers } from './state';
 import { InitializerService } from './initializer.service';
 import { HttpClientModule } from '@angular/common/http';
@@ -29,6 +30,7 @@ import { SafeHtmlPipe } from './pipes';
 import { UnsortedComponent } from './modals/unsorted/unsorted.component';
 import { RulesListComponent } from './modals/rules-list/rules-list.component';
 import { ConfirmPromptComponent } from './modals/confirm-prompt/confirm-prompt.component';
+import { ToastContainerComponent } from './toast-container/toast-container.component';
 
 export const initApp = (provider: InitializerService) => () => provider.init();
 
@@ -43,7 +45,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     SafeHtmlPipe,
     UnsortedComponent,
     RulesListComponent,
-    ConfirmPromptComponent
+    ConfirmPromptComponent,
+    ToastContainerComponent
   ],
   imports: [
     BrowserModule,
@@ -65,7 +68,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
       VideoEffects,
       HistoryEffects,
       RulesEffects,
-      SubscriptionsEffects
+      SubscriptionsEffects,
+      NotificationEffects
     ]),
     HttpClientModule,
     NgbModule,

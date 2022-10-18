@@ -1,5 +1,5 @@
 const express = require('express')
-const { loadResource, purgeUnsorted, addRule, updateRule, deleteRule } = require('../sort-service/lib/resources');
+const { loadResource, purgeUnsorted, addRule, updateRule, deleteRule, purgeErrors } = require('../sort-service/lib/resources');
 const { getChannelFeed, getPlaylistFeed } = require('../sort-service/lib/api-calls');
 const app = express()
 const port = 3000
@@ -90,6 +90,11 @@ app.post('/api/resources/addRule', (req, res) => {
 app.post('/api/history/purgeUnsorted', (req, res) => {
     console.log('POST: /api/history/purgeUnsorted');
     const response = purgeUnsorted().then(res.status(204).send()).catch(e => res.status(e.code).json({ error: e.message }));
+});
+
+app.post('/api/history/purgeErrors', (req, res) => {
+    console.log('POST: /api/history/purgeErrors');
+    const response = purgeErrors().then(res.status(204).send()).catch(e => res.status(e.code).json({ error: e.message }));
 });
 
 app.post('/api/runSort', (req, res) => {

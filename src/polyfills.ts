@@ -55,3 +55,4 @@ import 'zone.js';  // Included with Angular CLI.
  (window as any).process = process;
  import { Buffer } from 'buffer';
  (window as any).Buffer = Buffer;
+ import '@angular/localize/init';

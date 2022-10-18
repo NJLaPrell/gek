@@ -21,8 +21,16 @@ export class HistoryEffects {
     purgeUnsorted$ = createEffect(() => this.actions$.pipe(
         ofType(HistoryActions.purgeUnsorted),
         mergeMap(() => this.historyService.purgeUnsorted().pipe(
-            map(() => HistoryActions.getHistory()),
+            mergeMap(() => [HistoryActions.getHistory(), HistoryActions.purgeUnsortedSuccess({ message: "Unsorted videoes have been purged." })]),
             catchError((error: HttpErrorResponse) => of(HistoryActions.purgeUnsortedFail({ error: error.message })))
+        ))
+    ))
+
+    purgeErrors$ = createEffect(() => this.actions$.pipe(
+        ofType(HistoryActions.purgeErrorBuffer),
+        mergeMap(() => this.historyService.purgeErrors().pipe(
+            mergeMap(() => [HistoryActions.getHistory(), HistoryActions.purgeErrorBufferSuccess({ message: "The error buffer has been purged." })]),
+            catchError((error: HttpErrorResponse) => of(HistoryActions.purgeErrorBufferFail({ error: error.message })))
         ))
     ))
 

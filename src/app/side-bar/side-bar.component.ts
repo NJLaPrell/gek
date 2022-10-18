@@ -7,8 +7,6 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 })
 export class SideBarComponent implements OnInit {
 
-  @Output() onPageTitleChange: EventEmitter<string> = new EventEmitter<string>();
-
   constructor() { }
 
   ngOnInit(): void {

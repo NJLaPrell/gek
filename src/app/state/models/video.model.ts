@@ -24,6 +24,7 @@ export interface Video {
     processedDate?: number;
     errorMessage?: any;
     channelId: string;
+    playlistItemId?: string;
     channelName: string;
     title: string;
     published: string;

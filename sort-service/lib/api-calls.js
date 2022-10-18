@@ -30,6 +30,17 @@ const SCOPES = [
 // Path to the authentication credentials to authenticate the app.
 const CREDENTIALS_PATH = path.join(process.cwd(), 'sort-service/credentials.json');
 
+async function verifyToken(token, client) {
+    console.log('  Verifying auth token.');
+
+    const credentails = await loadResource('credentials', true, false, true);
+    const key = credentails.installed || credentails.web;
+
+    const ticket = await client.verifyIdToken({ idToken: token.refresh_token, audience: key.client_id })
+    const payload = ticket.getPayload();
+    const userid = payload['sub'];
+}
+
 /**
  * Load or request authorization to call APIs.
  *
@@ -40,20 +51,38 @@ const CREDENTIALS_PATH = path.join(process.cwd(), 'sort-service/credentials.json
     console.log('Authorizing User...');
 
     // Load from cache
+    console.log('  Loading credentials from cache.');
     const cachedToken = await loadResource('token', true, false, true);
     if (cachedToken) {
         try {
-            console.log('  Loading credentials from cache.');
+            
             authClient = await google.auth.fromJSON(cachedToken);
+            
+
+            
+
+            
+
+
+            
           } catch (err) {
             console.warn('  Error encountered using cached credentials:');
             console.warn(err);
           }
+        /*
+          if (authClient) {
+            await verifyToken(cachedToken, authClient).catch(e => {
+                console.log(e)
+                throw 'stop';
+            });
+          }
+          */
     }
 
     // Trigger authentication if unable to authenticate with stored credentails.
     if (!authClient) {
         console.log('  Triggering user authentication.');
+
         authClient = await authenticate({
             scopes: SCOPES,
             keyfilePath: CREDENTIALS_PATH,
@@ -87,32 +116,46 @@ const CREDENTIALS_PATH = path.join(process.cwd(), 'sort-service/credentials.json
  * @param {number | false} fromTime - Timestamp after which to return results based on publish date. Default is false.
  * @return {<Promise<ClientRequest>>}
  */
-const getFeed = async (type, id, fromTime = false) => httpsRequest({ host: 'www.youtube.com', path: '/feeds/videos.xml?' + type + '_id=' + id }).then(res => {
+const getFeed = async (type, id, fromTime = false) => {
     console.log('');
     console.log(`Loading ${type} feed: ${id}${fromTime ? ' (From timestamp: ' + String(fromTime) : ''}.`);
-    const parser = new XMLParser(xmlOptions);
-    const output = parser.parse(res);
-    console.log('  Processing ' + output.feed.title);
-    return (output.feed.entry || []).filter(e => fromTime < Date.parse(e.published)).map(e => ({
-        id: e['yt:videoId'],
-        channelId: e['yt:channelId'],
-        channelName: e.author.name,
-        title: e.title,
-        published: e.published,
-        updated: e.updated,
-        authorName: e.author.name,
-        channelLink: e.author.uri,
-        link: e.link['@_href'],
-        description: e['media:group']['media:description'],
-        thumbnail: e['media:group']['media:thumbnail']['@_url'],
-        viewCount: e['media:group']['media:community']['media:statistics']['@_views'],
-        thumbCount: e['media:group']['media:community']['media:starRating']['@_count']
+
+    const vmap = {};
+    if (type === 'playlist') {
+        const test = await listPlaylistItems(id)
+            .catch(e => console.log('  Unable to get playlist items from google.', e))
+            .then(items => items.forEach(pl => vmap[pl.id] = pl));
+    }
+ 
+    return httpsRequest({ host: 'www.youtube.com', path: '/feeds/videos.xml?' + type + '_id=' + id }).then(res => {
         
-    }));
-}).catch(e => {
-    console.error('  Error loading feed:');
-    console.error(e);
-});
+        const parser = new XMLParser(xmlOptions);
+        const output = parser.parse(res);
+        console.log('  Processing ' + output.feed.title);
+        
+        return (output.feed.entry || []).filter(e => fromTime < Date.parse(e.published)).map(e => {
+            return {
+                id: e['yt:videoId'],
+                playlistItemId: vmap[e['yt:videoId']]?.playlistId || '',
+                channelId: e['yt:channelId'],
+                channelName: e.author.name,
+                title: e.title,
+                published: e.published,
+                updated: e.updated,
+                authorName: e.author.name,
+                channelLink: e.author.uri,
+                link: e.link['@_href'],
+                description: e['media:group']['media:description'],
+                thumbnail: e['media:group']['media:thumbnail']['@_url'],
+                viewCount: e['media:group']['media:community']['media:statistics']['@_views'],
+                thumbCount: e['media:group']['media:community']['media:starRating']['@_count']        
+            }
+        });
+    }).catch(e => {
+        console.error('  Error loading feed:');
+        console.error(e);
+    });
+}
 
 const getChannelFeed = async(id, fromTime = false) => getFeed('channel', id, fromTime);
 const getPlaylistFeed = async(id, fromTime = false) => getFeed('playlist', id, fromTime);
@@ -131,7 +174,7 @@ async function getSubscriptionPage(subscriptionList = [], pageToken = '') {
             "snippet"
         ],
         "mine": true,
-        "maxResults": 500,
+        "maxResults": 50,
         pageToken: pageToken
     });
     subscriptionList = subscriptionList.concat(response.data.items);
@@ -156,7 +199,7 @@ async function getPlaylistPage(playlistList = [], pageToken = '') {
             "snippet"
         ],
         "mine": true,
-        "maxResults": 500,
+        "maxResults": 50,
         pageToken: pageToken
     });
     playlistList = playlistList.concat(response.data.items);
@@ -182,6 +225,52 @@ function addToPlaylist(playlistId, videoId) {
             }
         }
     })
+}
+
+async function listPlaylistItems(id, fromTime = 0) {
+    const items = await getPlaylistItemsPage(id).catch(e => console.log(e));
+    return items.filter(e => fromTime < Date.parse(e.contentDetails.videoPublishedAt)).map(e => ({
+        id: e.contentDetails.videoId,
+        playlistId: e.id,
+        channelId: e.snippet.channelId,
+        channelName: e.snippet.channelTitle,
+        title: e.snippet.title,
+        published: e.snippet.videoPublishedAt,
+        description: e.snippet.description,
+        thumbnail: e.snippet.thumbnails?.standard?.url || e.snippet.thumbnails?.medium?.url || e.snippet.thumbnails?.default?.url
+    }));
+}
+
+/**
+ * Load list of videos from a playlistId. Supports paging to get the full list.
+ *
+ * @param {string} id - PlaylistId.
+ * @param {array} videos - List of videos retrieved.
+ * @param {string} pageToken - Page token received from the previous call.
+ * @return {<Subscription[]>}
+ */
+ async function getPlaylistItemsPage(id, videos = [], pageToken = '') {
+    google.oauth2
+    if (!google.options.auth) {
+        await authorize();
+    }
+    console.log('  Calling playlist API.');
+    const response = await youtube.playlistItems.list({
+        "part": [
+            "snippet,contentDetails"
+        ],
+        "playlistId": id,
+        "maxResults": 50,
+        pageToken: pageToken
+    }).catch(e => console.log('Error calling playlistItems API', e));
+    if (response?.data?.items?.length > 0) {
+        videos = videos.concat(response.data.items);
+        const nextPageToken = response.data.nextPageToken;
+        if (nextPageToken) {
+            videos = await getPlaylistItemsPage(id, videos, nextPageToken);
+        }
+    }
+    return videos
 }
 
 module.exports = { authorize, getFeed, getChannelFeed, getPlaylistFeed, getSubscriptionPage, getPlaylistPage, addToPlaylist };
