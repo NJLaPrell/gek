@@ -6,7 +6,8 @@ export const playlistFeatureKey = 'playlists';
 
 export const initialState: Playlists = {
     lastUpdated: false,
-    items: []
+    items: [],
+    titleLookup: {}
 };
 
 export const playlistReducer = createReducer(

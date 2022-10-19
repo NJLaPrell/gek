@@ -17,10 +17,15 @@ export class PlaylistsHelper {
         }));
     }
 
-    get = (): Playlists => (<Playlists>{
-        lastUpdated: this.lastUpdated,
-        items: this.playlists.sort((a, b) => a.title.localeCompare(b.title))
-    });
+    get = (): Playlists => {
+        let playlists = {
+            lastUpdated: this.lastUpdated,
+            items: this.playlists.sort((a, b) => a.title.localeCompare(b.title)),
+            titleLookup: <any>{}
+        }
+        playlists.items.forEach((p: Playlist) => playlists.titleLookup[p.id] = p.title);
+        return <Playlists>playlists;
+    };
 
 }
 
@@ -31,6 +36,7 @@ export class PlaylistsHelper {
 export interface Playlists {
     lastUpdated: number | false;
     items: Playlist[]
+    titleLookup: { [key: string]: string }
 }
 
 export interface Playlist {

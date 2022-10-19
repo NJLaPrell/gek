@@ -5,6 +5,7 @@ import { Playlists } from 'src/app/state/models/playlist.model';
 import { selectPlaylists } from '../../state/selectors/playlists.selectors';
 import { initialState } from 'src/app/state/reducers/playlist.reducer';
 import { ActivatedRoute, Router } from '@angular/router';
+import { selectNavState } from 'src/app/state/selectors/navState.selectors';
 
 
 @Component({
@@ -30,16 +31,10 @@ export class PlaylistsComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.select(selectPlaylists).pipe().subscribe(r => this.playlists = Object.assign({}, r));
-    this.activatedRoute.params.subscribe(params => {
-      console.log(params);
-      this.selectedPlaylist = params['playlistId'];
-      console.log(this.selectedPlaylist);
-    });
+    this.store.select(selectNavState).subscribe(n => this.selectedPlaylist = n.playlistId);
   }
 
-  onPlaylistClicked(playlistId: string, playlistTitle: string): void {
-    this.selectedPlaylist = playlistId;
-    this.onPageTitleChange.emit(playlistTitle);
+  onPlaylistClicked(playlistId: string): void {
     this.router.navigate(['/', 'player', playlistId]);
   }
 

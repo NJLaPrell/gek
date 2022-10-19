@@ -4,6 +4,8 @@ import { OAuth2Client } from 'google-auth-library';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import { selectPageTitle } from './state/selectors/navState.selectors';
+import { skipUntil } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -43,6 +45,9 @@ export class AppComponent implements OnInit {
       }
       
     });
+
+    this.store.select(selectPageTitle).subscribe(t => this.pageTitle = t);
+    
   };
 
   doAuth = () => {
@@ -72,6 +77,7 @@ export class AppComponent implements OnInit {
   }
 
   pageTitleChange(title: any): void {
+    console.log('foo');
     this.pageTitle = title;
   }
 }

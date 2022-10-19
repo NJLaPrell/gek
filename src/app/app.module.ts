@@ -15,6 +15,7 @@ import { HistoryEffects } from './state/effects/history.effects';
 import { RulesEffects } from './state/effects/rules.effects';
 import { SubscriptionsEffects } from './state/effects/subscriptions.effects';
 import { NotificationEffects } from './state/effects/notification.effects';
+import { NavStateEffects } from './state/effects/navState.effects';
 import { metaReducers, reducers } from './state';
 import { InitializerService } from './initializer.service';
 import { HttpClientModule } from '@angular/common/http';
@@ -69,7 +70,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
       HistoryEffects,
       RulesEffects,
       SubscriptionsEffects,
-      NotificationEffects
+      NotificationEffects,
+      NavStateEffects
     ]),
     HttpClientModule,
     NgbModule,

@@ -1,6 +1,6 @@
 <div id="playlist-panel">
     <div *ngIf="playlists.items.length === 0" class="alert alert-danger ms-2 me-2" role="alert">No Playlists Found.</div>
     <ul id="playlist-list">
-        <li *ngFor="let item of playlists.items" class="playlist-item" [class.selected]="selectedPlaylist == item.id" (click)="onPlaylistClicked($any(item.id), $any(item.title))">{{ item.title }}</li>
+        <li *ngFor="let item of playlists.items" class="playlist-item" [class.selected]="selectedPlaylist == item.id" (click)="onPlaylistClicked($any(item.id))">{{ item.title }}</li>
     </ul>
 </div>

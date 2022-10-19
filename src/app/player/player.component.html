@@ -30,8 +30,10 @@
     <youtube-player [videoId]="videoId" 
         suggestedQuality="highres"
         (stateChange)="stateChanged($event)"
+        (ready)="googleReady($event)"
         [width]="videoWidth"
         [height]="videoHeight"
+        [startSeconds]="0"
     ></youtube-player>
     <div class="video-description" [innerHtml]="video?.description || '' | safeHtml"></div>
 </div>

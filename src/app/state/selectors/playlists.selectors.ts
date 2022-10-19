@@ -11,3 +11,8 @@ export const selectPlaylists = createSelector(
     selectPlaylistState,
     (state) => state
 )
+
+export const selectPlaylistTitles = createSelector(
+    selectPlaylistState,
+    (state) => state.titleLookup
+)
