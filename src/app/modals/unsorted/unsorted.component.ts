@@ -8,6 +8,7 @@ import { faTrash, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import { deleteUnsortedItem, purgeUnsorted } from 'src/app/state/actions/history.actions';
 import { ConfirmPromptComponent } from '../confirm-prompt/confirm-prompt.component';
 import { selectPlaylists } from 'src/app/state/selectors/playlists.selectors';
+import { addToPlaylist } from 'src/app/state/actions/video.actions';
 
 @Component({
   selector: 'app-unsorted',
@@ -42,8 +43,8 @@ export class UnsortedComponent implements OnInit {
     return this.playlists.find((pl: any) => pl.id === id)?.title || 'Move to Playlist...';
   }
 
-  moveToPlaylist(playlistId: string, itemId: string) {
-    console.log(playlistId, itemId);
+  moveToPlaylist(playlistId: string, videoId: string) {
+    this.store.dispatch(addToPlaylist({ videoId, playlistId }));
   }
 
   deleteItem(id: string) {

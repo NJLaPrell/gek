@@ -30,3 +30,18 @@ export const getPlaylistVideosFail = createAction(
     '[Video] Get Playlist Videos Fail',
     props<{ error: string }>()
 );
+
+export const addToPlaylist = createAction(
+  '[Video] Add to Playlist',
+  props<{ videoId: string, playlistId: string }>()
+);
+
+export const addToPlaylistSuccess = createAction(
+  '[Video] Add to Playlist Success',
+  props<{ videoId: string, playlistId: string, message: string }>()
+);
+
+export const addToPlaylistFail = createAction(
+  '[Video] Add to Playlist Fail',
+  props<{ error: string }>()
+);

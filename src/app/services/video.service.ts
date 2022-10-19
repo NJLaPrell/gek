@@ -16,4 +16,6 @@ export class VideoService {
 
     getPlaylistVideos = (playlistId: string): Observable<Video[]> =>this.http.get<Video[]>(`/api/getPlaylistFeed/${playlistId}`).pipe(shareReplay());
 
+    addToPlaylist = (videoId: string, playlistId: string): Observable<any> => this.http.put(`/api/video/${videoId}/addToPlaylist/${playlistId}`, '');
+
 }

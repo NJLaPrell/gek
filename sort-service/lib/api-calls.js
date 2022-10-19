@@ -194,6 +194,9 @@ async function getSubscriptionPage(subscriptionList = [], pageToken = '') {
  * @return {<Subscription[]>}
  */
 async function getPlaylistPage(playlistList = [], pageToken = '') {
+    if (!google.options.auth) {
+        await authorize();
+    }
     console.log('  Calling playlist API.');
     const response = await youtube.playlists.list({
         "part": [
@@ -211,7 +214,10 @@ async function getPlaylistPage(playlistList = [], pageToken = '') {
     return playlistList
 }
 
-function addToPlaylist(playlistId, videoId) {
+async function addToPlaylist(playlistId, videoId) {
+    if (!google.options.auth) {
+        await authorize();
+    }
     return youtube.playlistItems.insert({
         part: [
             "snippet"
@@ -251,7 +257,6 @@ async function listPlaylistItems(id, fromTime = 0) {
  * @return {<Subscription[]>}
  */
  async function getPlaylistItemsPage(id, videos = [], pageToken = '') {
-    google.oauth2
     if (!google.options.auth) {
         await authorize();
     }

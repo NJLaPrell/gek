@@ -28,7 +28,8 @@ export class NotificationEffects {
                 RulesActions.updateRuleFail,
                 SubscriptionsActions.getSubscriptionsFail,
                 VideoActions.getChannelVideosFail,
-                VideoActions.getPlaylistVideosFail
+                VideoActions.getPlaylistVideosFail,
+                VideoActions.addToPlaylistFail
             ),
             tap((action) => {
                 this.notifyFail(action.error);
@@ -45,7 +46,8 @@ export class NotificationEffects {
                 HistoryActions.deleteUnsortedItemSuccess,
                 RulesActions.addRuleSuccess,
                 RulesActions.deleteRuleSuccess,
-                RulesActions.updateRuleSuccess
+                RulesActions.updateRuleSuccess,
+                VideoActions.addToPlaylistSuccess
             ),
             tap((action) => {
                 this.notifySuccess(action.message);
