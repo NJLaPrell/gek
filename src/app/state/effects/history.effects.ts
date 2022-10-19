@@ -26,6 +26,14 @@ export class HistoryEffects {
         ))
     ))
 
+    deleteUnsortedItem$ = createEffect(() => this.actions$.pipe(
+        ofType(HistoryActions.deleteUnsortedItem),
+        mergeMap((action) => this.historyService.deleteUnsortedItem(action.id).pipe(
+            map(() => HistoryActions.deleteUnsortedItemSuccess({ id: action.id, message: "The unsorted item has been deleted." })),
+            catchError((error: HttpErrorResponse) => of(HistoryActions.deleteUnsortedItemFail({ error: error.message })))
+        ))
+    ))
+
     purgeErrors$ = createEffect(() => this.actions$.pipe(
         ofType(HistoryActions.purgeErrorBuffer),
         mergeMap(() => this.historyService.purgeErrors().pipe(

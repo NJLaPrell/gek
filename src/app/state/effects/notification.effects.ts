@@ -20,6 +20,7 @@ export class NotificationEffects {
                 HistoryActions.purgeErrorBufferFail,
                 HistoryActions.getHistoryFail,
                 HistoryActions.purgeUnsortedFail,
+                HistoryActions.deleteUnsortedItemFail,
                 PlaylistActions.getPlaylistsFail,
                 RulesActions.addRuleFail,
                 RulesActions.deleteRuleFail,
@@ -41,6 +42,7 @@ export class NotificationEffects {
             ofType(
                 HistoryActions.purgeErrorBufferSuccess,
                 HistoryActions.purgeUnsortedSuccess,
+                HistoryActions.deleteUnsortedItemSuccess,
                 RulesActions.addRuleSuccess,
                 RulesActions.deleteRuleSuccess,
                 RulesActions.updateRuleSuccess

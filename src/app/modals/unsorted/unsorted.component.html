@@ -1,35 +1,27 @@
-<div class="modal-header">
+<div class="modal-header bg-dark">
     <h4 class="modal-title">Unsorted Videos</h4>
     <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
-<div class="modal-body">
-    <table class="table table-striped table-hover table-sm" style="table-layout:fixed;">
+<div class="modal-body bg-dark">
+    <table class="table table-dark table-responsive table-striped table-hover table-sm" style="table-layout:fixed;">
         <thead>
             <tr>
                 <th>Channel</th>
-                <th>Video</th>
-                <th>Description</th>
-                <th>Published</th>
+                <th class="w-50">Video</th>
                 <th>&nbsp;</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let u of unsorted">
                 <td>{{ u?.channelName }}</td>
-                <td>
-
-                            <img class="unsorted-thumbnail" [src]="u?.thumbnail"  />
-
-
-                            <div class="unsorted-title" [ngbTooltip]="u?.title">{{ u?.title }}</div>
-
-               
+                <td class="w-50">
+                    <img class="unsorted-thumbnail" [src]="u?.thumbnail"  />
+                    <div class="unsorted-title">{{ u?.title }}</div>
+                    <div class="unsorted-details"><fa-icon [icon]="faInfoCircle" [ngbTooltip]="u?.description"></fa-icon> Published {{ moment(u?.published).fromNow() }}</div>
                 </td>
-                <td><div class="unsorted-description" [ngbTooltip]="u?.description">{{ u?.description }}</div></td>
-                <td>{{ moment(u?.published).fromNow() }}</td>
-                <td>
+                <td class="text-end">
                     <div ngbDropdown class="d-inline-block">
-                        <button type="button" class="btn btn-primary btn-sm" [id]="'assign' + u?.id" ngbDropdownToggle>Move to Playlist...</button>
+                        <button type="button" class="btn btn-dark btn-sm" [id]="'assign' + u?.id" ngbDropdownToggle>Move to Playlist...</button>
                         <div ngbDropdownMenu style="max-height: 200px; overflow:auto">
                             <ng-container *ngFor="let pl of playlists">
                                 <button (click)="moveToPlaylist(pl.id, u?.id || '')" ngbDropdownItem>{{ pl.title }}</button>
@@ -43,7 +35,7 @@
         </tbody>
     </table>
 </div>
-<div class="modal-footer">
+<div class="modal-footer bg-dark">
     <button type="button" class="btn btn-danger" (click)="purge()"><fa-icon [icon]="faTrash"></fa-icon> Purge Unsorted Videos</button>
-    <button type="button" class="btn btn-primary" (click)="activeModal.close('Close click')">Close</button>
+    <button type="button" class="btn btn-dark" (click)="activeModal.close('Close click')">Close</button>
 </div>

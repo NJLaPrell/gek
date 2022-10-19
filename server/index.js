@@ -1,5 +1,5 @@
 const express = require('express')
-const { loadResource, purgeUnsorted, addRule, updateRule, deleteRule, purgeErrors } = require('../sort-service/lib/resources');
+const { loadResource, purgeUnsorted, deleteUnsortedItem, addRule, updateRule, deleteRule, purgeErrors } = require('../sort-service/lib/resources');
 const { getChannelFeed, getPlaylistFeed } = require('../sort-service/lib/api-calls');
 const app = express()
 const port = 3000
@@ -101,12 +101,20 @@ app.post('/api/history/purgeErrors', (req, res) => {
 app.post('/api/runSort', (req, res) => {
     console.log('POST: /api/runSort');
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-  res.setHeader('Transfer-Encoding', 'chunked');
+    res.setHeader('Transfer-Encoding', 'chunked');
     //runSort().then(results => res.status(201).json(results));
     const child = spawn('npm', ['run', 'sort']);
     child.stdout.pipe(res);
     //child.stdout.on('error', (e) => console.log(e)).on('data', (m) => res.write(m)).on('close', () => res.end());
 
+});
+
+app.delete('/api/history/deleteUnsortedItem/:id', (req, res) => {
+    const id = req.params.id;
+    console.log(`DELETE: /api/history/deleteUnsortedItem/${id}`);
+    const response = deleteUnsortedItem(id)
+        .then(res.status(204).send())
+        //.catch(e => res.status(e.code).json({ error: e.message }));
 });
 
 app.listen(port, () => {

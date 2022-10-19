@@ -7,5 +7,6 @@ export const historyFeatureKey = 'history';
 export const historyReducer = createReducer(
     initialHistoryState,
     on(HistoryActions.getHistoryFail, state => ({ ...state })),
-    on(HistoryActions.getHistorySuccess, (state, action) => ({ ...action.response }))
+    on(HistoryActions.getHistorySuccess, (state, action) => ({ ...action.response })),
+    on(HistoryActions.deleteUnsortedItemSuccess, (state, action) => ({ ...state, unsorted: [...state.unsorted].filter(v => v.id !== action.id) }))
 );

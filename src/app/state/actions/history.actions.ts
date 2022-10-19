@@ -29,6 +29,21 @@ export const purgeUnsortedFail = createAction(
     props<{ error: string }>()
 );
 
+export const deleteUnsortedItem = createAction(
+    '[History] Delete Unsorted Item',
+    props<{ id: string }>()
+);
+
+export const deleteUnsortedItemSuccess = createAction(
+    '[History] Delete Unsorted Item Success',
+    props<{ id: string, message: string }>()
+);
+
+export const deleteUnsortedItemFail = createAction(
+    '[History] Delete Unsorted Item Fail',
+    props<{ error: string }>()
+);
+
 export const purgeErrorBuffer = createAction(
     '[History] Purge Error Buffer'
 );

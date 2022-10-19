@@ -4,8 +4,8 @@ import { Store } from '@ngrx/store';
 import { Video } from 'src/app/state/models/video.model';
 import { selectUnsorted } from 'src/app/state/selectors/history.selectors';
 import * as moment from 'moment';
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
-import { purgeUnsorted } from 'src/app/state/actions/history.actions';
+import { faTrash, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
+import { deleteUnsortedItem, purgeUnsorted } from 'src/app/state/actions/history.actions';
 import { ConfirmPromptComponent } from '../confirm-prompt/confirm-prompt.component';
 import { selectPlaylists } from 'src/app/state/selectors/playlists.selectors';
 
@@ -18,6 +18,7 @@ export class UnsortedComponent implements OnInit {
   unsorted: Video[] = [];
   moment = moment;
   faTrash = faTrash;
+  faInfoCircle = faInfoCircle;
   playlists: any = [];
 
   constructor(
@@ -46,7 +47,7 @@ export class UnsortedComponent implements OnInit {
   }
 
   deleteItem(id: string) {
-    console.log(id);
+    this.store.dispatch(deleteUnsortedItem({ id }));
   }
 
  

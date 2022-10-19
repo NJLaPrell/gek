@@ -16,6 +16,8 @@ export class HistoryService {
 
     purgeUnsorted = (): Observable<any> => this.http.post<any>(`/api/history/purgeUnsorted`, '').pipe();
 
+    deleteUnsortedItem = (id: string): Observable<any> => this.http.delete<any>(`/api/history/deleteUnsortedItem/${id}`);
+
     purgeErrors = (): Observable<any> => this.http.post<any>(`/api/history/purgeErrors`, '');
 
 }
