@@ -40,9 +40,11 @@ app.get('/api/getChannelFeed/:id', (req, res) => {
 });
 
 app.get('/api/getPlaylistFeed/:id', (req, res) => {
-    console.log('GET: /api/getPlaylistFeed/:id');
+    
     const id = req.params.id;
-    const response = getPlaylistFeed(id)
+    const useGApi = req.query.useGApi === 'true';
+    console.log(`GET: /api/getPlaylistFeed/${id}?useGApi=${useGApi}`);
+    const response = getPlaylistFeed(id, false, useGApi)
         .then(contents => {
             if (contents) {
                 res.json(contents);

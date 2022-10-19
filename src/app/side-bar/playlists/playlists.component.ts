@@ -6,6 +6,7 @@ import { selectPlaylists } from '../../state/selectors/playlists.selectors';
 import { initialState } from 'src/app/state/reducers/playlist.reducer';
 import { ActivatedRoute, Router } from '@angular/router';
 import { selectNavState } from 'src/app/state/selectors/navState.selectors';
+import { selectVideoState } from 'src/app/state/selectors/video.selectors';
 
 
 @Component({
@@ -18,6 +19,7 @@ export class PlaylistsComponent implements OnInit {
 
   playlists: Playlists;
   selectedPlaylist: string = '';
+  playlistCounts: { [key: string]: { new: number; total: number } } = {};
 
   @Output() onPageTitleChange: EventEmitter<string> = new EventEmitter<string>();
 
@@ -32,6 +34,10 @@ export class PlaylistsComponent implements OnInit {
   ngOnInit(): void {
     this.store.select(selectPlaylists).pipe().subscribe(r => this.playlists = Object.assign({}, r));
     this.store.select(selectNavState).subscribe(n => this.selectedPlaylist = n.playlistId);
+    this.store.select(selectVideoState).subscribe(vs => Object.keys(vs.playlist).forEach((pl: string) => this.playlistCounts[pl] = {
+      new: vs.playlist[pl].filter(p => new Date(p.published) > (new Date(Date.now() - 86400000) )).length,
+      total: vs.playlist[pl].length
+    }))
   }
 
   onPlaylistClicked(playlistId: string): void {

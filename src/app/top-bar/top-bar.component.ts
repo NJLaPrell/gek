@@ -12,6 +12,7 @@ import { getSubscriptions } from '../state/actions/subscriptions.actions';
 import { selectHistoryState } from '../state/selectors/history.selectors';
 import { last, map, tap } from 'rxjs';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
+import { SortProgressComponent } from '../modals/sort-progress/sort-progress.component';
 
 @Component({
   selector: 'app-top-bar',
@@ -62,7 +63,9 @@ export class TopBarComponent implements OnInit {
   }
 
   sortVideos() {
-    this.sortService.runSortService().pipe(
+    const modalRef = this.modalService.open(SortProgressComponent, { size: 'xl', scrollable: true });
+    //this.sortService.runSortService()
+    //.pipe(
       /*
       map((event: HttpEvent<any>) => {
         if (event.type === HttpEventType.Response) {
@@ -70,20 +73,28 @@ export class TopBarComponent implements OnInit {
         }
       }),
       */
+     /*
       map((response) => {
         console.log(response);
         return response;
       }),
       tap(message => console.log(message)),
+      */
       //last(),
-    )
-    
-    .subscribe(r => {
-      console.log(r);
+    //)
+    /*
+    .subscribe({
+      next(chunk) { console.log(chunk) },
+      error(e) { console.log(e) },
+      complete() { console.log('done') }
+    })
+    */
+    //.subscribe(r => {
+      //console.log(r);
       //this.store.dispatch(getHistory());
       //this.store.dispatch(getPlaylists());
       //this.store.dispatch(getSubscriptions());
-    });
+    //});
   }
 
 }

@@ -117,12 +117,12 @@ async function verifyToken(token, client) {
  * @param {number | false} fromTime - Timestamp after which to return results based on publish date. Default is false.
  * @return {<Promise<ClientRequest>>}
  */
-const getFeed = async (type, id, fromTime = false) => {
+const getFeed = async (type, id, fromTime = false, useGApi = true) => {
     console.log('');
     console.log(`Loading ${type} feed: ${id}${fromTime ? ' (From timestamp: ' + String(fromTime) : ''}.`);
 
     const vmap = {};
-    if (type === 'playlist') {
+    if (type === 'playlist' && useGApi) {
         const test = await listPlaylistItems(id)
             .catch(e => console.log('  Unable to get playlist items from google.', e))
             .then(items => items.forEach(pl => vmap[pl.id] = pl));
@@ -133,8 +133,9 @@ const getFeed = async (type, id, fromTime = false) => {
         const parser = new XMLParser(xmlOptions);
         const output = parser.parse(res);
         console.log('  Processing ' + output.feed.title);
+        const entries = output?.feed?.entry || Array([]);
         
-        return (output.feed.entry || []).filter(e => fromTime < Date.parse(e.published)).map(e => {
+        return !entries.filter ? [] : entries.filter(e => fromTime < Date.parse(e.published)).map(e => {
             return {
                 id: e['yt:videoId'],
                 playlistItemId: vmap[e['yt:videoId']]?.playlistId || '',
@@ -159,7 +160,7 @@ const getFeed = async (type, id, fromTime = false) => {
 }
 
 const getChannelFeed = async(id, fromTime = false) => getFeed('channel', id, fromTime);
-const getPlaylistFeed = async(id, fromTime = false) => getFeed('playlist', id, fromTime);
+const getPlaylistFeed = async(id, fromTime = false, useGApi = true) => getFeed('playlist', id, fromTime, useGApi);
 
 /**
  * Load list of subscriptions. Supports paging to get the full list.

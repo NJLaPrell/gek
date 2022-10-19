@@ -18,7 +18,7 @@ export const getChannelVideosFail = createAction(
 
 export const getPlaylistVideos = createAction(
   '[Video] Get Playlist Videos',
-  props<{ playlistId: string }>()
+  props<{ playlistId: string, useGApi?: boolean }>()
 );
 
 export const getPlaylistVideosSuccess = createAction(

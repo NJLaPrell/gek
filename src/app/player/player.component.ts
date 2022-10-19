@@ -61,9 +61,9 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         ]
     )
       .pipe(
-        skipWhile((r) => r[0][this.playlistId].length === 0 || !r[0][this.playlistId] || r[2]['length'] === 0),
+        skipWhile((r) => r[0][this.playlistId]?.length === 0 || !r[0][this.playlistId] || r[2]?.['length'] === 0),
         map((r: any) => ({
-          videoList: r[0][this.playlistId].sort((a:any, b:any) => new Date(a.published) > new Date(b.published) ? 1 : -1),
+          videoList: [...r[0][this.playlistId]].sort((a:any, b:any) => new Date(a.published) > new Date(b.published) ? 1 : -1),
           titleLookup: r[1],
           routeParams: r[2]
         }))

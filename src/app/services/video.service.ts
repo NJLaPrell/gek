@@ -14,7 +14,7 @@ export class VideoService {
 
     getChannelVideos = (channelId: string): Observable<Video[]> =>this.http.get<Video[]>(`/api/getChannelFeed/${channelId}`).pipe(shareReplay());
 
-    getPlaylistVideos = (playlistId: string): Observable<Video[]> =>this.http.get<Video[]>(`/api/getPlaylistFeed/${playlistId}`).pipe(shareReplay());
+    getPlaylistVideos = (playlistId: string, useGApi: boolean = true): Observable<Video[]> =>this.http.get<Video[]>(`/api/getPlaylistFeed/${playlistId}?useGApi=${useGApi}`).pipe(shareReplay());
 
     addToPlaylist = (videoId: string, playlistId: string): Observable<any> => this.http.put(`/api/video/${videoId}/addToPlaylist/${playlistId}`, '');
 

@@ -21,7 +21,7 @@ export class VideoEffects {
 
     getPlaylistVideos$ = createEffect(() => this.actions$.pipe(
         ofType(VideoActions.getPlaylistVideos),
-        mergeMap((action) => this.videoService.getPlaylistVideos(action.playlistId).pipe(
+        mergeMap((action) => this.videoService.getPlaylistVideos(action.playlistId, action.useGApi).pipe(
             map((response: Video[]) => VideoActions.getPlaylistVideosSuccess({ response, playlistId: action.playlistId })),
             catchError((error: HttpErrorResponse) => of(VideoActions.getPlaylistVideosFail({ error: error.message })))
         ))

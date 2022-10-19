@@ -3,7 +3,7 @@ const { authorize, getChannelFeed, getSubscriptionPage, getPlaylistPage, addToPl
 
 const USE_SUBSCRIPTION_CACHE = true;
 const SUBSCRIPTION_CACHE_EXPIRE = 43200000; // 12 Hours
-const USE_PLAYLIST_CACHE = false;
+const USE_PLAYLIST_CACHE = true;
 const PLAYLIST_CACHE_EXPIRE = 43200000; // 12 Hours
 const USE_CACHED_VIDEOS = false;
 var subscriptionList = {};

@@ -1,11 +1,11 @@
-<div *ngIf="loading" class="text-center">
+<div *ngIf="loading && playlistId" class="text-center">
     <div class="spinner-border" role="status"></div>
     <div>Loading...</div>
 </div>
 
-<div *ngIf="!loading && !videoList.length && !videoId" class="no-videos">No videos to display.</div>
+<div *ngIf="playlistId && !loading && !videoList.length && !videoId" class="no-videos">No videos to display.</div>
 
-<div *ngIf="!videoId">
+<div *ngIf="!videoId && playlistId">
     <div *ngFor="let video of videoList" class="video-card">
         <div class="text-center">
             <img class="videoThumbnail" [src]="video.thumbnail" (click)="videoClicked($any(video.id))" />
@@ -36,4 +36,8 @@
         [startSeconds]="0"
     ></youtube-player>
     <div class="video-description" [innerHtml]="video?.description || '' | safeHtml"></div>
+</div>
+
+<div *ngIf="!playlistId && !videoId" class="text-center">
+    <img src="/assets/585335.jpg" class="align-middle" />
 </div>

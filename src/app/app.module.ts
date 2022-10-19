@@ -32,6 +32,7 @@ import { UnsortedComponent } from './modals/unsorted/unsorted.component';
 import { RulesListComponent } from './modals/rules-list/rules-list.component';
 import { ConfirmPromptComponent } from './modals/confirm-prompt/confirm-prompt.component';
 import { ToastContainerComponent } from './toast-container/toast-container.component';
+import { SortProgressComponent } from './modals/sort-progress/sort-progress.component';
 
 export const initApp = (provider: InitializerService) => () => provider.init();
 
@@ -47,7 +48,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     UnsortedComponent,
     RulesListComponent,
     ConfirmPromptComponent,
-    ToastContainerComponent
+    ToastContainerComponent,
+    SortProgressComponent
   ],
   imports: [
     BrowserModule,
