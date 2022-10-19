@@ -10,6 +10,8 @@ import { getHistory } from '../state/actions/history.actions';
 import { getPlaylists } from '../state/actions/playlist.actions';
 import { getSubscriptions } from '../state/actions/subscriptions.actions';
 import { selectHistoryState } from '../state/selectors/history.selectors';
+import { last, map, tap } from 'rxjs';
+import { HttpEvent, HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-top-bar',
@@ -60,10 +62,27 @@ export class TopBarComponent implements OnInit {
   }
 
   sortVideos() {
-    this.sortService.runSortService().pipe().subscribe(r => {
-      this.store.dispatch(getHistory());
-      this.store.dispatch(getPlaylists());
-      this.store.dispatch(getSubscriptions());
+    this.sortService.runSortService().pipe(
+      /*
+      map((event: HttpEvent<any>) => {
+        if (event.type === HttpEventType.Response) {
+          return event.body;
+        }
+      }),
+      */
+      map((response) => {
+        console.log(response);
+        return response;
+      }),
+      tap(message => console.log(message)),
+      //last(),
+    )
+    
+    .subscribe(r => {
+      console.log(r);
+      //this.store.dispatch(getHistory());
+      //this.store.dispatch(getPlaylists());
+      //this.store.dispatch(getSubscriptions());
     });
   }
 

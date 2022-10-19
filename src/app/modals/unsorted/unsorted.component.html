@@ -15,29 +15,29 @@
         </thead>
         <tbody>
             <tr *ngFor="let u of unsorted">
-                <td>{{ u.channelName }}</td>
+                <td>{{ u?.channelName }}</td>
                 <td>
 
-                            <img class="unsorted-thumbnail" [src]="u.thumbnail"  />
+                            <img class="unsorted-thumbnail" [src]="u?.thumbnail"  />
 
 
-                            <div class="unsorted-title" [ngbTooltip]="u.title">{{ u.title }}</div>
+                            <div class="unsorted-title" [ngbTooltip]="u?.title">{{ u?.title }}</div>
 
                
                 </td>
-                <td><div class="unsorted-description" [ngbTooltip]="u.description">{{ u.description }}</div></td>
-                <td>{{ moment(u.published).fromNow() }}</td>
+                <td><div class="unsorted-description" [ngbTooltip]="u?.description">{{ u?.description }}</div></td>
+                <td>{{ moment(u?.published).fromNow() }}</td>
                 <td>
                     <div ngbDropdown class="d-inline-block">
-                        <button type="button" class="btn btn-primary btn-sm" [id]="'assign' + u.id" ngbDropdownToggle>Move to Playlist...</button>
+                        <button type="button" class="btn btn-primary btn-sm" [id]="'assign' + u?.id" ngbDropdownToggle>Move to Playlist...</button>
                         <div ngbDropdownMenu style="max-height: 200px; overflow:auto">
                             <ng-container *ngFor="let pl of playlists">
-                                <button (click)="moveToPlaylist(pl.id, u.id)" ngbDropdownItem>{{ pl.title }}</button>
+                                <button (click)="moveToPlaylist(pl.id, u?.id || '')" ngbDropdownItem>{{ pl.title }}</button>
                             </ng-container>
                         </div>
                     </div>
                     &nbsp;
-                    <button type="button" class="btn btn-danger btn-sm" (click)="deleteItem(u.id)" ngbTooltip="Remove from the list."><fa-icon [icon]="faTrash"></fa-icon></button>
+                    <button type="button" class="btn btn-danger btn-sm" (click)="deleteItem(u?.id || '')" ngbTooltip="Remove from the list."><fa-icon [icon]="faTrash"></fa-icon></button>
                 </td>
             </tr>
         </tbody>

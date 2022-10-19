@@ -5,6 +5,7 @@ const app = express()
 const port = 3000
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
+const { spawn } = require('child_process');
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.json({ extended: true }));
@@ -99,7 +100,13 @@ app.post('/api/history/purgeErrors', (req, res) => {
 
 app.post('/api/runSort', (req, res) => {
     console.log('POST: /api/runSort');
-    runSort().then(results => res.status(201).json(results));
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  res.setHeader('Transfer-Encoding', 'chunked');
+    //runSort().then(results => res.status(201).json(results));
+    const child = spawn('npm', ['run', 'sort']);
+    child.stdout.pipe(res);
+    //child.stdout.on('error', (e) => console.log(e)).on('data', (m) => res.write(m)).on('close', () => res.end());
+
 });
 
 app.listen(port, () => {

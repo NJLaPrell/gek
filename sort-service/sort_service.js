@@ -3,7 +3,7 @@ const { authorize, getChannelFeed, getSubscriptionPage, getPlaylistPage, addToPl
 
 const USE_SUBSCRIPTION_CACHE = true;
 const SUBSCRIPTION_CACHE_EXPIRE = 43200000; // 12 Hours
-const USE_PLAYLIST_CACHE = true;
+const USE_PLAYLIST_CACHE = false;
 const PLAYLIST_CACHE_EXPIRE = 43200000; // 12 Hours
 const USE_CACHED_VIDEOS = false;
 var subscriptionList = {};
@@ -164,12 +164,12 @@ async function sortNewVideos() {
                 try {
                     const req = JSON.parse(e.response.config.body);
                     console.log(`  Failed adding videoId: ${req.snippet.resourceId.videoId} to playlistId: ${req.snippet.playlistId}`);
-                    console.log('~~~~~~~~~~~~~~~')
-                    console.log(e.response.data.error.errors);
-                    console.log('~~~~~~~~~~~~~~~')
+                    //console.log('~~~~~~~~~~~~~~~')
+                    //console.log(e.response.data.error.errors);
+                    //console.log('~~~~~~~~~~~~~~~')
 
                     const video = newVideos.find(v => v.id === req.snippet.resourceId.videoId);
-                    console.log(video);
+                    //console.log(video);
                     history.errorQueue.push({ videoId: req.snippet.resourceId.videoId, playlistId: req.snippet.playlistId, errors: e.response.data.error.errors, video: video, failDate: Date.now() });
                 } catch(ee) {
                     console.log(e)

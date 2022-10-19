@@ -5,6 +5,7 @@ const { XMLParser } = require('fast-xml-parser');
 const { google } = require('googleapis');
 const youtube = google.youtube('v3');
 const path = require('path');
+const e = require('express');
 
 // Options for parsing XML.
 const xmlOptions = {
@@ -90,13 +91,13 @@ async function verifyToken(token, client) {
         // Cache the credentials.
         if (authClient.credentials) {
             console.log('  Caching credentials');
-            const credentails = await loadResource('credentials', true, false, true);
-            const key = credentials.installed || credentails.web;
+            const credentials = await loadResource('credentials', true, false, true);
+            const key = credentials.installed || credentials.web;
             const payload = {
                 type: 'authorized_user',
                 client_id: key.client_id,
                 client_secret: key.client_secret,
-                refresh_token: client.credentials.refresh_token
+                refresh_token: authClient.credentials.refresh_token
             };
             await cacheResource('token', payload, false, true);
         }
@@ -202,7 +203,7 @@ async function getPlaylistPage(playlistList = [], pageToken = '') {
         "maxResults": 50,
         pageToken: pageToken
     });
-    playlistList = playlistList.concat(response.data.items);
+    playlistList = playlistList.concat(response.data.items.filter(i => i.id !== 'PLLFJ6m60CtDxpqLNqJHUFNyIh0R81jZKa'));
     const nextPageToken = response.data.nextPageToken;
     if (nextPageToken) {
         playlistList = await getPlaylistPage(playlistList, nextPageToken);

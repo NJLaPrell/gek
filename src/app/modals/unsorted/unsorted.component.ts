@@ -27,7 +27,7 @@ export class UnsortedComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.store.select(selectUnsorted).subscribe(u => this.unsorted = [...u].sort((a, b) => new Date(a.published) > new Date(b.published) ? 1 : -1));
+    this.store.select(selectUnsorted).subscribe(u => this.unsorted = [...u].sort((a, b) => new Date(a?.published || 0) > new Date(b?.published || 0) ? 1 : -1));
     this.store.select(selectPlaylists).subscribe(pl => this.playlists = [...pl.items].sort((a, b) => a.title.localeCompare(b.title)).map(pl => ({ title: pl.title, id: pl.id })))
   }
 

@@ -17,7 +17,7 @@
         </thead>
         <tbody>
             <tr *ngFor="let r of rules">
-                <ng-template [ngIf]="!r.edit">
+                <ng-template [ngIf]="!r?.edit">
                     <td>{{ r.type }}</td>
                     <td [class.text-center]="!r.channelMatch">{{ subTitleById(r.channelMatch) || '---' }}</td>
                     <td [class.text-center]="!r.titleMatch">{{ r.titleMatch || '---'}}</td>
@@ -34,7 +34,7 @@
                     </td>
                 </ng-template>
 
-                <ng-template [ngIf]="r.edit">
+                <ng-template [ngIf]="r?.edit">
                     <td>
                         <div ngbDropdown class="d-inline-block">
                             <button type="button" class="btn btn-outline-primary" id="ruleType" ngbDropdownToggle>{{ r.type || 'Select a Type' }}</button>

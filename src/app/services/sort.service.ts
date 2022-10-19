@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParamsOptions } from '@angular/common/http';
 import { Observable } from "rxjs";
 
 @Injectable({
@@ -11,9 +11,10 @@ export class SortService {
     constructor(
         private http: HttpClient
     ) {
-        this.headers = new HttpHeaders().set("Content-Type", "application/json");
+        this.headers = new HttpHeaders().set("Content-Type", "text/plain");
+        
     }
 
-    runSortService = (): Observable<any> => this.http.post<any>(`/api/runSort`, {});    
+    runSortService = () => this.http.post<string>('/api/runSort', { headers: this.headers, responseType: 'text' as 'json'});    
 
 }
