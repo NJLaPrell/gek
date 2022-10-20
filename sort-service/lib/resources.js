@@ -125,6 +125,7 @@ const cacheResource = async(resourceName, data, addTimestamp = true, loadProtect
  * @return {<true>}
  */
 const purgeUnsorted = async() => {
+    console.log('  Purging unsorted items.')
     let history = await loadResource('history');
     history.unsorted = [];
     await cacheResource('history', history);
@@ -132,15 +133,25 @@ const purgeUnsorted = async() => {
 };
 
 /**
+ * Deletes the item with matching ID from the history.unsorted array.
+ *
+ */
+ const deleteUnsortedItem = async(id) => {
+    console.log(`  Deleting unsorted item: ${id}`);
+    let history = await loadResource('history');
+    history.unsorted = history.unsorted.filter(u => u.id !== id);
+    return await cacheResource('history', history);
+};
+
+/**
  * Empties the history.errorQueue array.
  *
- * @return {<true>}
  */
 const purgeErrors = async() => {
+    console.log('  Purging the error queue.');
     let history = await loadResource('history');
     history.errorQueue = [];
     await cacheResource('history', history);
-    return true;
 };
 
 /**
@@ -150,6 +161,7 @@ const purgeErrors = async() => {
  * @return {<true>}
  */
 const deleteRule = async(id) => {
+    console.log(`  Deleting rule: ${id}`);
     let rules = await loadResource('rules');
     let ix = await rules.rules.findIndex(r => r.id == id);
     if (ix >= 0) {
@@ -168,6 +180,7 @@ const deleteRule = async(id) => {
  * @return {<boolean>}
  */
 const updateRule = async(rule) => {
+    console.log(`  Updating rule: ${rule.id}`);
     let rules = await loadResource('rules');
     let ix =await  rules.rules.findIndex(r => r.id === rule.id);
     if (ix >= 0) {
@@ -186,10 +199,11 @@ const updateRule = async(rule) => {
  * @return {<boolean>}
  */
 const addRule = async(rule) => {
+    console.log(`  Adding rule: ${rule.id}`);
     let rules = await loadResource('rules');
     rules.rules.push(rule);
     await cacheResource('rules', rules);
     return true;
 }
 
-module.exports = { loadResource, cacheResource, purgeUnsorted, updateRule, deleteRule, addRule, purgeErrors };
+module.exports = { loadResource, cacheResource, purgeUnsorted, deleteUnsortedItem, updateRule, deleteRule, addRule, purgeErrors };

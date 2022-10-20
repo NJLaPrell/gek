@@ -1,14 +1,18 @@
-import { Component, OnInit, AfterViewInit, ChangeDetectorRef, ElementRef, OnDestroy, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef, ElementRef, OnDestroy, ViewChild, Output, EventEmitter, TemplateRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { combineLatest, map, skipWhile } from 'rxjs';
 import { Video, initialVideoState } from 'src/app/state/models/video.model';
 import { getPlaylistVideos } from '../state/actions/video.actions';
 import { selectPlaylistVideos } from '../state/selectors/video.selectors';
-import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUpRightFromSquare, faEye, faThumbsUp, faBackward, faForward, faTrashAlt, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import * as moment from 'moment';
-import { selectPlaylists, selectPlaylistTitles } from '../state/selectors/playlists.selectors';
+import { selectPlaylistTitles } from '../state/selectors/playlists.selectors';
 import { setNavState } from '../state/actions/navState.actions';
+import { selectNavState } from '../state/selectors/navState.selectors';
+import { ToastService } from '../services/toast.service';
+import { ConfirmPromptComponent } from '../modals/confirm-prompt/confirm-prompt.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-player',
@@ -16,31 +20,39 @@ import { setNavState } from '../state/actions/navState.actions';
   styleUrls: ['./player.component.scss']
 })
 export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
-  @Output() onPageTitleChange: EventEmitter<any> = new EventEmitter<any>();
-  @ViewChild('player') player: ElementRef<HTMLDivElement> | false = false;
-  playlistId: string = '';
-  videoId: string = '';
-  videoList: Video[] = [];
-  video: Video | undefined;
-
-  videoWidth: number | undefined;
-  videoHeight: number | undefined;
-
   faArrowUpRightFromSquare = faArrowUpRightFromSquare;
+  faThumbsUp = faThumbsUp;
+  faEye = faEye;
+  faBackward = faBackward;
+  faForward = faForward;
+  faTrashAlt = faTrashAlt;
+  faThumbsDown = faThumbsDown;
 
-  loading = false;
+  @ViewChild('player') player: ElementRef<HTMLDivElement> | false = false;        // Youtube player element
+  @ViewChild('endOfVideoToast') endOfVideoToast: TemplateRef<any> | string = '';  // Template for the end of video toast.
 
-  moment = moment;
-  videoNavState: any = {};
+  playlistId: string = '';          // From the route params.
+  videoId: string = '';             // From the route params.
+  videoList: Video[] = [];          // List of videos in the playlist.
+  video: Video | undefined;         // Current video, if routed.
+  videoWidth: number | undefined;   // Width set on the player.
+  videoHeight: number | undefined;  // Height set on the player.
+  loading = false;                  // Loading indicator state (for the playlist).
+  videoTimer: any;                  // Time used for triggering the videoAlmostOver event.
+  moment = moment;                  // Moment for date display
+  navState: any = {};               // Video navigation state.
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private store: Store,
     private router: Router,
-    private _changeDetectorRef: ChangeDetectorRef
+    private _changeDetectorRef: ChangeDetectorRef,
+    private toast: ToastService,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit(): void {
+    // Get the route params and dispatch getPlaylistVideos to build the list.
     this.activatedRoute.params.subscribe(params => {
       this.playlistId = params['playlistId'];
       this.videoId = params['videoId'];
@@ -50,10 +62,12 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.store.dispatch(getPlaylistVideos({ playlistId: this.playlistId }));
       }
-      
     });
 
-    // Wait until we have both the video list for the playlist and they playlist title lookup.
+    // Listen for navState changes and update this.navState
+    this.store.select(selectNavState).subscribe(n => this.navState = n);
+
+    // Wait until we have the video list for the playlist, the playlist title lookup, and the route params to get them.
     combineLatest([
           this.store.select(selectPlaylistVideos),
           this.store.select(selectPlaylistTitles),
@@ -69,7 +83,10 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         }))
       )
       .subscribe(r => {
-        this.videoList = r.videoList;
+        if (this.videoList.length > 0) {
+          //return;
+        }
+        this.videoList = [...r.videoList];
         if (this.videoId) {
           this.video = this.videoList.find(v => v.id == this.videoId);
         } 
@@ -90,6 +107,7 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         }));
       });
 
+    // Youtube player API
     const tag = document.createElement('script');
     tag.src = 'https://www.youtube.com/iframe_api';
     document.body.appendChild(tag);
@@ -100,35 +118,122 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     window.addEventListener('resize', this.onResize);
   }
 
+  ngOnDestroy(): void {
+    window.removeEventListener('resize', this.onResize);
+  }
+
+  // Fit the video player width with the page.
   onResize = (): void => {
     if (!this.player)
       return;
-    // Automatically expand the video to fit the page up to 1200px x 720px
     this.videoWidth = Math.min(this.player.nativeElement.clientWidth, 1200);
     this.videoHeight = this.videoWidth * 0.6;
     this._changeDetectorRef.detectChanges();
   }
 
-  ngOnDestroy(): void {
-    window.removeEventListener('resize', this.onResize);
+  // #####################
+  // FORMATERS
+  // #####################
+  // TODO: Use pipes.
+  
+  // Format view count
+  getViewCount(views: number | undefined): string {
+    return (views || 0 > 999) ? ((views || 0) / 1000).toFixed(1) + 'K' : String(views);
   }
+
+  // Format thumb count with commas. 
+  getThumbCount(count: number | undefined): string | void {
+    if (count) {
+      return Number(count).toLocaleString();
+    }
+  }
+
+  // #####################
+  // PLAYER EVENTS
+  // #####################
 
   videoClicked(videoId: string): void {
-    this.router.navigate(['/', 'player', this.playlistId, videoId]);
+    this.goToVideo(videoId);
   }
 
+  // Fires on player state changes
   stateChanged(e: any) {
-    console.log('stateChanged');
-    console.log(e);
+    if (e.data === 0) {
+      // The video has ended.
+      this.onVideoEnded(e.target);
+    } else {
+      // Set a timer for when the video is 30 seconds from the end.
+      const duration = e.target.playerInfo.duration;
+      const endMark = duration - 30;
+      const currentMark = e.target.playerInfo.currentTime;
+      const secondsToEndMark = endMark - currentMark;
+      if (secondsToEndMark > 0) {
+        clearTimeout(this.videoTimer);
+        this.videoTimer = setTimeout(() => this.onAlmostOver(), secondsToEndMark * 1000);
+      }
+    }
   }
 
+  // Fires 30 seconds before the end of a video.
+  onAlmostOver() {
+    this.toast.info(this.endOfVideoToast)
+  }
+
+  // Fires when a video has finished.
+  onVideoEnded(player: any) {
+    console.log('Video Ended');
+    if (this.navState.nextVideo) {
+      this.router.navigate(['/', 'player', this.playlistId, this.navState.nextVideo.id]);
+      setTimeout(() => player.playVideo(), 2000);
+    }
+  }
+
+  // Fires when the player API finishes loading.
   googleReady(e: any) {
-    console.log('google ready', e);
     e.target.playVideo();
   }
 
-  getViewCount(views: number | undefined): string {
-    return ((views || 0 > 999) ? ((views || 0) / 1000).toFixed(1) + 'K' : views) + ' views';
+  // Fires with the api loads a new module.
+  onApiChange(e: any) {
+    console.log('apiChange');
+  }
+
+  // #####################
+  // USER ACTIONS
+  // #####################
+
+  // Navigate to the video with the given videoId.
+  goToVideo(videoId: string | undefined) {
+    if (videoId) {
+      this.router.navigate(['/', 'player', this.playlistId, videoId]);
+    }
+  }
+
+  // Like the current video.
+  thumbsUp() {
+    console.log('thumbsUp() - NOT YET IMPLEMENTED.');
+  }
+
+  // Dislike the current video
+  thumbsDown() {
+    console.log('thumbsDown() - NOT YET IMPLEMENTED.');
+  }
+
+  // Remove the current video from the playlist.
+  remove(confirm = true) {
+    const doIt = () => console.log('remove() - NOT YET IMPLEMENTED.');
+    if (confirm) {
+      const modalRef = this.modalService.open(ConfirmPromptComponent);
+      modalRef.componentInstance.prompt = 'Are you sure you wish to remove this video from the playlist?';
+      modalRef.closed.subscribe(c => c === 'Continue click' ? doIt() : null);
+    } else {
+      doIt();
+    }
+  }
+
+  // Open the video in a new window
+  openInNewWindow() {
+    console.log('openInNewWindow() - NOT YET IMPLEMENTED.');
   }
 
 }

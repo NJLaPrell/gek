@@ -1,3 +1,6 @@
+<!-- ############################################# -->
+<!-- Loading Indicator                             -->
+<!-- ############################################# -->
 <div *ngIf="loading && playlistId" class="text-center">
     <div class="spinner-border" role="status"></div>
     <div>Loading...</div>
@@ -5,6 +8,9 @@
 
 <div *ngIf="playlistId && !loading && !videoList.length && !videoId" class="no-videos">No videos to display.</div>
 
+<!-- ############################################# -->
+<!-- VIDEO LIST.                                   -->
+<!-- ############################################# -->
 <div *ngIf="!videoId && playlistId">
     <div *ngFor="let video of videoList" class="video-card">
         <div class="text-center">
@@ -17,27 +23,129 @@
                 <a class="channel-link" [href]="video.channelLink" target="_blank">{{ video.channelName }}</a>
             </div>
             <div class="counts">
-                <span class="view-count">{{ getViewCount(video.viewCount) }}</span>
+                <span class="view-count">{{ getViewCount(video.viewCount) }} <fa-icon [icon]="faEye"></fa-icon></span>
                 &nbsp;•&nbsp;
                 <span class="publish-date">{{ moment(video.published).fromNow() }}</span>
             </div>
-            
         </div>
     </div>
 </div>
 
-<div #player *ngIf="videoId" id="player">
+
+<!-- ############################################# -->
+<!-- VIDEO PLAYER                                  -->
+<!-- ############################################# -->
+<div #player *ngIf="videoId" id="player" class="pb-5">
     <youtube-player [videoId]="videoId" 
         suggestedQuality="highres"
         (stateChange)="stateChanged($event)"
         (ready)="googleReady($event)"
+        (apiChange)="onApiChange($event)"
         [width]="videoWidth"
         [height]="videoHeight"
         [startSeconds]="0"
     ></youtube-player>
-    <div class="video-description" [innerHtml]="video?.description || '' | safeHtml"></div>
+    <div class="text-start">
+        <div class="video-title">
+            <a [href]="video?.channelLink" target="_blank" class="channel-link">{{ video?.channelName }}</a>
+            &nbsp; | &nbsp; {{ getViewCount(video?.viewCount)}} <fa-icon [icon]="faEye"></fa-icon>
+            &nbsp; | &nbsp; {{ getThumbCount(video?.thumbCount) }} <fa-icon [icon]="faThumbsUp"></fa-icon>
+            &nbsp; | &nbsp; Published: {{ moment(video?.published).fromNow() }}
+        </div>
+
+        <div #description class="video-description text-truncate" [innerHtml]="video?.description || '' | safeHtml" (click)="description.classList.toggle('text-truncate')"></div>
+
+        <hr />
+        
+        <div class="row">
+            <div class="col-sm-3 next-prev video-prev">
+                <div class="text-end m-0 p-0">
+                    <img *ngIf="navState.previousVideo" class="videoThumbnail" [src]="navState.previousVideo.thumbnail" />       
+                </div>
+                <div *ngIf="navState.previousVideo" class="text-truncate">{{ navState.previousVideo.title }}</div>
+                <div *ngIf="navState.previousVideo" class="text-truncate">
+                    <span class="view-count">{{ getViewCount(navState.previousVideo.viewCount) }} <fa-icon [icon]="faEye"></fa-icon></span>
+                    &nbsp;•&nbsp;
+                    <span class="publish-date">{{ moment(navState.previousVideo.published).fromNow() }}</span>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <button type="button"
+                    [disabled]="!navState.previousVideo"
+                    class="btn btn-secondary next-prev-btn"
+                    ngbTooltip="Previous Video"
+                    (click)="goToVideo(navState?.previousVideo?.id)"
+                >
+                    <fa-icon [icon]="faBackward"></fa-icon>
+                </button>
+            </div>
+            <div class="col-sm-2 text-center center-buttons">
+                <div>
+                    <button type="button" class="btn btn-secondary" (click)="thumbsUp()">
+                        <fa-icon [icon]="faThumbsUp"></fa-icon>
+                    </button>
+                    <button type="button" class="btn btn-secondary" (click)="thumbsDown()">
+                        <fa-icon [icon]="faThumbsDown"></fa-icon>
+                    </button>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-secondary">
+                        <fa-icon [icon]="faTrashAlt" (click)="remove(true)"></fa-icon>
+                    </button>
+                    <button type="button" class="btn btn-secondary" (click)="openInNewWindow()">
+                        <fa-icon [icon]="faArrowUpRightFromSquare"></fa-icon>
+                    </button>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <button type="button"
+                    [disabled]="!navState.nextVideo"
+                    class="btn btn-secondary next-prev-btn"
+                    ngbTooltip="Next Video"
+                    (click)="goToVideo(navState?.nextVideo?.id)"
+                >
+                    <fa-icon [icon]="faForward"></fa-icon>
+                </button>
+            </div>
+            <div class="col-sm-3 next-prev video-next">
+                <div class="text-start m-0 p-0">
+                    <img *ngIf="navState.nextVideo" class="videoThumbnail" [src]="navState.nextVideo.thumbnail" />       
+                </div>
+                <div *ngIf="navState.nextVideo" class="text-truncate">{{ navState.nextVideo.title }}</div>
+                <div *ngIf="navState.nextVideo" class="text-truncate">
+                    <span class="view-count">{{ getViewCount(navState.nextVideo.viewCount) }} <fa-icon [icon]="faEye"></fa-icon></span>
+                    &nbsp;•&nbsp;
+                    <span class="publish-date">{{ moment(navState.nextVideo.published).fromNow() }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
+<!-- ############################################# -->
+<!-- MAIN PLAYER PAGE                              -->
+<!-- ############################################# -->
 <div *ngIf="!playlistId && !videoId" class="text-center">
     <img src="/assets/585335.jpg" class="align-middle" />
 </div>
+
+<!-- ############################################# -->
+<!-- TOAST TEMPLATES.                              -->
+<!-- ############################################# -->
+<ng-template #endOfVideoToast>
+	<p>This video is almost over...</p>
+    <div class="clearfix">
+        <button type="button" class="btn btn-primary btn-sm float-start" (click)="thumbsUp()">
+            <fa-icon [icon]="faThumbsUp"></fa-icon>
+        </button>
+
+        <button type="button" class="btn btn-primary btn-sm float-start ms-2" (click)="thumbsDown()">
+            <fa-icon [icon]="faThumbsDown"></fa-icon>
+        </button>
+
+        <button type="button" class="btn btn-danger btn-sm float-end" (click)="remove(false)">
+            <fa-icon [icon]="faTrashAlt"></fa-icon> Delete Now
+        </button>
+        <p class="flo"></p>
+    </div>
+</ng-template>

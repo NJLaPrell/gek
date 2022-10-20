@@ -15,7 +15,7 @@ export class NavStateHelper {
           playlistTitle: props.titleLookup ? props.titleLookup[props.playlistId] : '',
           videoId: video ? video.id : false,
           videoTitle: video ? video.title : false,
-          previousVideo: props.videoList && videoIndex > 1 ? props.videoList[videoIndex - 1] : false,
+          previousVideo: props.videoList && videoIndex > 0 ? props.videoList[videoIndex - 1] : false,
           currentVideo: video || false,
           nextVideo: props.videoList && videoIndex <= props.videoList.length ? props.videoList[videoIndex + 1] : false
         }

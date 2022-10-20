@@ -30,12 +30,13 @@
         text-decoration: none;
         font-size: 0.7em;
         font-weight: 700;
-
+    
         &:hover {
             color: #CBC660;
             text-decoration: underline;
         }
     }
+    
 
     .counts {
         font-size: 0.7em;
@@ -89,8 +90,51 @@
 .video-description {
     text-align: left;
     padding: 6px;
+    cursor: pointer;
 }
 
+
+
+
+.video-title {
+    font-size: 0.7em;
+    padding: 6px;
+    a {
+        color: #DDD; 
+        text-decoration: none;
+        font-weight: 700;
+        &:hover {
+            color: #CBC660;
+            text-decoration: underline;
+        }
+    }
+}
+
+.next-prev {
+    img {
+        height: 120px;
+        width: 160px;
+    }
+    font-size: 0.8em;
+    
+}
+
+.next-prev-btn {
+    font-size: 3em;
+    display: block;
+    width: 100%;
+    line-height: 160px;
+}
+
+.center-buttons {
+    div {
+        height: 80px;
+        button {
+            margin: 10px;
+            line-height: 40px;
+        }
+    }
+}
 
 
 
