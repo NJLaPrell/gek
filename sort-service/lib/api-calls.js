@@ -297,4 +297,19 @@ async function listPlaylistItems(id, fromTime = 0) {
     }).catch(e => console.log('Error calling rate video API', e));
 }
 
-module.exports = { authorize, getFeed, getChannelFeed, getPlaylistFeed, getSubscriptionPage, getPlaylistPage, addToPlaylist, rateVideo };
+/**
+ * Remove a video from a playlist
+ *
+ * @param {string} playlistItemId - The playlistItemId of the video in the playlist.
+ */
+ async function removeVideo(playlistItemId) {
+    if (!google.options.auth) {
+        await authorize();
+    }
+    console.log('  Calling remove playlist item API.');
+    const response = await youtube.playlistItems.delete({
+        "id": playlistItemId
+    }).catch(e => console.log('Error calling remove playlist item API', e));
+}
+
+module.exports = { authorize, getFeed, getChannelFeed, getPlaylistFeed, getSubscriptionPage, getPlaylistPage, addToPlaylist, rateVideo, removeVideo };

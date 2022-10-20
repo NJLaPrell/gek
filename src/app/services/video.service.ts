@@ -18,6 +18,8 @@ export class VideoService {
 
     rateVideo = (videoId: string, rating: string): Observable<any> => this.http.put(`/api/video/${videoId}/rate/${rating}`, '');
 
+    removeFromPlaylist = (playlistItemId: string): Observable<any> => this.http.put(`/api/playlistItem/remove/${playlistItemId}`, '');
+
     addToPlaylist = (videoId: string, playlistId: string): Observable<any> => this.http.put(`/api/video/${videoId}/addToPlaylist/${playlistId}`, '');
 
 }

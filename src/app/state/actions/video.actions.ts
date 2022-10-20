@@ -23,7 +23,7 @@ export const getPlaylistVideos = createAction(
 
 export const getPlaylistVideosSuccess = createAction(
     '[Video] Get Playlist Videos Success',
-    props<{ response: Video[], playlistId: string }>()
+    props<{ response: Video[], playlistId: string, useGApi?: boolean }>()
 );
 
 export const getPlaylistVideosFail = createAction(
@@ -58,5 +58,20 @@ export const rateVideoSuccess = createAction(
 
 export const rateVideoFail = createAction(
   '[Video] Rate Video Fail',
+  props<{ error: string }>()
+);
+
+export const removeFromPlaylist = createAction(
+  '[Video] Remove from Playlist',
+  props<{ playlistItemId: string }>()
+);
+
+export const removeFromPlaylistSuccess = createAction(
+  '[Video] Remove from Playlist Success',
+  props<{ message: string }>()
+);
+
+export const removeFromPlaylistFail = createAction(
+  '[Video] Remove from Playlist Fail',
   props<{ error: string }>()
 );

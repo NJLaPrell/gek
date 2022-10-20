@@ -43,6 +43,14 @@ export class VideoEffects {
         ))
     ));
 
+    removeFromPlaylist$ = createEffect(() => this.actions$.pipe(
+        ofType(VideoActions.removeFromPlaylist),
+        mergeMap((action) => this.videoService.removeFromPlaylist(action.playlistItemId).pipe(
+            map(() => VideoActions.removeFromPlaylistSuccess({ message: 'Video removed.' })),
+            catchError((error: HttpErrorResponse) => of(VideoActions.removeFromPlaylistFail({ error: error.message })))
+        ))
+    ));
+
     constructor(
         private actions$: Actions,
         private videoService: VideoService

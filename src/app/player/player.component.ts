@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { combineLatest, map, skipWhile } from 'rxjs';
 import { Video, initialVideoState } from 'src/app/state/models/video.model';
-import { getPlaylistVideos, rateVideo } from '../state/actions/video.actions';
+import { getPlaylistVideos, rateVideo, removeFromPlaylist } from '../state/actions/video.actions';
 import { selectPlaylistVideos } from '../state/selectors/video.selectors';
 import { faArrowUpRightFromSquare, faEye, faThumbsUp, faBackward, faForward, faTrashAlt, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import * as moment from 'moment';
@@ -225,7 +225,7 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Remove the current video from the playlist.
   remove(confirm = true) {
-    const doIt = () => console.log('remove() - NOT YET IMPLEMENTED.');
+    const doIt = () => this.video?.playlistItemId ? this.store.dispatch(removeFromPlaylist({ playlistItemId: this.video?.playlistItemId })) : null;
     if (confirm) {
       const modalRef = this.modalService.open(ConfirmPromptComponent);
       modalRef.componentInstance.prompt = 'Are you sure you wish to remove this video from the playlist?';

@@ -38,10 +38,20 @@ export const videoReducer = createReducer(
     on(VideoActions.getPlaylistVideosFail, state => ({ ...state })),
     on(VideoActions.getPlaylistVideosSuccess, (state, action) => { 
         const playlist = { ...state.playlist };
-        playlist[action.playlistId]= new VideoListHelper(action.response).get();
+        playlist[action.playlistId] = new VideoListHelper(action.response).get();
+        return {
+            ...state, 
+            playlist
+        }
+    }),
+    /*
+    on(VideoActions.removeFromPlaylistSuccess, (state, action) => { 
+        const playlist = { ...state.playlist };
+        playlist[action.playlistId] = state.playlist[action.playlistId].filter(pl => pl.playlistItemId !== action.playlistItemId);
         return {
             ...state, 
             playlist
         }
     })
+    */
 );
