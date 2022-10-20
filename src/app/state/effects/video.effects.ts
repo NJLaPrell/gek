@@ -35,6 +35,14 @@ export class VideoEffects {
         ))
     ))
 
+    rateVideo$ = createEffect(() => this.actions$.pipe(
+        ofType(VideoActions.rateVideo),
+        mergeMap((action) => this.videoService.rateVideo(action.videoId, action.rating).pipe(
+            map(() => VideoActions.rateVideoSuccess({ message: 'Video rated.' })),
+            catchError((error: HttpErrorResponse) => of(VideoActions.rateVideoFail({ error: error.message })))
+        ))
+    ));
+
     constructor(
         private actions$: Actions,
         private videoService: VideoService

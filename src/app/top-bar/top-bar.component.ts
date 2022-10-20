@@ -4,14 +4,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ErrorBufferComponent } from '../modals/error-buffer/error-buffer.component';
 import { UnsortedComponent } from '../modals/unsorted/unsorted.component';
 import { RulesListComponent } from '../modals/rules-list/rules-list.component';
-import { SortService } from '../services/sort.service';
 import { Store } from '@ngrx/store';
-import { getHistory } from '../state/actions/history.actions';
-import { getPlaylists } from '../state/actions/playlist.actions';
-import { getSubscriptions } from '../state/actions/subscriptions.actions';
 import { selectHistoryState } from '../state/selectors/history.selectors';
-import { last, map, tap } from 'rxjs';
-import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { SortProgressComponent } from '../modals/sort-progress/sort-progress.component';
 
 @Component({
@@ -35,7 +29,6 @@ export class TopBarComponent implements OnInit {
 
   constructor(
     private modalService: NgbModal,
-    private sortService: SortService,
     private store: Store
   ) { }
 
@@ -64,37 +57,6 @@ export class TopBarComponent implements OnInit {
 
   sortVideos() {
     const modalRef = this.modalService.open(SortProgressComponent, { size: 'xl', scrollable: true });
-    //this.sortService.runSortService()
-    //.pipe(
-      /*
-      map((event: HttpEvent<any>) => {
-        if (event.type === HttpEventType.Response) {
-          return event.body;
-        }
-      }),
-      */
-     /*
-      map((response) => {
-        console.log(response);
-        return response;
-      }),
-      tap(message => console.log(message)),
-      */
-      //last(),
-    //)
-    /*
-    .subscribe({
-      next(chunk) { console.log(chunk) },
-      error(e) { console.log(e) },
-      complete() { console.log('done') }
-    })
-    */
-    //.subscribe(r => {
-      //console.log(r);
-      //this.store.dispatch(getHistory());
-      //this.store.dispatch(getPlaylists());
-      //this.store.dispatch(getSubscriptions());
-    //});
   }
 
 }

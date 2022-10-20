@@ -16,6 +16,8 @@ export class VideoService {
 
     getPlaylistVideos = (playlistId: string, useGApi: boolean = true): Observable<Video[]> =>this.http.get<Video[]>(`/api/getPlaylistFeed/${playlistId}?useGApi=${useGApi}`).pipe(shareReplay());
 
+    rateVideo = (videoId: string, rating: string): Observable<any> => this.http.put(`/api/video/${videoId}/rate/${rating}`, '');
+
     addToPlaylist = (videoId: string, playlistId: string): Observable<any> => this.http.put(`/api/video/${videoId}/addToPlaylist/${playlistId}`, '');
 
 }

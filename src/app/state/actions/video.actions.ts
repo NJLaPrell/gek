@@ -45,3 +45,18 @@ export const addToPlaylistFail = createAction(
   '[Video] Add to Playlist Fail',
   props<{ error: string }>()
 );
+
+export const rateVideo = createAction(
+  '[Video] Rate Video',
+  props<{ videoId: string, rating: string }>()
+);
+
+export const rateVideoSuccess = createAction(
+  '[Video] Rate Video Success',
+  props<{ message: string }>()
+);
+
+export const rateVideoFail = createAction(
+  '[Video] Rate Video Fail',
+  props<{ error: string }>()
+);

@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { combineLatest, map, skipWhile } from 'rxjs';
 import { Video, initialVideoState } from 'src/app/state/models/video.model';
-import { getPlaylistVideos } from '../state/actions/video.actions';
+import { getPlaylistVideos, rateVideo } from '../state/actions/video.actions';
 import { selectPlaylistVideos } from '../state/selectors/video.selectors';
 import { faArrowUpRightFromSquare, faEye, faThumbsUp, faBackward, faForward, faTrashAlt, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import * as moment from 'moment';
@@ -211,12 +211,16 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Like the current video.
   thumbsUp() {
-    console.log('thumbsUp() - NOT YET IMPLEMENTED.');
+    if (this.video?.id) {
+      this.store.dispatch(rateVideo({ videoId: this.video?.id, rating: 'like' }))
+    }
   }
 
   // Dislike the current video
   thumbsDown() {
-    console.log('thumbsDown() - NOT YET IMPLEMENTED.');
+    if (this.video?.id) {
+      this.store.dispatch(rateVideo({ videoId: this.video?.id, rating: 'dislike' }))
+    }
   }
 
   // Remove the current video from the playlist.
@@ -233,7 +237,7 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Open the video in a new window
   openInNewWindow() {
-    console.log('openInNewWindow() - NOT YET IMPLEMENTED.');
+    window.open(this.video?.link);
   }
 
 }

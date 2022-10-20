@@ -1,6 +1,6 @@
 const express = require('express')
 const { loadResource, purgeUnsorted, deleteUnsortedItem, addRule, updateRule, deleteRule, purgeErrors } = require('../sort-service/lib/resources');
-const { getChannelFeed, getPlaylistFeed, addToPlaylist } = require('../sort-service/lib/api-calls');
+const { getChannelFeed, getPlaylistFeed, addToPlaylist, rateVideo } = require('../sort-service/lib/api-calls');
 const app = express()
 const port = 3000
 const util = require('util');
@@ -121,9 +121,15 @@ app.delete('/api/history/deleteUnsortedItem/:id', (req, res) => {
 app.put('/api/video/:videoId/addToPlaylist/:playlistId', (req, res) => {
     const videoId = req.params.videoId;
     const playlistId = req.params.playlistId;
-    console.log(videoId);
     console.log(`PUT: /api/video/${videoId}/addToPlaylist/${playlistId}`);
     const response = addToPlaylist(playlistId, videoId).then(res.status(204).send())
+});
+
+app.put('/api/video/:videoId/rate/:rating', (req, res) => {
+    const videoId = req.params.videoId;
+    const rating = req.params.rating;
+    console.log(`PUT: /api/video/${videoId}/rate/${rating}`);
+    const response = rateVideo(videoId, rating).then(res.status(204).send());
 });
 
 app.listen(port, () => {

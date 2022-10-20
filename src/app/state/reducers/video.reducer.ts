@@ -6,6 +6,7 @@ export const videoFeatureKey = 'videos';
 
 export const videoReducer = createReducer(
     initialVideoState,
+    /*
     on(VideoActions.getChannelVideos, (state, action) => {
         const channel = { ...state.channel };
         channel[action.channelId] = [];
@@ -14,6 +15,7 @@ export const videoReducer = createReducer(
             channel
         }
     }),
+    */
     on(VideoActions.getChannelVideosFail, state => ({ ...state })),
     on(VideoActions.getChannelVideosSuccess, (state, action) => { 
         const channel = { ...state.channel };
@@ -23,6 +25,7 @@ export const videoReducer = createReducer(
             channel
         }
     }),
+    /*
     on(VideoActions.getPlaylistVideos, (state, action) => {
         const playlist = { ...state.playlist };
         playlist[action.playlistId] = [];
@@ -31,6 +34,7 @@ export const videoReducer = createReducer(
             playlist
         }
     }),
+    */
     on(VideoActions.getPlaylistVideosFail, state => ({ ...state })),
     on(VideoActions.getPlaylistVideosSuccess, (state, action) => { 
         const playlist = { ...state.playlist };

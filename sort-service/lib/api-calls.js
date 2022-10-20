@@ -280,4 +280,21 @@ async function listPlaylistItems(id, fromTime = 0) {
     return videos
 }
 
-module.exports = { authorize, getFeed, getChannelFeed, getPlaylistFeed, getSubscriptionPage, getPlaylistPage, addToPlaylist };
+/**
+ * Rate a video.
+ *
+ * @param {string} videoId - The videoId to rate.
+ * @param {string} rating - like | dislike | none
+ */
+ async function rateVideo(videoId, rating) {
+    if (!google.options.auth) {
+        await authorize();
+    }
+    console.log('  Calling rate video API.');
+    const response = await youtube.videos.rate({
+        "id": videoId,
+        "rating": rating
+    }).catch(e => console.log('Error calling rate video API', e));
+}
+
+module.exports = { authorize, getFeed, getChannelFeed, getPlaylistFeed, getSubscriptionPage, getPlaylistPage, addToPlaylist, rateVideo };

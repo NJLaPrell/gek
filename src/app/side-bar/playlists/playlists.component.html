@@ -3,8 +3,8 @@
     <ul id="playlist-list">
         <li *ngFor="let item of playlists.items" class="playlist-item" [class.selected]="selectedPlaylist == item.id" (click)="onPlaylistClicked($any(item.id))">
             {{ item.title }}
-            <span class="badge bg-secondary float-end total-badge">{{ playlistCounts[item.id].total }}</span>
-            <span *ngIf="playlistCounts[item.id].new" class="badge bg-danger new-badge">{{ playlistCounts[item.id].new }}</span>
+            <span *ngIf="playlistCounts[item.id]?.total"class="badge bg-secondary float-end total-badge">{{ playlistCounts[item.id].total }}</span>
+            <span *ngIf="playlistCounts[item.id]?.new" class="badge bg-danger new-badge">{{ playlistCounts[item.id].new }}</span>
         </li>
     </ul>
 </div>
