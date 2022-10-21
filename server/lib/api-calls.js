@@ -29,7 +29,7 @@ const SCOPES = [
 ];
 
 // Path to the authentication credentials to authenticate the app.
-const CREDENTIALS_PATH = path.join(process.cwd(), 'sort-service/credentials.json');
+const CREDENTIALS_PATH = path.join(process.cwd(), '../credentials.json');
 
 async function verifyToken(token, client) {
     console.log('  Verifying auth token.');

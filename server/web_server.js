@@ -1,6 +1,6 @@
 const express = require('express')
-const { loadResource, purgeUnsorted, deleteUnsortedItem, addRule, updateRule, deleteRule, purgeErrors } = require('../sort-service/lib/resources');
-const { getChannelFeed, getPlaylistFeed, addToPlaylist, rateVideo, removeVideo } = require('../sort-service/lib/api-calls');
+const { loadResource, purgeUnsorted, deleteUnsortedItem, addRule, updateRule, deleteRule, purgeErrors } = require('./lib/resources');
+const { getChannelFeed, getPlaylistFeed, addToPlaylist, rateVideo, removeVideo } = require('./lib/api-calls');
 const app = express()
 const port = 3000
 const util = require('util');

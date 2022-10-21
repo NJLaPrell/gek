@@ -4,33 +4,33 @@ const fs = require('fs').promises;
 // Map of resources and how to handle them.
 const RESOURCES = {
     token: {
-        path: path.join(process.cwd(), 'sort-service/token.json'),
+        path: path.join(process.cwd(), 'server/token.json'),
         protected: true
     },
     credentials: {
-        path: path.join(process.cwd(), 'sort-service/credentials.json'),
+        path: path.join(process.cwd(), 'server/credentials.json'),
         protected: true
     },
     subscriptions: {
-        path: path.join(process.cwd(), 'sort-service/state/subscriptions.json'),
+        path: path.join(process.cwd(), 'server/state/subscriptions.json'),
         defaultExpire: 43200000,
         protected: false
     },
     playlists: {
-        path: path.join(process.cwd(), 'sort-service/state/playlists.json'),
+        path: path.join(process.cwd(), 'server/state/playlists.json'),
         defaultExpire: 43200000,
         protected: false
     },
     history: {
-        path: path.join(process.cwd(), 'sort-service/state/history.json'),
+        path: path.join(process.cwd(), 'server/state/history.json'),
         protected: false
     },
     rules: {
-        path: path.join(process.cwd(), 'sort-service/state/rules.json'),
+        path: path.join(process.cwd(), 'server/state/rules.json'),
         protected: false
     },
     videos: {
-        path: path.join(process.cwd(), 'sort-service/state/videos.json'),
+        path: path.join(process.cwd(), 'server/state/videos.json'),
         protected: false
     }
 }
