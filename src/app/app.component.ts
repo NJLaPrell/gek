@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { selectPageTitle } from './state/selectors/navState.selectors';
-import { skipUntil } from 'rxjs';
+import { SocketService } from './services/socket.service';
 
 @Component({
   selector: 'app-root',
@@ -22,7 +22,8 @@ export class AppComponent implements OnInit {
     private oauth2Client: OAuth2Client,
     private route: ActivatedRoute,
     private store: Store,
-    private router: Router
+    private router: Router,
+    private socket: SocketService
   ) { }
 
   ngOnInit() {
@@ -47,6 +48,10 @@ export class AppComponent implements OnInit {
     });
 
     this.store.select(selectPageTitle).subscribe(t => this.pageTitle = t);
+
+    this.socket.connect();
+    this.socket.onMessageReceived((msg: any) => console.log(msg));
+    //setTimeout(() => this.socket.sendMessage({ foo: 'bar' }), 1000);
     
   };
 
