@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { selectPageTitle } from './state/selectors/navState.selectors';
-import { SocketService } from './services/socket.service';
+import { selectConnected, selectPeerConnected, selectRemoteMode } from './state/selectors/remote.selectors';
 
 @Component({
   selector: 'app-root',
@@ -18,12 +18,15 @@ export class AppComponent implements OnInit {
   pageTitle = '';
   showSidebar = true;
 
+  mode = '';
+  connected = false;
+  peerConnected = false;
+
   constructor(
     private oauth2Client: OAuth2Client,
     private route: ActivatedRoute,
     private store: Store,
-    private router: Router,
-    private socket: SocketService
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -49,9 +52,23 @@ export class AppComponent implements OnInit {
 
     this.store.select(selectPageTitle).subscribe(t => this.pageTitle = t);
 
-    this.socket.connect();
-    this.socket.onMessageReceived((msg: any) => console.log(msg));
+    //this.socket.connect();
+    //this.socket.onMessageReceived((msg: any) => console.log(msg));
     //setTimeout(() => this.socket.sendMessage({ foo: 'bar' }), 1000);
+
+    this.store.select(selectRemoteMode).subscribe(m => this.mode = m);
+
+    this.store.select(selectConnected).subscribe(c => {
+      this.connected = c;
+      this.connectionChanged();
+    });
+
+    this.store.select(selectPeerConnected).subscribe(c => {
+      this.peerConnected = c;
+      this.connectionChanged();
+    });
+
+    
     
   };
 
@@ -82,7 +99,16 @@ export class AppComponent implements OnInit {
   }
 
   pageTitleChange(title: any): void {
-    console.log('foo');
     this.pageTitle = title;
+  }
+
+  connectionChanged() {
+    console.log('connectionChanged');
+    console.log(this.connected, this.peerConnected, this.mode);
+    if (this.connected && this.peerConnected) {
+      this.router.navigate(['/', this.mode]);
+    } else if (this.connected || this.peerConnected) {
+      this.router.navigate(['/', 'connecting']);
+    }
   }
 }

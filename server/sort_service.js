@@ -110,7 +110,7 @@ async function loadRules() {
  */
 async function sortNewVideos() {
     console.log('Sorting new videos...');
-    return await sortVideos(newVideos);
+    await sortVideos(newVideos);
 }
 
 /**
@@ -121,7 +121,7 @@ async function sortNewVideos() {
     const unsortedVideos = [...history.unsorted];
     history.unsorted = [];
     console.log('Sorting previously unsorted videos...');
-    return await sortVideos(unsortedVideos);
+    await sortVideos(unsortedVideos);
 }
 
 /**

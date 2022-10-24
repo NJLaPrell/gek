@@ -16,6 +16,7 @@ import { RulesEffects } from './state/effects/rules.effects';
 import { SubscriptionsEffects } from './state/effects/subscriptions.effects';
 import { NotificationEffects } from './state/effects/notification.effects';
 import { NavStateEffects } from './state/effects/navState.effects';
+import { RemoteEffects } from './state/effects/remote.effects';
 import { metaReducers, reducers } from './state';
 import { InitializerService } from './initializer.service';
 import { HttpClientModule } from '@angular/common/http';
@@ -33,6 +34,9 @@ import { RulesListComponent } from './modals/rules-list/rules-list.component';
 import { ConfirmPromptComponent } from './modals/confirm-prompt/confirm-prompt.component';
 import { ToastContainerComponent } from './toast-container/toast-container.component';
 import { SortProgressComponent } from './modals/sort-progress/sort-progress.component';
+import { ConnectingComponent } from './connecting/connecting.component';
+import { ViewerComponent } from './viewer/viewer.component';
+import { RemoteComponent } from './remote/remote.component';
 
 export const initApp = (provider: InitializerService) => () => provider.init();
 
@@ -49,7 +53,10 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     RulesListComponent,
     ConfirmPromptComponent,
     ToastContainerComponent,
-    SortProgressComponent
+    SortProgressComponent,
+    ConnectingComponent,
+    ViewerComponent,
+    RemoteComponent
   ],
   imports: [
     BrowserModule,
@@ -73,7 +80,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
       RulesEffects,
       SubscriptionsEffects,
       NotificationEffects,
-      NavStateEffects
+      NavStateEffects,
+      RemoteEffects
     ]),
     HttpClientModule,
     NgbModule,

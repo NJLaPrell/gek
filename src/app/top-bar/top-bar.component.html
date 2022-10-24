@@ -23,4 +23,16 @@
         <fa-icon [icon]="faArrowUpShortWide"></fa-icon> Unsorted 
         <span *ngIf="unsortedCount" class="badge text-bg-primary">{{ unsortedCount }}</span>
     </button>
+
+    <div id="modeControl">
+        <div class="form-check form-check-inline form-switch">
+            <input class="form-check-input" type="checkbox" id="viewerToggle" [(ngModel)]="viewerMode" (change)="sync($event)">
+            <label class="form-check-label" for="viewerToggle">Viewer Mode</label>
+        </div>
+        <br />
+        <div class="form-check form-check-inline form-switch">
+            <input class="form-check-input" type="checkbox" id="remoteToggle" [(ngModel)]="remoteMode" (change)="sync($event)">
+            <label class="form-check-label" for="remoteToggle">Remote Mode</label>
+        </div>
+    </div>
 </div>

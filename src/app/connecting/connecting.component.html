@@ -1,0 +1,16 @@
+<div class="text-center">
+    <div class="spinner-border" role="status" style="width: 200px; height: 200px;"></div>
+    <div>Connecting...</div>
+</div>
+
+<div class="p-5">
+    <div>
+        <b>Mode:</b> {{ mode | uppercase }}
+    </div>
+    <div>
+        <b>Socket Server:</b> {{ connected ? 'Connected' : 'Connecting...' }}
+    </div>
+    <div>
+        <b>Peer:</b> {{ peerConnected ? 'Connected' : 'Awaiting Connection...' }}
+    </div>
+</div>

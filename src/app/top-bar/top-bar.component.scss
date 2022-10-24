@@ -1,4 +1,6 @@
 #app-title {
+    display: inline-block;
+    margin-right: 6px;
     .logo {
         color: #FFFFFF;
         height: 40px;
@@ -20,5 +22,22 @@
         margin-left: -4px;
         float: right;
         padding: 2px;
+    }
+}
+
+#modeControl {
+    font-size: 0.7em;
+    display: inline-block;
+    position: absolute;
+    top: 8px;
+    right: 4px;
+    
+    .form-check {   
+        height: 14px !important;
+        min-height: 14px;
+        overflow: hidden;
+        input, label {
+            cursor: pointer;
+        }
     }
 }
