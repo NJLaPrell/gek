@@ -7,6 +7,7 @@ import { initialState } from 'src/app/state/reducers/playlist.reducer';
 import { ActivatedRoute, Router } from '@angular/router';
 import { selectNavState } from 'src/app/state/selectors/navState.selectors';
 import { selectVideoState } from 'src/app/state/selectors/video.selectors';
+import { selectRemoteMode } from 'src/app/state/selectors/remote.selectors';
 
 
 @Component({
@@ -20,6 +21,7 @@ export class PlaylistsComponent implements OnInit {
   playlists: Playlists;
   selectedPlaylist: string = '';
   playlistCounts: { [key: string]: { new: number; total: number } } = {};
+  videoRoute = 'player';
 
   @Output() onPageTitleChange: EventEmitter<string> = new EventEmitter<string>();
 
@@ -38,10 +40,11 @@ export class PlaylistsComponent implements OnInit {
       new: vs.playlist[pl].filter(p => new Date(p.published) > (new Date(Date.now() - 86400000) )).length,
       total: vs.playlist[pl].length
     }))
+    this.store.select(selectRemoteMode).subscribe(m => this.videoRoute = m === 'remote' ? 'remote' : 'player');
   }
 
   onPlaylistClicked(playlistId: string): void {
-    this.router.navigate(['/', 'player', playlistId]);
+    this.router.navigate(['/', this.videoRoute, playlistId]);
   }
 
 }

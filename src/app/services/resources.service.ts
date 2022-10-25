@@ -28,10 +28,7 @@ export class ResourcesService {
 
     getResource = (resource: string): Observable<any> => this.http.get<any>(`/api/getResource/${resource}`).pipe(shareReplay());
 
-    addRule = (rule: Rule): Observable<any> => {
-        console.log(rule);
-        return this.http.post<any>(`/api/resources/addRule`, { ...rule }, { headers: this.headers });
-    }
+    addRule = (rule: Rule): Observable<any> => this.http.post<any>(`/api/resources/addRule`, { ...rule }, { headers: this.headers });
 
     updateRule = (rule: Rule): Observable<any> => this.http.put<any>(`/api/resources/updateRule`, rule);
 

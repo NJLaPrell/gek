@@ -15,6 +15,19 @@
     }
 }
 
+#app-title.viewer {
+
+    #app-subtitle {
+        display: none !important;
+    }
+
+
+
+    .logo {
+        display: none !important;
+    }
+}
+
 #top-bar-contents {
     .badge {
         font-size: 0.6em;
@@ -23,6 +36,10 @@
         float: right;
         padding: 2px;
     }
+}
+
+#top-bar-contents.viewer {
+    padding: 0px !important;
 }
 
 #modeControl {
@@ -40,4 +57,9 @@
             cursor: pointer;
         }
     }
+}
+
+#modeControl.viewer {
+    position: relative !important;
+    top: 0px !important;
 }

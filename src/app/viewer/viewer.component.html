@@ -1,1 +1,11 @@
-<p>viewer works!</p>
+<div #player *ngIf="videoId" id="player">
+    <youtube-player [videoId]="videoId" 
+        suggestedQuality="highres"
+        (stateChange)="stateChanged($event)"
+        (ready)="googleReady($event)"
+        (apiChange)="onApiChange($event)"
+        [width]="videoWidth"
+        [height]="videoHeight"
+        [startSeconds]="0"
+    ></youtube-player>
+</div>

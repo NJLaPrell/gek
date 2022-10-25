@@ -10,6 +10,8 @@ const routes: Routes = [
   { path: 'connecting', component: ConnectingComponent },
   { path: 'viewer', component: ViewerComponent },
   { path: 'remote', component: RemoteComponent },
+  { path: 'remote/:playlistId', component: RemoteComponent },
+  { path: 'remote/:playlistId/:videoId', component: RemoteComponent },
   { path: 'player', component: PlayerComponent },
   { path: 'player/:playlistId', component: PlayerComponent },
   { path: 'player/:playlistId/:videoId', component: PlayerComponent }

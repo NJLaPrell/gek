@@ -23,12 +23,12 @@ export const receivedHandshake = createAction(
 
 export const sendCommand = createAction(
     '[Remote] Send Command',
-    props<{ command: RemoteCommand }>()
+    props<RemoteCommand>()
 );
 
 export const receivedCommand = createAction(
     '[Remote] Command Received',
-    props<{ command: RemoteCommand }>()
+    props<RemoteCommand>()
 );
 
 export const sendCommandAck = createAction(
@@ -67,8 +67,7 @@ export const reconnected = createAction(
 );
 
 export const disconnect = createAction(
-    '[Remote] Disconnect',
-    props<ClientType>()
+    '[Remote] Disconnect'
 );
 
 export const peerDisconnected = createAction(

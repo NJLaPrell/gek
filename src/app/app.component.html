@@ -9,7 +9,7 @@
 
   <div class="d-flex flex-row flex-grow-1 overflow-y-none">
 
-    <div *ngIf="showSidebar" id="side-bar" class="d-flex flex-column overflow-y-none">
+    <div *ngIf="showSidebar && mode !== 'viewer'" id="side-bar" class="d-flex flex-column overflow-y-none">
       <div id="side-bar-header" class="text-end me-2">
         <fa-icon [icon]="faCircleChevronLeft" class="icon-button" style="font-size: 1.3em;" (click)="toggleSidebar()"></fa-icon>
       </div>

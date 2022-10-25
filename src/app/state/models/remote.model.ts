@@ -13,14 +13,16 @@ export interface RemoteCommandState {
 
 export interface RemoteCommand {
     id: string;
+    client: 'remote' | 'viewer',
     command: string;
     timestamp: number;
-    videoId: string;
+    videoId?: string;
     ack?: boolean;
 };
 
 export interface RemoteCommandAck {
     id: string;
+    clientType: 'remote' | 'viewer';
 }
 
 export const initialRemoteCommandState = {

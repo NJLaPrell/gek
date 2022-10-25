@@ -65,22 +65,17 @@ export class TopBarComponent implements OnInit {
     const modalRef = this.modalService.open(SortProgressComponent, { size: 'xl', scrollable: true });
   }
 
-  sync(e:any){
-    console.log('sync');
+  handleModeToggle(e:any){
     if(e.target.id === 'viewerToggle' && e.target.checked) {
-      console.log('dispatching init for viewer');
       this.store.dispatch(initializeSocketConnection({clientType: 'viewer' }));
       this.remoteMode = false;
     } else if(e.target.checked) {
-      console.log('dispatching init for remote');
       this.store.dispatch(initializeSocketConnection({clientType: 'remote' }));
       this.viewerMode = false;
     } else if (e.target.id === 'viewerToggle') {
-      console.log('dispatching viewer disconnect');
-      this.store.dispatch(disconnect({ clientType: 'viewer' }));
+      this.store.dispatch(disconnect());
     } else {
-      console.log('dispatching remote disconnect');
-      this.store.dispatch(disconnect({ clientType: 'remote' }));
+      this.store.dispatch(disconnect());
     }
   }
 

@@ -1,1 +1,163 @@
-<p>remote works!</p>
+<!-- ############################################# -->
+<!-- Loading Indicator                             -->
+<!-- ############################################# -->
+<div *ngIf="loading && playlistId" class="text-center">
+    <div class="spinner-border" role="status"></div>
+    <div>Loading...</div>
+</div>
+
+<div *ngIf="playlistId && !loading && !videoList.length && !videoId" class="no-videos">No videos to display.</div>
+
+<!-- ############################################# -->
+<!-- VIDEO LIST.                                   -->
+<!-- ############################################# -->
+<div *ngIf="!videoId && playlistId">
+    <div *ngFor="let video of videoList" class="video-card">
+        <div class="text-center">
+            <img class="videoThumbnail" [src]="video.thumbnail" (click)="videoClicked($any(video.id))" />
+        </div>
+        <a [href]="video.link" target="_blank" class="video-link"><fa-icon [icon]="faArrowUpRightFromSquare"></fa-icon></a>
+        <div class="video-card-body">
+            <h3 class="video-card-title" (click)="videoClicked($any(video.id))" [ngbTooltip]="video.title">{{ video.title }}</h3>
+            <div class="channel">
+                <a class="channel-link" [href]="video.channelLink" target="_blank">{{ video.channelName }}</a>
+            </div>
+            <div class="counts">
+                <span class="view-count">{{ getViewCount(video.viewCount) }} <fa-icon [icon]="faEye"></fa-icon></span>
+                &nbsp;•&nbsp;
+                <span class="publish-date">{{ moment(video.published).fromNow() }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ############################################# -->
+<!-- VIDEO PLAYER                                  -->
+<!-- ############################################# -->
+<div #player *ngIf="videoId" id="player" class="pb-5">
+    <div class="text-start">
+        <div class="video-title">
+            <a [href]="video?.channelLink" target="_blank" class="channel-link">{{ video?.channelName }}</a>
+            &nbsp; | &nbsp; {{ getViewCount(video?.viewCount)}} <fa-icon [icon]="faEye"></fa-icon>
+            &nbsp; | &nbsp; {{ getThumbCount(video?.thumbCount) }} <fa-icon [icon]="faThumbsUp"></fa-icon>
+            &nbsp; | &nbsp; Published: {{ moment(video?.published).fromNow() }}
+        </div>
+
+        <div #description class="video-description text-truncate" [innerHtml]="video?.description || '' | safeHtml" (click)="description.classList.toggle('text-truncate')"></div>
+
+        <hr />
+        
+        <div class="row">
+            <div class="col-sm-3 next-prev video-prev">
+                <div class="text-end m-0 p-0">
+                    <img *ngIf="navState.previousVideo" class="videoThumbnail" [src]="navState.previousVideo.thumbnail" />       
+                </div>
+                <div *ngIf="navState.previousVideo" class="text-truncate">{{ navState.previousVideo.title }}</div>
+                <div *ngIf="navState.previousVideo" class="text-truncate">
+                    <span class="view-count">{{ getViewCount(navState.previousVideo.viewCount) }} <fa-icon [icon]="faEye"></fa-icon></span>
+                    &nbsp;•&nbsp;
+                    <span class="publish-date">{{ moment(navState.previousVideo.published).fromNow() }}</span>
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <button type="button"
+                    [disabled]="!navState.previousVideo"
+                    class="btn btn-dark next-prev-btn"
+                    ngbTooltip="Previous Video"
+                    (click)="goToVideo(navState?.previousVideo?.id)"
+                >
+                    <fa-icon [icon]="faBackward"></fa-icon>
+                </button>
+            </div>
+            <div class="col-sm-4 text-center center-buttons">
+                <div>
+                    <button type="button" class="btn btn-dark" (click)="thumbsUp()">
+                        <fa-icon [icon]="faThumbsUp"></fa-icon>
+                    </button>
+                    <button type="button" class="btn btn-dark" (click)="thumbsDown()">
+                        <fa-icon [icon]="faThumbsDown"></fa-icon>
+                    </button>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-dark">
+                        <fa-icon [icon]="faTrashAlt" (click)="remove(true)"></fa-icon>
+                    </button>
+                    <button type="button" class="btn btn-dark" (click)="openInNewWindow()">
+                        <fa-icon [icon]="faArrowUpRightFromSquare"></fa-icon>
+                    </button>
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <button type="button"
+                    [disabled]="!navState.nextVideo"
+                    class="btn btn-dark next-prev-btn"
+                    ngbTooltip="Next Video"
+                    (click)="goToVideo(navState?.nextVideo?.id)"
+                >
+                    <fa-icon [icon]="faForward"></fa-icon>
+                </button>
+            </div>
+            <div class="col-sm-3 next-prev video-next">
+                <div class="text-start m-0 p-0">
+                    <img *ngIf="navState.nextVideo" class="videoThumbnail" [src]="navState.nextVideo.thumbnail" />       
+                </div>
+                <div *ngIf="navState.nextVideo" class="text-truncate">{{ navState.nextVideo.title }}</div>
+                <div *ngIf="navState.nextVideo" class="text-truncate">
+                    <span class="view-count">{{ getViewCount(navState.nextVideo.viewCount) }} <fa-icon [icon]="faEye"></fa-icon></span>
+                    &nbsp;•&nbsp;
+                    <span class="publish-date">{{ moment(navState.nextVideo.published).fromNow() }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-sm-4">
+                
+            </div>
+            <div class="col-sm-4 text-center">
+                <button type="button" class="btn btn-dark play-btn" (click)="pausePlay()">
+                    <fa-icon *ngIf="!playing" [icon]="faPlay"></fa-icon>
+                    <fa-icon *ngIf="playing" [icon]="faPause"></fa-icon>
+                </button>
+            </div>
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-dark mute-btn" (click)="toggleMute()">
+                    <fa-icon *ngIf="!muted" [icon]="faVolumeHigh"></fa-icon>
+                    <fa-icon *ngIf="muted" [icon]="faVolumeXmark"></fa-icon>
+                </button>
+
+                <label for="volume" class="form-label">Volume</label>
+                <input name="volume" [disabled]="muted" [(ngModel)]="volume" type="range" class="form-range" min="0" max="100" step="1" id="volume" (change)="volumeChange()">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ############################################# -->
+<!-- MAIN PLAYER PAGE                              -->
+<!-- ############################################# -->
+<div *ngIf="!playlistId && !videoId" class="text-center">
+    <img src="/assets/585335.jpg" class="align-middle" />
+</div>
+
+<!-- ############################################# -->
+<!-- TOAST TEMPLATES.                              -->
+<!-- ############################################# -->
+<ng-template #endOfVideoToast>
+	<p>This video is almost over...</p>
+    <div class="clearfix">
+        <button type="button" class="btn btn-primary btn-sm float-start" (click)="thumbsUp()">
+            <fa-icon [icon]="faThumbsUp"></fa-icon>
+        </button>
+
+        <button type="button" class="btn btn-primary btn-sm float-start ms-2" (click)="thumbsDown()">
+            <fa-icon [icon]="faThumbsDown"></fa-icon>
+        </button>
+
+        <button type="button" class="btn btn-danger btn-sm float-end" (click)="remove(false)">
+            <fa-icon [icon]="faTrashAlt"></fa-icon> Delete Now
+        </button>
+        <p class="flo"></p>
+    </div>
+</ng-template>

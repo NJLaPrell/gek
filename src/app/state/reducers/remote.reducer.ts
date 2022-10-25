@@ -18,13 +18,14 @@ export const remoteReducer = createReducer(
         ...(action.clientType === 'viewer' ? { viewerConnected: true } : {} )
     })),
     on(RemoteActions.receivedCommand, (state, action) => {
-        state.receivedCommands.unshift(action.command);
+        console.log('cmd', action);
+        state.receivedCommands.unshift(action);
         return {
             ...state
         }
     }),
     on(RemoteActions.sendCommand, (state, action) => {
-        const newCommand = action.command;
+        const newCommand = { ...action };
         newCommand.ack = false;
         state.sentCommands.unshift(newCommand);
         return {
@@ -41,22 +42,22 @@ export const remoteReducer = createReducer(
     on(RemoteActions.remoteClientTimeout, (state, action) => ({
         ...state,
         ...(action.clientType === 'remote' ? { remoteConnected: false } : {} ),
-        ...(action.clientType === 'viewer' ? { viewer: false } : {} )
+        ...(action.clientType === 'viewer' ? { viewerConnected: false } : {} )
     })),
     on(RemoteActions.connectionLost, (state, action) => ({
         ...state,
         ...(action.clientType === 'remote' ? { remoteConnected: false } : {} ),
-        ...(action.clientType === 'viewer' ? { viewer: false } : {} )
+        ...(action.clientType === 'viewer' ? { viewerConnected: false } : {} )
     })),
     on(RemoteActions.reconnected, (state, action) => ({
         ...state,
         ...(action.clientType === 'remote' ? { remoteConnected: true } : {} ),
-        ...(action.clientType === 'viewer' ? { viewer: true } : {} )
+        ...(action.clientType === 'viewer' ? { viewerConnected: true } : {} )
     })),
     on(RemoteActions.peerDisconnected, (state, action) => ({
         ...state,
         ...(action.clientType === 'remote' ? { remoteConnected: false } : {} ),
-        ...(action.clientType === 'viewer' ? { viewer: false } : {} )
+        ...(action.clientType === 'viewer' ? { viewerConnected: false } : {} )
     })),
     on(RemoteActions.disconnect, () => ({ ...initialRemoteCommandState }))
     

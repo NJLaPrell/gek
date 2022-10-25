@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ChangeDetectorRef, ElementRef, OnDest
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { combineLatest, map, skipWhile } from 'rxjs';
-import { Video, initialVideoState } from 'src/app/state/models/video.model';
+import { Video } from 'src/app/state/models/video.model';
 import { getPlaylistVideos, rateVideo, removeFromPlaylist } from '../state/actions/video.actions';
 import { selectPlaylistVideos } from '../state/selectors/video.selectors';
 import { faArrowUpRightFromSquare, faEye, faThumbsUp, faBackward, faForward, faTrashAlt, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
@@ -181,7 +181,7 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Fires when a video has finished.
   onVideoEnded(player: any) {
-    console.log('Video Ended');
+    console.debug('Video Ended');
     if (this.navState.nextVideo) {
       this.router.navigate(['/', 'player', this.playlistId, this.navState.nextVideo.id]);
       setTimeout(() => player.playVideo(), 2000);
@@ -195,7 +195,7 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Fires with the api loads a new module.
   onApiChange(e: any) {
-    console.log('apiChange');
+    console.debug('apiChange');
   }
 
   // #####################

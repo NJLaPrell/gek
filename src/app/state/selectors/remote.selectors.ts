@@ -27,6 +27,11 @@ export const selectReceivedCommands = createSelector(
     (state) => state.receivedCommands
 );
 
+export const selectLastCommand = createSelector(
+    selectRemoteState,
+    (state) => state.receivedCommands.length ? state.receivedCommands[0] : null
+);
+
 export const selectRemoteVideoId = createSelector(
     selectRemoteState,
     (state) => state.videoId

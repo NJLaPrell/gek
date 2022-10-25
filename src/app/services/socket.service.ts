@@ -86,7 +86,6 @@ export class SocketService {
 
     // Handle raw processing of all messages.
     private onRawMessageReceived(msg: SocketMessage) {
-        console.log('rawMessage', this.connected, msg);
         // Any inbound message indicates the server is alive
         if (msg.direction === 'inbound' && !this.connected) {
             this.connected = true;
@@ -102,6 +101,8 @@ export class SocketService {
             this.messageListeners.forEach(func => func(msg?.message));
         } else if (msg.direction === 'inbound' && msg.type === 'handshake') {
             this.fireOnHandshake(msg.message);
+        } else if (msg.direction === 'inbound' && msg.type=== 'peerDisconnect') {
+            this.firePeerDisconnect(msg.message);
         } else if (msg.type === 'ping') {
             this.heartbeat();
         }
@@ -109,7 +110,6 @@ export class SocketService {
 
     // Connect to the socket server if not already connected.
     public connect() {
-        console.log('connect', this.connection, this.connection?.closed);
         if(!this.connection || this.connection.closed) {
             this.connectClient();
         }    
@@ -136,6 +136,11 @@ export class SocketService {
     }
     public onPeerDisconnect(peerDisconnectListener: Function) {
         this.peerDisconnectListeners.push(peerDisconnectListener);
+    }
+
+    private firePeerDisconnect(client: string) {
+        console.debug(`[Socket Server] - Peer Disconnected (${client}`);
+        this.peerDisconnectListeners.forEach(func => func(client));
     }
 
     private fireOnConnect() {
@@ -169,7 +174,7 @@ export class SocketService {
     }
 
     public disconnect(clientType: string) {
-        console.log('disconnect');
+        console.debug(`[Socket Server] - Disconnect`);
         // Send peer disconnect message
         this.sendRawMessage({ type: 'peerDisconnect', direction: 'outbound', message: clientType });
         // Reset the instance
@@ -186,7 +191,7 @@ export class SocketService {
         // Disconnect the socket connection.
         this.connection.complete();
         delete this.connection;
-        //this.connected = false;  
+        this.connected = false;  
     }
 
 };

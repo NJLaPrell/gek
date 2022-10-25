@@ -103,12 +103,12 @@ export class AppComponent implements OnInit {
   }
 
   connectionChanged() {
-    console.log('connectionChanged');
-    console.log(this.connected, this.peerConnected, this.mode);
     if (this.connected && this.peerConnected) {
       this.router.navigate(['/', this.mode]);
     } else if (this.connected || this.peerConnected) {
       this.router.navigate(['/', 'connecting']);
+    } else {
+      this.router.navigate(['/', 'player']);
     }
   }
 }

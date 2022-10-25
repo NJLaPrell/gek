@@ -1,0 +1,144 @@
+.video-card {
+    cursor: pointer;
+    display: inline-block;
+    width: 25%;
+    height: 280px;
+    overflow: hidden;
+    padding: 6px;
+    position: relative;
+
+    .videoThumbnail {
+        max-width: 260px;
+        object-fit: contain;
+    }
+
+    .video-link {
+        float:right;
+        color: #FFF;
+        opacity: 0;
+        position: absolute ;
+        top: 10px;
+        right: 10px;
+
+        &:hover {
+            color: #CBC660;
+        }
+    }
+
+    .channel-link {
+        color: #DDD;
+        text-decoration: none;
+        font-size: 0.7em;
+        font-weight: 700;
+    
+        &:hover {
+            color: #CBC660;
+            text-decoration: underline;
+        }
+    }
+    
+
+    .counts {
+        font-size: 0.7em;
+        color: #CCC;
+    }
+
+    .video-card-body {
+
+        .video-card-title {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            font-size: 0.8em;
+            margin-bottom: 0px;
+            overflow:hidden;
+        }
+
+        .video-card-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            font-size: 0.8em;
+            overflow:hidden;
+        }
+    }
+
+    &:hover {
+        background-color: #333333;
+        
+        .videoThumbnail {
+            opacity: 0.5;
+        }
+
+        .video-link {
+            opacity: 1;
+        }
+    }
+}
+
+.no-videos {
+    text-align: center;
+    font-size: 1.6em;
+    font-style: italic;
+    margin: 20px;
+}
+
+#player {
+    text-align: center;
+}
+
+.video-description {
+    text-align: left;
+    padding: 6px;
+    cursor: pointer;
+}
+
+
+
+
+.video-title {
+    font-size: 0.7em;
+    padding: 6px;
+    a {
+        color: #DDD; 
+        text-decoration: none;
+        font-weight: 700;
+        &:hover {
+            color: #CBC660;
+            text-decoration: underline;
+        }
+    }
+}
+
+.next-prev {
+    img {
+        height: 120px;
+        width: 160px;
+    }
+    font-size: 0.8em;
+    
+}
+
+.next-prev-btn {
+    font-size: 1.5em;
+    display: block;
+    width: 100%;
+    line-height: 160px;
+}
+
+.center-buttons {
+    div {
+        height: 80px;
+        button {
+            margin: 10px;
+            line-height: 40px;
+        }
+    }
+}
+
+.play-btn, .mute-btn {
+    font-size: 5em;
+}
+
+
+
