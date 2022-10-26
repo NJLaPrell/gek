@@ -1,3 +1,5 @@
+import { Video } from "./video.model";
+
 // ###################################
 // ## HELPER CLASS
 // ###################################
@@ -23,7 +25,7 @@ export class PlaylistsHelper {
             items: this.playlists.sort((a, b) => a.title.localeCompare(b.title)),
             titleLookup: <any>{}
         }
-        playlists.items.forEach((p: Playlist) => playlists.titleLookup[p.id] = p.title);
+        playlists.items.forEach((p: Playlist) => playlists.titleLookup[p.id || p.playlistId || ''] = p.title);
         return <Playlists>playlists;
     };
 
@@ -40,12 +42,16 @@ export interface Playlists {
 }
 
 export interface Playlist {
-    id: string;
-    channelId: string;
-    publishedDate: Date;
+    playlistId?: string;      //------
     title: string;
     description: string;
     thumbnail: string;
+    newItemCount?: number;    // TODO
+    itemCount?: number;       //------
+    videos?: Video[];         //------
+    channelId?: string;       //XXXXXX
+    publishedDate?: Date;     //XXXXXX
+    id?: string;              //XXXXXX
 }
 
 // ###################################

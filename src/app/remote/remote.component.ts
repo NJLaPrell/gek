@@ -15,6 +15,8 @@ import { ConfirmPromptComponent } from '../modals/confirm-prompt/confirm-prompt.
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { sendCommand } from '../state/actions/remote.actions';
 import { v4 as uuid } from 'uuid';
+import { selectLists } from '../state/selectors/list.selectors';
+import { Playlist } from '../state/models/playlist.model';
 
 @Component({
   selector: 'app-remote',
@@ -68,7 +70,7 @@ export class RemoteComponent implements OnInit {
         if (!this.videoId) {
           this.loading = true;
         }
-        this.store.dispatch(getPlaylistVideos({ playlistId: this.playlistId }));
+        //this.store.dispatch(getPlaylistVideos({ playlistId: this.playlistId }));
       }
       if (this.playlistId && this.videoId) {
         this.sendCommand({ directive: 'navigate', params: { playlistId: this.playlistId, videoId: this.videoId }});
@@ -81,15 +83,15 @@ export class RemoteComponent implements OnInit {
 
     // Wait until we have the video list for the playlist, the playlist title lookup, and the route params to get them.
     combineLatest([
-          this.store.select(selectPlaylistVideos),
+          this.store.select(selectLists),
           this.store.select(selectPlaylistTitles),
           this.activatedRoute.params
         ]
     )
       .pipe(
-        skipWhile((r) => r[0][this.playlistId]?.length === 0 || !r[0][this.playlistId] || r[2]?.['length'] === 0),
+        skipWhile((r) => r[0].length === 0 || r[2]?.['length'] === 0),
         map((r: any) => ({
-          videoList: [...r[0][this.playlistId]].sort((a:any, b:any) => new Date(a.published) > new Date(b.published) ? 1 : -1),
+          videoList: [...r[0].find((pl: Playlist) => pl.playlistId === this.playlistId).videos].sort((a: Video, b:Video) => new Date(a.publishedAt || '') > new Date(b.publishedAt || '') ? 1 : -1),
           titleLookup: r[1],
           routeParams: r[2]
         }))
@@ -100,19 +102,14 @@ export class RemoteComponent implements OnInit {
         }
         this.videoList = [...r.videoList];
         if (this.videoId) {
-          this.video = this.videoList.find(v => v.id == this.videoId);
+          this.video = this.videoList.find(v => v.videoId == this.videoId);
         } 
         if(this.videoList.length) {
           this.loading = false;
         } else {
           setTimeout(() => this.loading = false, 3000);
         }
-        console.log({ 
-          playlistId: this.playlistId,
-          videoId: this.videoId,
-          videoList: this.videoList,
-          titleLookup: r.titleLookup
-        });
+
         // Set the navigation state in the store.
         this.store.dispatch(setNavState({ 
           props: { 
@@ -168,15 +165,15 @@ export class RemoteComponent implements OnInit {
 
   // Like the current video.
   thumbsUp() {
-    if (this.video?.id) {
-      this.store.dispatch(rateVideo({ videoId: this.video?.id, rating: 'like' }))
+    if (this.video?.videoId) {
+      this.store.dispatch(rateVideo({ videoId: this.video.videoId, rating: 'like' }))
     }
   }
 
   // Dislike the current video
   thumbsDown() {
-    if (this.video?.id) {
-      this.store.dispatch(rateVideo({ videoId: this.video?.id, rating: 'dislike' }))
+    if (this.video?.videoId) {
+      this.store.dispatch(rateVideo({ videoId: this.video.videoId, rating: 'dislike' }))
     }
   }
 
@@ -194,7 +191,7 @@ export class RemoteComponent implements OnInit {
 
   // Open the video in a new window
   openInNewWindow() {
-    window.open(this.video?.link);
+    window.open('https://www.youtube.com/watch?v=' + this.video?.videoId);
   }
 
   toggleMute() {

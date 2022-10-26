@@ -7,13 +7,13 @@ export class NavStateHelper {
     navState: NavState;
 
     constructor(props: NavStateProps) {
-        const videoIndex = props.videoList ? props.videoList.findIndex(v => v.id === props.videoId) : -1;
-        const video = props.videoId && props.videoList ? props.videoList.find(v => v.id === props.videoId) : false;
+        const videoIndex = props.videoList ? props.videoList.findIndex(v => v.videoId === props.videoId) : -1;
+        const video = props.videoId && props.videoList ? props.videoList.find(v => v.videoId === props.videoId) : false;
         this.navState = {
           pageTitle: (props.titleLookup ? props.titleLookup[props.playlistId] : '') + (video ? ' > ' + video.title : ''),
           playlistId: props.playlistId,
           playlistTitle: props.titleLookup ? props.titleLookup[props.playlistId] : '',
-          videoId: video ? video.id : false,
+          videoId: video ? video.id || video.videoId || '' : false,
           videoTitle: video ? video.title : false,
           previousVideo: props.videoList && videoIndex > 0 ? props.videoList[videoIndex - 1] : false,
           currentVideo: video || false,

@@ -6,14 +6,16 @@ const port = 3000
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const { spawn } = require('child_process');
+const { getSortedList } = require('./lib/web.js');
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.json({ extended: true }));
 //app.use(express.json());
 
 app.get('/api/getResource/:resource', (req, res) => {
-    console.log('GET: /api/getResource/:resource');
     const resource = req.params.resource;
+    console.log(`GET: /api/getResource/${resource}`);
+    
     const response = loadResource(resource)
         .then(contents => {
             if (contents) {
@@ -53,6 +55,11 @@ app.get('/api/getPlaylistFeed/:id', (req, res) => {
             }
         })
         .catch(e => res.status(404).json({ error: e }));
+});
+
+app.get('/api/getLists', (req, res) => {
+    console.log(`GET /api/getLists`);
+    const response = getSortedList().then(contents => res.json(contents));
 });
 
 app.put('/api/resources/updateRule', (req, res) => {

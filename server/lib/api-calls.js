@@ -201,7 +201,8 @@ async function getPlaylistPage(playlistList = [], pageToken = '') {
     console.log('  Calling playlist API.');
     const response = await youtube.playlists.list({
         "part": [
-            "snippet"
+            "snippet",
+            "contentDetails"
         ],
         "mine": true,
         "maxResults": 50,
@@ -264,7 +265,7 @@ async function listPlaylistItems(id, fromTime = 0) {
     console.log('  Calling playlist API.');
     const response = await youtube.playlistItems.list({
         "part": [
-            "snippet,contentDetails"
+            "snippet,contentDetails,id"
         ],
         "playlistId": id,
         "maxResults": 50,
@@ -312,4 +313,29 @@ async function listPlaylistItems(id, fromTime = 0) {
     }).catch(e => console.log('Error calling remove playlist item API', e));
 }
 
-module.exports = { authorize, getFeed, getChannelFeed, getPlaylistFeed, getSubscriptionPage, getPlaylistPage, addToPlaylist, rateVideo, removeVideo };
+/**
+ * Gets a list of video details for the supplied comma delimited list of videoIds
+ *
+ * @param {string} videoIds - Comma delimited list of videoIds.
+ * @param {string} pageToken - Page token received from the previous call.
+ * @return {<Videos[]>}
+ */
+ async function getVideoDetailsPage(videoIds, videoList = [], pageToken = '') {
+    console.log('  Calling videos API.');
+    const response = await youtube.videos.list({
+        "part": [
+            "snippet,contentDetails,statistics,id"
+        ],
+        "id": videoIds,
+        "maxResults": 50,
+        pageToken: pageToken
+    });
+    videoList = videoList.concat(response.data.items);
+    const nextPageToken = response.data.nextPageToken;
+    if (nextPageToken) {
+        videoList = await getVideoDetailsPage(videoIds, videoList, nextPageToken);
+    }
+    return videoList
+}
+
+module.exports = { authorize, getFeed, getChannelFeed, getPlaylistFeed, getSubscriptionPage, getPlaylistPage, addToPlaylist, rateVideo, removeVideo, getPlaylistItemsPage, getVideoDetailsPage };

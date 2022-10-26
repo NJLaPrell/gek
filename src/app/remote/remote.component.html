@@ -14,18 +14,18 @@
 <div *ngIf="!videoId && playlistId">
     <div *ngFor="let video of videoList" class="video-card">
         <div class="text-center">
-            <img class="videoThumbnail" [src]="video.thumbnail" (click)="videoClicked($any(video.id))" />
+            <img class="videoThumbnail" [src]="video.thumbnail" (click)="videoClicked($any(video.videoId))" />
         </div>
-        <a [href]="video.link" target="_blank" class="video-link"><fa-icon [icon]="faArrowUpRightFromSquare"></fa-icon></a>
+        <a [href]="'https://www.youtube.com/watch?v=' + video.videoId" target="_blank" class="video-link"><fa-icon [icon]="faArrowUpRightFromSquare"></fa-icon></a>
         <div class="video-card-body">
-            <h3 class="video-card-title" (click)="videoClicked($any(video.id))" [ngbTooltip]="video.title">{{ video.title }}</h3>
+            <h3 class="video-card-title" (click)="videoClicked($any(video.videoId))" [ngbTooltip]="video.title">{{ video.title }}</h3>
             <div class="channel">
-                <a class="channel-link" [href]="video.channelLink" target="_blank">{{ video.channelName }}</a>
+                <a class="channel-link" [href]="video.channelLink" target="_blank">{{ video.channelTitle }}</a>
             </div>
             <div class="counts">
                 <span class="view-count">{{ getViewCount(video.viewCount) }} <fa-icon [icon]="faEye"></fa-icon></span>
                 &nbsp;•&nbsp;
-                <span class="publish-date">{{ moment(video.published).fromNow() }}</span>
+                <span class="publish-date">{{ moment(video.publishedAt).fromNow() }}</span>
             </div>
         </div>
     </div>
@@ -38,10 +38,10 @@
 <div #player *ngIf="videoId" id="player" class="pb-5">
     <div class="text-start">
         <div class="video-title">
-            <a [href]="video?.channelLink" target="_blank" class="channel-link">{{ video?.channelName }}</a>
+            <a [href]="video?.channelLink" target="_blank" class="channel-link">{{ video?.channelTitle }}</a>
             &nbsp; | &nbsp; {{ getViewCount(video?.viewCount)}} <fa-icon [icon]="faEye"></fa-icon>
-            &nbsp; | &nbsp; {{ getThumbCount(video?.thumbCount) }} <fa-icon [icon]="faThumbsUp"></fa-icon>
-            &nbsp; | &nbsp; Published: {{ moment(video?.published).fromNow() }}
+            &nbsp; | &nbsp; {{ getThumbCount(video?.likeCount) }} <fa-icon [icon]="faThumbsUp"></fa-icon>
+            &nbsp; | &nbsp; Published: {{ moment(video?.publishedAt).fromNow() }}
         </div>
 
         <div #description class="video-description text-truncate" [innerHtml]="video?.description || '' | safeHtml" (click)="description.classList.toggle('text-truncate')"></div>
@@ -57,7 +57,7 @@
                 <div *ngIf="navState.previousVideo" class="text-truncate">
                     <span class="view-count">{{ getViewCount(navState.previousVideo.viewCount) }} <fa-icon [icon]="faEye"></fa-icon></span>
                     &nbsp;•&nbsp;
-                    <span class="publish-date">{{ moment(navState.previousVideo.published).fromNow() }}</span>
+                    <span class="publish-date">{{ moment(navState.previousVideo.publishedPa).fromNow() }}</span>
                 </div>
             </div>
             <div class="col-sm-1">
@@ -65,7 +65,7 @@
                     [disabled]="!navState.previousVideo"
                     class="btn btn-dark next-prev-btn"
                     ngbTooltip="Previous Video"
-                    (click)="goToVideo(navState?.previousVideo?.id)"
+                    (click)="goToVideo(navState?.previousVideo?.videoId)"
                 >
                     <fa-icon [icon]="faBackward"></fa-icon>
                 </button>
@@ -93,7 +93,7 @@
                     [disabled]="!navState.nextVideo"
                     class="btn btn-dark next-prev-btn"
                     ngbTooltip="Next Video"
-                    (click)="goToVideo(navState?.nextVideo?.id)"
+                    (click)="goToVideo(navState?.nextVideo?.videoId)"
                 >
                     <fa-icon [icon]="faForward"></fa-icon>
                 </button>
@@ -106,7 +106,7 @@
                 <div *ngIf="navState.nextVideo" class="text-truncate">
                     <span class="view-count">{{ getViewCount(navState.nextVideo.viewCount) }} <fa-icon [icon]="faEye"></fa-icon></span>
                     &nbsp;•&nbsp;
-                    <span class="publish-date">{{ moment(navState.nextVideo.published).fromNow() }}</span>
+                    <span class="publish-date">{{ moment(navState.nextVideo.publishedAt).fromNow() }}</span>
                 </div>
             </div>
         </div>

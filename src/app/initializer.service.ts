@@ -3,6 +3,7 @@ import { Store } from '@ngrx/store';
 import { concat, Observable, of, skipWhile } from 'rxjs';
 import { AppState } from './state';
 import { getHistory } from './state/actions/history.actions';
+import { getLists } from './state/actions/list.actions';
 import { getPlaylists } from './state/actions/playlist.actions';
 import { getRules } from './state/actions/rules.actions';
 import { getSubscriptions } from './state/actions/subscriptions.actions';
@@ -18,9 +19,14 @@ export class InitializerService {
         private injector: Injector,
         private store: Store<AppState>
     ) {
-        this.store.select(selectPlaylists).pipe(skipWhile(pl => pl.items.length === 0)).subscribe(pl => {
-            pl.items.forEach(p => this.store.dispatch(getPlaylistVideos({ playlistId: p.id, useGApi: false })))
-        })
+        //this.store.select(selectPlaylists).pipe(skipWhile(pl => pl.items.length === 0)).subscribe(pl => {
+        //    pl.items.forEach(p => this.store.dispatch(getPlaylistVideos({ playlistId: p.id || p.playlistId || '', useGApi: false })))
+        //})
+    }
+
+    private getLists(): Observable<any> {
+        this.store.dispatch(getLists());
+        return of([]);
     }
 
     private getPlaylists(): Observable<any> {
@@ -44,6 +50,7 @@ export class InitializerService {
 
     init(): Promise<any> {
         return concat(
+            this.getLists(),
             this.getPlaylists(),
             this.getHistory(),
             this.getRules(),

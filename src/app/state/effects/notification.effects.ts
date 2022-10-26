@@ -6,8 +6,10 @@ import * as PlaylistActions from '../actions/playlist.actions';
 import * as RulesActions from '../actions/rules.actions';
 import * as SubscriptionsActions from '../actions/subscriptions.actions';
 import * as VideoActions from '../actions/video.actions';
+import * as ListActions from '../actions/list.actions';
 import { ToastService } from "src/app/services/toast.service";
-import { RulesEffects } from "./rules.effects";
+
+
 
 const DELAY = 5000;
 
@@ -31,7 +33,8 @@ export class NotificationEffects {
                 VideoActions.getPlaylistVideosFail,
                 VideoActions.addToPlaylistFail,
                 VideoActions.rateVideoFail,
-                VideoActions.removeFromPlaylistFail
+                VideoActions.removeFromPlaylistFail,
+                ListActions.getListsFail
             ),
             tap((action) => {
                 this.notifyFail(action.error);

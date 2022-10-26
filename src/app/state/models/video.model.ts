@@ -20,22 +20,31 @@ export class VideoListHelper {
 // ###################################
 
 export interface Video {
-    id: string;
-    processedDate?: number;
-    errorMessage?: any;
-    channelId: string;
-    playlistItemId?: string;
-    channelName: string;
-    title: string;
-    published: string;
-    updated: string;
-    description: string;
-    link?: string;
+    videoId?: string;          //-----
+    publishedAt?: string;      //-----
+    title: string;             //-----
+    description: string;       //-----
+    channelId: string;         //-----
+    channelTitle?: string;     //-----
+    duration?: string          //-----
+    viewCount?: number;        //-----
+    likeCount?: number;        //-----
+    commentCount?: number;     //-----
+    playlistId?: string;       //-----
+    playlistItemId?: string;   //-----
+    playlistPosition?: number; //-----
+
+    id?: string;               //XXXXX
+    processedDate?: number;    //XXXXX
+    errorMessage?: any;        //XXXXX
+    channelName?: string;      //XXXXX
+    published?: string;        //XXXXX
+    updated?: string;          //XXXXX
+    link?: string;             //XXXXX
     thumbnail?: string;
-    authorName?: string;
-    channelLink?: string;
-    viewCount?: number;
-    thumbCount?: number;
+    authorName?: string;       //XXXXX
+    channelLink?: string;      //XXXXX
+    thumbCount?: number;       //XXXXX
 }
 
 export interface VideoState {

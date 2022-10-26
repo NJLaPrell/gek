@@ -32,6 +32,11 @@ const RESOURCES = {
     videos: {
         path: path.join(process.cwd(), 'server/state/videos.json'),
         protected: false
+    },
+    sortedList: {
+        path: path.join(process.cwd(), 'server/state/sortedList.json'),
+        protected: false,
+        defaultExpire: 3600
     }
 }
 

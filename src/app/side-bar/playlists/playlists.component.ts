@@ -1,13 +1,11 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { faList } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
-import { Playlists } from 'src/app/state/models/playlist.model';
-import { selectPlaylists } from '../../state/selectors/playlists.selectors';
-import { initialState } from 'src/app/state/reducers/playlist.reducer';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Playlist } from 'src/app/state/models/playlist.model';
+import { Router } from '@angular/router';
 import { selectNavState } from 'src/app/state/selectors/navState.selectors';
-import { selectVideoState } from 'src/app/state/selectors/video.selectors';
 import { selectRemoteMode } from 'src/app/state/selectors/remote.selectors';
+import { selectLists } from 'src/app/state/selectors/list.selectors';
 
 
 @Component({
@@ -18,7 +16,7 @@ import { selectRemoteMode } from 'src/app/state/selectors/remote.selectors';
 export class PlaylistsComponent implements OnInit {
   faList = faList;
 
-  playlists: Playlists;
+  playlists: Playlist[] = [];
   selectedPlaylist: string = '';
   playlistCounts: { [key: string]: { new: number; total: number } } = {};
   videoRoute = 'player';
@@ -27,19 +25,23 @@ export class PlaylistsComponent implements OnInit {
 
   constructor(
     private store: Store,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
+    private router: Router
   ) {
-    this.playlists = initialState;
+  
   }
 
   ngOnInit(): void {
-    this.store.select(selectPlaylists).pipe().subscribe(r => this.playlists = Object.assign({}, r));
+    //this.store.select(selectPlaylists).pipe().subscribe(r => this.playlists = Object.assign({}, r));
+    this.store.select(selectLists).pipe().subscribe(l => {
+      this.playlists = [...l];
+      // Calculate new videos
+      // TODO: Move to the backend.
+      this.playlists.map(i => ({
+        ...i,
+        newItemCount: i.videos ? i.videos?.filter(p => new Date(p.publishedAt || '') > (new Date(Date.now() - 86400000) )).length : 0
+      }));
+    });
     this.store.select(selectNavState).subscribe(n => this.selectedPlaylist = n.playlistId);
-    this.store.select(selectVideoState).subscribe(vs => Object.keys(vs.playlist).forEach((pl: string) => this.playlistCounts[pl] = {
-      new: vs.playlist[pl].filter(p => new Date(p.published) > (new Date(Date.now() - 86400000) )).length,
-      total: vs.playlist[pl].length
-    }))
     this.store.select(selectRemoteMode).subscribe(m => this.videoRoute = m === 'remote' ? 'remote' : 'player');
   }
 
