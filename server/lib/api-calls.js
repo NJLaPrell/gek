@@ -29,7 +29,7 @@ const SCOPES = [
 ];
 
 // Path to the authentication credentials to authenticate the app.
-const CREDENTIALS_PATH = path.join(process.cwd(), '../credentials.json');
+const CREDENTIALS_PATH = path.join(process.cwd(), 'server/credentials.json');
 
 async function verifyToken(token, client) {
     console.log('  Verifying auth token.');
@@ -56,20 +56,11 @@ async function verifyToken(token, client) {
     const cachedToken = await loadResource('token', true, false, true);
     if (cachedToken) {
         try {
-            
-            authClient = await google.auth.fromJSON(cachedToken);
-            
-
-            
-
-            
-
-
-            
-          } catch (err) {
+            authClient = await google.auth.fromJSON(cachedToken);            
+        } catch (err) {
             console.warn('  Error encountered using cached credentials:');
             console.warn(err);
-          }
+        }
         /*
           if (authClient) {
             await verifyToken(cachedToken, authClient).catch(e => {
@@ -118,9 +109,6 @@ async function verifyToken(token, client) {
  * @return {<Promise<ClientRequest>>}
  */
 const getFeed = async (type, id, fromTime = false, useGApi = true) => {
-    console.log('');
-    console.log(`Loading ${type} feed: ${id}${fromTime ? ' (From timestamp: ' + String(fromTime) : ''}.`);
-
     const vmap = {};
     if (type === 'playlist' && useGApi) {
         const test = await listPlaylistItems(id)
@@ -132,7 +120,7 @@ const getFeed = async (type, id, fromTime = false, useGApi = true) => {
         
         const parser = new XMLParser(xmlOptions);
         const output = parser.parse(res);
-        console.log('  Processing ' + output.feed.title);
+        console.log(`  Loading ${type} feed: ${output.feed.title} ${fromTime ? ' (From timestamp: ' + String(fromTime) : ''}.`);
         const entries = output?.feed?.entry || Array([]);
         
         return !entries.filter ? [] : entries.filter(e => fromTime < Date.parse(e.published)).map(e => {
@@ -154,7 +142,7 @@ const getFeed = async (type, id, fromTime = false, useGApi = true) => {
             }
         });
     }).catch(e => {
-        console.error('  Error loading feed:');
+        console.error(`  Error loading ${type} feed: ${id}.`);
         console.error(e);
     });
 }

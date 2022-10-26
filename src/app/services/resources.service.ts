@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { PlaylistResponse } from "../state/models/playlist.model";
 import { RulesResponse, Rule } from '../state/models/rules.model';
 import { SubscriptionsResponse } from "../state/models/subscriptions";
 import { Observable, shareReplay } from "rxjs";
@@ -18,10 +17,6 @@ export class ResourcesService {
         this.headers = new HttpHeaders().set("Content-Type", "application/json");
     }
     
-    
-
-    getPlaylists = (): Observable<PlaylistResponse> => this.getResource('playlists');
-
     getRules = (): Observable<RulesResponse> => this.getResource('rules');
 
     getSubscriptions = (): Observable<SubscriptionsResponse> => this.getResource('subscriptions');
@@ -33,7 +28,5 @@ export class ResourcesService {
     updateRule = (rule: Rule): Observable<any> => this.http.put<any>(`/api/resources/updateRule`, rule);
 
     deleteRule = (id: string): Observable<any> => this.http.delete<any>(`/api/resources/deleteRule/${id}`);
-
-    
 
 }

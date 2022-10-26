@@ -2,9 +2,7 @@ import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { tap } from "rxjs";
 import * as HistoryActions from '../actions/history.actions';
-import * as PlaylistActions from '../actions/playlist.actions';
 import * as RulesActions from '../actions/rules.actions';
-import * as SubscriptionsActions from '../actions/subscriptions.actions';
 import * as VideoActions from '../actions/video.actions';
 import * as ListActions from '../actions/list.actions';
 import { ToastService } from "src/app/services/toast.service";
@@ -23,12 +21,11 @@ export class NotificationEffects {
                 HistoryActions.getHistoryFail,
                 HistoryActions.purgeUnsortedFail,
                 HistoryActions.deleteUnsortedItemFail,
-                PlaylistActions.getPlaylistsFail,
+                HistoryActions.deleteErrorItemFail,
                 RulesActions.addRuleFail,
                 RulesActions.deleteRuleFail,
                 RulesActions.getRulesFail,
                 RulesActions.updateRuleFail,
-                SubscriptionsActions.getSubscriptionsFail,
                 VideoActions.getChannelVideosFail,
                 VideoActions.getPlaylistVideosFail,
                 VideoActions.addToPlaylistFail,
@@ -49,6 +46,7 @@ export class NotificationEffects {
                 HistoryActions.purgeErrorBufferSuccess,
                 HistoryActions.purgeUnsortedSuccess,
                 HistoryActions.deleteUnsortedItemSuccess,
+                HistoryActions.deleteErrorItemSuccess,
                 RulesActions.addRuleSuccess,
                 RulesActions.deleteRuleSuccess,
                 RulesActions.updateRuleSuccess,
@@ -64,11 +62,11 @@ export class NotificationEffects {
     );
 
     notifyFail(text: string) {
-        this.notify(text, { classname: 'bg-danger text-light', delay: DELAY, header: 'Error!'})
+        this.notify(text, { classname: 'bg-danger text-light', delay: DELAY/*, header: 'Error!'*/})
     }
 
     notifySuccess(text: string) {
-        this.notify(text, { classname: 'bg-success text-light', delay: 2000, header: 'Success!'})
+        this.notify(text, { classname: 'bg-success text-light', delay: 2000/*, header: 'Success!'*/})
     }
 
     notify(text: string, options = {}) {

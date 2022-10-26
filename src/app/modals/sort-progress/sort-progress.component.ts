@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { getHistory } from 'src/app/state/actions/history.actions';
-import { getPlaylists } from 'src/app/state/actions/playlist.actions';
 import { getRules } from 'src/app/state/actions/rules.actions';
 import { getSubscriptions } from 'src/app/state/actions/subscriptions.actions';
 import { SortService } from '../../services/sort.service';
@@ -25,7 +24,6 @@ export class SortProgressComponent implements OnInit {
       this.store.dispatch(getSubscriptions());
       this.store.dispatch(getRules());
       this.store.dispatch(getHistory());
-      this.store.dispatch(getPlaylists());
     }));
   }
   //response.body.pipeThrough(new TextDecoderStream()).getReader();

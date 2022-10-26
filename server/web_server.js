@@ -1,5 +1,5 @@
 const express = require('express')
-const { loadResource, purgeUnsorted, deleteUnsortedItem, addRule, updateRule, deleteRule, purgeErrors } = require('./lib/resources');
+const { loadResource, purgeUnsorted, deleteUnsortedItem, addRule, updateRule, deleteRule, purgeErrors, deleteErrorItem } = require('./lib/resources');
 const { getChannelFeed, getPlaylistFeed, addToPlaylist, rateVideo, removeVideo } = require('./lib/api-calls');
 const app = express()
 const port = 3000
@@ -122,6 +122,13 @@ app.delete('/api/history/deleteUnsortedItem/:id', (req, res) => {
     const id = req.params.id;
     console.log(`DELETE: /api/history/deleteUnsortedItem/${id}`);
     const response = deleteUnsortedItem(id).then(res.status(204).send())
+        //.catch(e => res.status(e.code).json({ error: e.message }));
+});
+
+app.delete('/api/history/deleteErrorItem/:id', (req, res) => {
+    const id = req.params.id;
+    console.log(`DELETE: /api/history/deleteErrorItem/${id}`);
+    const response = deleteErrorItem(id).catch(e => res.status(e.code).json({ error: e.message })).then(res.status(204).send())
         //.catch(e => res.status(e.code).json({ error: e.message }));
 });
 

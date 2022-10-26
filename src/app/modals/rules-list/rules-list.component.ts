@@ -5,7 +5,7 @@ import { Rule } from 'src/app/state/models/rules.model';
 import { updateRule, addRule, deleteRule } from 'src/app/state/actions/rules.actions';
 import { selectRules } from 'src/app/state/selectors/rules.selectors';
 import { selectSubscriptions } from 'src/app/state/selectors/subscriptions.selector';
-import { selectPlaylists } from 'src/app/state/selectors/playlists.selectors';
+import { selectPlaylistTitles } from 'src/app/state/selectors/list.selectors';
 import { faTrash, faEdit, faCircleCheck, faXmarkCircle, faSquarePlus } from '@fortawesome/free-solid-svg-icons'
 import { v4 as uuid } from 'uuid';
 import { ConfirmPromptComponent } from '../confirm-prompt/confirm-prompt.component';
@@ -43,10 +43,11 @@ export class RulesListComponent implements OnInit {
       });
       this.subscriptions = this.subscriptions.sort((a: string, b: string) => a.localeCompare(b));
     });
-    this.store.select(selectPlaylists).subscribe(pl => {
-      pl.items.forEach(p => {
-        this.playlistsList[p.title] = p.id;
-        this.playlists.push(p.title);
+    this.store.select(selectPlaylistTitles).subscribe(pl => {
+      Object.keys(pl).forEach(plid => {
+        let title = pl[plid];
+        this.playlistsList[title] = plid;
+        this.playlists.push(title);
       })
       this.playlists = this.playlists.sort((a: string, b: string) => a.localeCompare(b));
     });

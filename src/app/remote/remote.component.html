@@ -45,8 +45,10 @@
         </div>
 
         <div #description class="video-description text-truncate" [innerHtml]="video?.description || '' | safeHtml" (click)="description.classList.toggle('text-truncate')"></div>
-
+        <input name="progress" [disabled]="muted" [(ngModel)]="progress" type="range" class="form-range" min="0" max="duration" step="1" id="progress" (change)="seek($event)">
         <hr />
+
+        <p><ngb-progressbar [value]="progress" type="dark"></ngb-progressbar></p>
         
         <div class="row">
             <div class="col-sm-3 next-prev video-prev">
@@ -128,7 +130,7 @@
                 </button>
 
                 <label for="volume" class="form-label">Volume</label>
-                <input name="volume" [disabled]="muted" [(ngModel)]="volume" type="range" class="form-range" min="0" max="100" step="1" id="volume" (change)="volumeChange()">
+                <input name="volume" [disabled]="muted" [(ngModel)]="volume" type="range" class="form-range" min="0" max="100" step="1" id="volume" (change)="volumeChange($event)">
             </div>
         </div>
     </div>

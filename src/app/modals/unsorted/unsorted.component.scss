@@ -20,3 +20,28 @@
     float: left;
     margin-right: 4px;
 }
+
+.errorMessage {
+    color: red;
+}
+
+.show-errors-switch {
+    margin-left: 50px;
+    input, label {
+        cursor: pointer;
+        font-size: 1.2em;
+    }
+    
+}
+
+.unsorted-button-panel {
+    width: 200px;
+}
+
+.unsorted-status {
+    width: 20px;
+}
+
+.unsorted-chanel {
+    width: 200px;
+}

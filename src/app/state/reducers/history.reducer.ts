@@ -8,5 +8,6 @@ export const historyReducer = createReducer(
     initialHistoryState,
     on(HistoryActions.getHistoryFail, state => ({ ...state })),
     on(HistoryActions.getHistorySuccess, (state, action) => ({ ...action.response })),
-    on(HistoryActions.deleteUnsortedItemSuccess, (state, action) => ({ ...state, unsorted: [...state.unsorted].filter(v => v.id !== action.id) }))
+    on(HistoryActions.deleteUnsortedItemSuccess, (state, action) => ({ ...state, unsorted: [...state.unsorted].filter(v => v.id !== action.id) })),
+    on(HistoryActions.deleteErrorItemSuccess, (state, action) => ({ ...state, errorQueue: [...state.errorQueue].filter(e => e.video?.id !== action.id) }))
 );

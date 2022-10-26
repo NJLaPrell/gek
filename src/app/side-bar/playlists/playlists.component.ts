@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { faList } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
-import { Playlist } from 'src/app/state/models/playlist.model';
+import { Playlist } from 'src/app/state/models/list.model';
 import { Router } from '@angular/router';
 import { selectNavState } from 'src/app/state/selectors/navState.selectors';
 import { selectRemoteMode } from 'src/app/state/selectors/remote.selectors';
@@ -31,16 +31,7 @@ export class PlaylistsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    //this.store.select(selectPlaylists).pipe().subscribe(r => this.playlists = Object.assign({}, r));
-    this.store.select(selectLists).pipe().subscribe(l => {
-      this.playlists = [...l];
-      // Calculate new videos
-      // TODO: Move to the backend.
-      this.playlists.map(i => ({
-        ...i,
-        newItemCount: i.videos ? i.videos?.filter(p => new Date(p.publishedAt || '') > (new Date(Date.now() - 86400000) )).length : 0
-      }));
-    });
+    this.store.select(selectLists).pipe().subscribe(l => this.playlists = [...l]);
     this.store.select(selectNavState).subscribe(n => this.selectedPlaylist = n.playlistId);
     this.store.select(selectRemoteMode).subscribe(m => this.videoRoute = m === 'remote' ? 'remote' : 'player');
   }

@@ -18,6 +18,8 @@ export class HistoryService {
 
     deleteUnsortedItem = (id: string): Observable<any> => this.http.delete<any>(`/api/history/deleteUnsortedItem/${id}`);
 
+    deleteErrorItem = (id: string): Observable<any> => this.http.delete<any>(`/api/history/deleteErrorItem/${id}`);
+
     purgeErrors = (): Observable<any> => this.http.post<any>(`/api/history/purgeErrors`, '');
 
 }

@@ -7,14 +7,13 @@ import { getPlaylistVideos, rateVideo, removeFromPlaylist } from '../state/actio
 import { selectPlaylistVideos } from '../state/selectors/video.selectors';
 import { faArrowUpRightFromSquare, faEye, faThumbsUp, faBackward, faForward, faTrashAlt, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import * as moment from 'moment';
-import { selectPlaylistTitles } from '../state/selectors/playlists.selectors';
 import { setNavState } from '../state/actions/navState.actions';
 import { selectNavState } from '../state/selectors/navState.selectors';
 import { ToastService } from '../services/toast.service';
 import { ConfirmPromptComponent } from '../modals/confirm-prompt/confirm-prompt.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { selectLists } from '../state/selectors/list.selectors';
-import { Playlist } from '../state/models/playlist.model';
+import { selectLists, selectPlaylistTitles } from '../state/selectors/list.selectors';
+import { Playlist } from '../state/models/list.model';
 
 @Component({
   selector: 'app-player',

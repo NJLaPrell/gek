@@ -11,3 +11,8 @@ export const selectLists = createSelector(
     selectListState,
     (state) => state.items
 );
+
+export const selectPlaylistTitles = createSelector(
+    selectListState,
+    (state) => state.playlistLookup
+)

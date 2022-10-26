@@ -57,3 +57,18 @@ export const purgeErrorBufferFail = createAction(
     '[History] Purge Error Buffer Fail',
     props<{ error: string }>()
 );
+
+export const deleteErrorItem = createAction(
+    '[History] Delete Error Item',
+    props<{ id: string }>()
+);
+
+export const deleteErrorItemSuccess = createAction(
+    '[History] Delete Error Item Success',
+    props<{ id: string, message: string }>()
+);
+
+export const deleteErrorItemFail = createAction(
+    '[History] Delete Error Item Fail',
+    props<{ error: string }>()
+);

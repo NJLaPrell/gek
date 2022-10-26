@@ -9,7 +9,6 @@ import { OAuth2Client } from 'google-auth-library';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
-import { PlaylistsEffects } from './state/effects/playlist.effects';
 import { VideoEffects } from './state/effects/video.effects';
 import { HistoryEffects } from './state/effects/history.effects';
 import { RulesEffects } from './state/effects/rules.effects';
@@ -75,7 +74,6 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     }),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: false}),
     EffectsModule.forRoot([
-      PlaylistsEffects,
       VideoEffects,
       HistoryEffects,
       RulesEffects,

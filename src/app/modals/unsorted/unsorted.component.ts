@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { Video } from 'src/app/state/models/video.model';
-import { selectUnsorted } from 'src/app/state/selectors/history.selectors';
+import { selectErrorQueue, selectUnsorted } from 'src/app/state/selectors/history.selectors';
 import * as moment from 'moment';
-import { faTrash, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
-import { deleteUnsortedItem, purgeUnsorted } from 'src/app/state/actions/history.actions';
+import { faTrash, faInfoCircle, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
+import { deleteErrorItem, deleteUnsortedItem, purgeUnsorted } from 'src/app/state/actions/history.actions';
 import { ConfirmPromptComponent } from '../confirm-prompt/confirm-prompt.component';
-import { selectPlaylists } from 'src/app/state/selectors/playlists.selectors';
+import { selectPlaylistTitles } from 'src/app/state/selectors/list.selectors';
 import { addToPlaylist } from 'src/app/state/actions/video.actions';
 
 @Component({
@@ -16,11 +16,18 @@ import { addToPlaylist } from 'src/app/state/actions/video.actions';
   styleUrls: ['./unsorted.component.scss']
 })
 export class UnsortedComponent implements OnInit {
-  unsorted: Video[] = [];
-  moment = moment;
+  // Fontawesome
   faTrash = faTrash;
   faInfoCircle = faInfoCircle;
+  faTriangleExclamation = faTriangleExclamation;
+
+  // State
+  unsorted: Video[] = [];
   playlists: any = [];
+  showErrors = false;
+
+  // Utilities
+  moment = moment;
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -29,8 +36,15 @@ export class UnsortedComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.store.select(selectUnsorted).subscribe(u => this.unsorted = [...u].sort((a, b) => new Date(a?.published || 0) > new Date(b?.published || 0) ? 1 : -1));
-    this.store.select(selectPlaylists).subscribe(pl => this.playlists = [...pl.items].sort((a, b) => a.title.localeCompare(b.title)).map(pl => ({ title: pl.title, id: pl.id })))
+    this.store.select(selectUnsorted).subscribe(u => {
+      this.unsorted = [...u];
+      this.sortList();
+    });
+    this.store.select(selectErrorQueue).subscribe(e => {
+      this.unsorted = this.unsorted.concat(e.map(f => ({...f.video, errorMessage: { errors: f.errors, failDate: f.failDate } })));
+      this.sortList();
+    });
+    this.store.select(selectPlaylistTitles).subscribe(pl => this.playlists = Object.keys(pl).map(plid => ({ id: plid, title: pl[plid]})).sort((a, b) => a.title.localeCompare(b.title)).map(pl => ({ title: pl.title, id: pl.id })))
   }
 
   purge() {
@@ -47,10 +61,23 @@ export class UnsortedComponent implements OnInit {
     this.store.dispatch(addToPlaylist({ videoId, playlistId }));
   }
 
-  deleteItem(id: string) {
-    this.store.dispatch(deleteUnsortedItem({ id }));
+  deleteItem(video: Video) {
+    if (video?.errorMessage) {
+      this.store.dispatch(deleteErrorItem({ id: video.id || '' }));
+    } else {
+      this.store.dispatch(deleteUnsortedItem({ id: video.id || '' }));
+    }
+  }
+
+  sortList() {
+    this.unsorted.sort((a, b) => new Date(a?.published || 0) > new Date(b?.published || 0) ? 1 : -1);
+  }
+
+  getUnsortedCount() {
+    return this.showErrors ? this.unsorted.length : this.unsorted.filter(u => !u?.errorMessage).length;
   }
 
  
 
 }
+

@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from '@angular/common/http';
-import { Playlist } from "../state/models/playlist.model";
+import { Playlist } from "../state/models/list.model";
 import { Observable, shareReplay } from "rxjs";
 
 

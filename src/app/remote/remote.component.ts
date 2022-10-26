@@ -7,7 +7,6 @@ import { getPlaylistVideos, rateVideo, removeFromPlaylist } from '../state/actio
 import { selectPlaylistVideos } from '../state/selectors/video.selectors';
 import { faVolumeXmark, faVolumeHigh, faPlay, faPause, faArrowUpRightFromSquare, faEye, faThumbsUp, faBackward, faForward, faTrashAlt, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import * as moment from 'moment';
-import { selectPlaylistTitles } from '../state/selectors/playlists.selectors';
 import { setNavState } from '../state/actions/navState.actions';
 import { selectNavState } from '../state/selectors/navState.selectors';
 import { ToastService } from '../services/toast.service';
@@ -15,8 +14,9 @@ import { ConfirmPromptComponent } from '../modals/confirm-prompt/confirm-prompt.
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { sendCommand } from '../state/actions/remote.actions';
 import { v4 as uuid } from 'uuid';
-import { selectLists } from '../state/selectors/list.selectors';
-import { Playlist } from '../state/models/playlist.model';
+import { selectLists, selectPlaylistTitles } from '../state/selectors/list.selectors';
+import { Playlist } from '../state/models/list.model';
+import { selectLastCommand } from '../state/selectors/remote.selectors';
 
 @Component({
   selector: 'app-remote',
@@ -52,6 +52,10 @@ export class RemoteComponent implements OnInit {
   playing = false;
   muted = false;
   volume = 50;
+  progress = 0;
+  duration = 0;
+
+  videoState = {};
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -76,6 +80,7 @@ export class RemoteComponent implements OnInit {
         this.sendCommand({ directive: 'navigate', params: { playlistId: this.playlistId, videoId: this.videoId }});
         this.playing = true;
       }
+      this.store.select(selectLastCommand).pipe(skipWhile(c => c === null)).subscribe(c => this.executeCommand(c));
     });
 
     // Listen for navState changes and update this.navState
@@ -204,8 +209,30 @@ export class RemoteComponent implements OnInit {
     this.playing = !this.playing;
   }
 
-  volumeChange() {
-    this.sendCommand({ directive: 'volume', params: { value: this.volume } });
+  volumeChange(e:any) {
+    if (e.target.value !== this.volume) {
+      this.sendCommand({ directive: 'volume', params: { value: this.volume } });
+    }
+  }
+
+  seek(e:any) {
+    if (e.target.value !== this.progress) {
+      this.sendCommand({ directive: 'seek', params: { value: this.progress } });
+    }
+  }
+
+  executeCommand(c: any) {
+    switch (c.command.directive) {
+      case 'updateVideoState':
+        this.videoState = c.command.params;
+        this.muted = c.command.params.muted;
+        this.volume = c.command.params.volume;
+        this.duration = c.command.params.duration;
+        this.progress = c.command.params.currentTime;
+        //this.progress = (c.command.params.currentTime / c.command.params.duration) * 100;
+        break;
+    }
+    console.log('FOO', this.videoState, c);
   }
 
   sendCommand(command: any): void {

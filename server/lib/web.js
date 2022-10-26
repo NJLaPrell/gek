@@ -45,10 +45,6 @@ function formatVideoList(videoList) {
     }));
 }
 
-async function getPlaylistVideos() {
-
-}
-
 async function getPlaylistItems(sortedList) {
     return await Promise.all(
         sortedList.map(i => getPlaylistItemsPage(i.playlistId))
@@ -102,6 +98,7 @@ async function getSortedList() {
     // Add the videoList array to each playlist.
     sortedList = sortedList.map(pl => ({
         ...pl,
+        newItemCount: videoDetails.filter(vd => pl.playlistId === vd.playlistId && new Date(vd.publishedAt) > Date.now() - 86400000).length,
         videos: videoDetails.filter(vd => pl.playlistId === vd.playlistId)
     }));
 

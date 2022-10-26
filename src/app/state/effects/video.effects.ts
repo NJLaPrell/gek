@@ -30,7 +30,11 @@ export class VideoEffects {
     addToPlaylist$ = createEffect(() => this.actions$.pipe(
         ofType(VideoActions.addToPlaylist),
         mergeMap((action) => this.videoService.addToPlaylist(action.videoId, action.playlistId).pipe(
-            mergeMap((response) => [VideoActions.addToPlaylistSuccess({ ...action, message: "Added to playlist."}), HistoryActions.deleteUnsortedItem({ id: action.videoId })]),
+            mergeMap((response) => [
+                VideoActions.addToPlaylistSuccess({ ...action, message: "Added to playlist."}),
+                HistoryActions.deleteUnsortedItem({ id: action.videoId }),
+                HistoryActions.deleteErrorItem({ id: action.videoId })
+            ]),
             catchError((error: HttpErrorResponse) => of(VideoActions.addToPlaylistFail({ error: error.message })))
         ))
     ))

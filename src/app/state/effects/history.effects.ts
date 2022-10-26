@@ -34,6 +34,14 @@ export class HistoryEffects {
         ))
     ))
 
+    deleteErrorItem$ = createEffect(() => this.actions$.pipe(
+        ofType(HistoryActions.deleteErrorItem),
+        mergeMap((action) => this.historyService.deleteErrorItem(action.id).pipe(
+            map(() => HistoryActions.deleteErrorItemSuccess({ id: action.id, message: "The error item has been deleted." })),
+            catchError((error: HttpErrorResponse) => of(HistoryActions.deleteErrorItemFail({ error: error.message })))
+        ))
+    ))
+
     purgeErrors$ = createEffect(() => this.actions$.pipe(
         ofType(HistoryActions.purgeErrorBuffer),
         mergeMap(() => this.historyService.purgeErrors().pipe(

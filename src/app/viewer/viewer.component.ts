@@ -6,13 +6,15 @@ import { Video, initialVideoState } from 'src/app/state/models/video.model';
 import { getPlaylistVideos, rateVideo, removeFromPlaylist } from '../state/actions/video.actions';
 import { selectPlaylistVideos } from '../state/selectors/video.selectors';
 import * as moment from 'moment';
-import { selectPlaylistTitles } from '../state/selectors/playlists.selectors';
 import { setNavState } from '../state/actions/navState.actions';
 import { selectNavState } from '../state/selectors/navState.selectors';
 import { ToastService } from '../services/toast.service';
 import { ConfirmPromptComponent } from '../modals/confirm-prompt/confirm-prompt.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { selectLastCommand } from '../state/selectors/remote.selectors';
+import { selectPlaylistTitles } from '../state/selectors/list.selectors';
+import { v4 as uuid } from 'uuid';
+import { sendCommand } from '../state/actions/remote.actions';
 
 @Component({
   selector: 'app-viewer',
@@ -48,6 +50,9 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.activatedRoute.params.subscribe(params => {
       this.playlistId = params['playlistId'];
       this.videoId = params['videoId'];
+      if (this.videoId && this.api) {
+        this.api.playVideo(this.videoId);
+      }
     });
 
     this.store.select(selectLastCommand).pipe(skipWhile(c => c === null)).subscribe(c => this.executeCommand(c));
@@ -96,17 +101,17 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
         this.videoTimer = setTimeout(() => this.onAlmostOver(), secondsToEndMark * 1000);
       }
     }
+    setTimeout(() => this.sendPlayerState(), 200);
   }
 
   // Fires 30 seconds before the end of a video.
   onAlmostOver() {
-    this.toast.info(this.endOfVideoToast)
+    setTimeout(() => this.sendPlayerState(), 200);
   }
 
   // Fires when a video has finished.
   onVideoEnded(player: any) {
     console.debug('Video Ended');
-
   }
 
   // Fires when the player API finishes loading.
@@ -114,11 +119,13 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
     e.target.playVideo();
     this.api = e.target;
     console.log(this.api);
+    setTimeout(() => this.sendPlayerState(), 200);
   }
 
   // Fires with the api loads a new module.
   onApiChange(e: any) {
     console.debug('apiChange');
+    setTimeout(() => this.sendPlayerState(), 200);
   }
 
   pause(): void {
@@ -147,14 +154,11 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Navigate to the video with the given videoId.
   goToVideo(playlistId: string, videoId: string) {
-    console.log('goToVideo', playlistId, videoId);
     this.videoId = videoId;
     this.playlistId = playlistId;
     if (this.api) {
-      console.log('API');
       setTimeout(() => this.api.playVideo(videoId), 200);
-    } else {
-      console.log('no API');
+      setTimeout(() => this.sendPlayerState(), 400);
     }
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   }
@@ -189,7 +193,36 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'volume':
         this.setVolume(c.command.params.value);
         break;
+
+      case 'seek':
+        console.log('SEEK:',c.command.params.value)
+        this.api.seekTo(c.command.params.value);
+        break;
     }
+    setTimeout(() => this.sendPlayerState(), 200);
+  }
+
+  sendPlayerState() {
+    if (this.api) {
+      this.sendCommand({
+        directive: 'updateVideoState',
+        params: {
+          currentTime: this.api.playerInfo.currentTime,
+          duration: this.api.playerInfo.duration,
+          muted: this.api.playerInfo.muted, 
+          volume: this.api.playerInfo.volume
+        }
+      })
+    }
+  }
+
+  sendCommand(command: any): void {
+    this.store.dispatch(sendCommand( {
+      id: uuid(),
+      client: 'remote',
+      timestamp: Date.now(),
+      command
+    }));
   }
 
 }
