@@ -7,23 +7,23 @@
     <table class="table table-striped table-hover table-sm" style="table-layout:fixed;">
         <thead>
             <tr>
-                <th>Type</th>
-                <th>Channel Match</th>
-                <th>Title Match</th>
-                <th>DescriptionMatch</th>
-                <th>Playlist</th>
-                <th>&nbsp;</th>
+                <th class="type-col">Type</th>
+                <th class="channel-col">Channel Match</th>
+                <th class="title-col">Title Match</th>
+                <th class="desc-col">DescriptionMatch</th>
+                <th class="playlist-col">Playlist</th>
+                <th class="btn-col">&nbsp;</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let r of rules">
                 <ng-template [ngIf]="!r?.edit">
-                    <td>{{ r.type }}</td>
-                    <td [class.text-center]="!r.channelMatch">{{ subTitleById(r.channelMatch) || '---' }}</td>
-                    <td [class.text-center]="!r.titleMatch">{{ r.titleMatch || '---'}}</td>
-                    <td [class.text-center]="!r.descriptionMatch">{{ r.descriptionMatch || '---'}}</td>
-                    <td>{{ playlistTitleById(r.playlistId) }}</td>
-                    <td class="text-end">
+                    <td class="type-col">{{ r.type }}</td>
+                    <td class="channel-col" [class.text-center]="!r.channelMatch">{{ subTitleById(r.channelMatch) || '---' }}</td>
+                    <td class="title-col" [class.text-center]="!r.titleMatch">{{ r.titleMatch || '---'}}</td>
+                    <td class="desc-col" [class.text-center]="!r.descriptionMatch">{{ r.descriptionMatch || '---'}}</td>
+                    <td class="playlist-col">{{ playlistTitleById(r.playlistId) }}</td>
+                    <td class="text-end btn-col">
                         <button type="button" class="btn btn-primary btn-sm" (click)="r.edit = true" ngbTooltip="Edit Rule">
                             <fa-icon [icon]="faEdit"></fa-icon> 
                         </button>
@@ -35,18 +35,18 @@
                 </ng-template>
 
                 <ng-template [ngIf]="r?.edit">
-                    <td>
+                    <td class="type-col">
                         <div ngbDropdown class="d-inline-block">
-                            <button type="button" class="btn btn-outline-primary" id="ruleType" ngbDropdownToggle>{{ r.type || 'Select a Type' }}</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="ruleType" ngbDropdownToggle>{{ r.type || 'Select a Type' }}</button>
                             <div ngbDropdownMenu aria-labelledby="ruleType">
                                 <button *ngIf="r.type !== 'and'" (click)="r.type = 'and'" ngbDropdownItem>and</button>
                                 <button *ngIf="r.type !== 'or'" (click)="r.type = 'or'" ngbDropdownItem>or</button>
                             </div>
                         </div>
                     </td>
-                    <td>
+                    <td class="channel-col">
                         <div ngbDropdown class="d-inline-block">
-                            <button type="button" class="btn btn-outline-primary" id="channelMatch" ngbDropdownToggle>{{ subTitleById(r.channelMatch) || '-- None --' }}</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="channelMatch" ngbDropdownToggle>{{ subTitleById(r.channelMatch) || '-- None --' }}</button>
                             <div ngbDropdownMenu aria-labelledby="channelMatch" style="max-height: 200px; overflow:auto">
                                 <button (click)="r.channelMatch = ''" class="fs-italics" ngbDropdownItem>None</button>
                                 <ng-container *ngFor="let sub of subscriptions">
@@ -55,11 +55,11 @@
                             </div>
                         </div>
                     </td>
-                    <td><input name="titleMatch" type="text" class="form-control" placeholder="Title Pattern Match" [(ngModel)]="r.titleMatch" /></td>
-                    <td><input name="descriptionMatch" type="text" class="form-control" placeholder="Description Pattern Match" [(ngModel)]="r.descriptionMatch" /></td>
-                    <td>
+                    <td class="title-col"><input name="titleMatch" type="text" class="form-control" placeholder="Title Pattern Match" [(ngModel)]="r.titleMatch" /></td>
+                    <td class="desc-col"><input name="descriptionMatch" type="text" class="form-control" placeholder="Description Pattern Match" [(ngModel)]="r.descriptionMatch" /></td>
+                    <td class="playlist-col">
                         <div ngbDropdown class="d-inline-block">
-                            <button type="button" class="btn btn-outline-primary" id="playlistId" ngbDropdownToggle>{{ playlistTitleById(r.playlistId) || '(Select a Playlist)' }}</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="playlistId" ngbDropdownToggle>{{ playlistTitleById(r.playlistId) || '(Select a Playlist)' }}</button>
                             <div ngbDropdownMenu aria-labelledby="playlistId" style="max-height: 200px; overflow:auto">
                                 <ng-container *ngFor="let pl of playlists">
                                     <button *ngIf="r.playlistId !== playlistsList[pl]" (click)="r.playlistId = playlistsList[pl]" ngbDropdownItem>{{ pl }}</button>
@@ -67,7 +67,7 @@
                             </div>
                         </div>
                     </td>
-                    <td class="text-end">
+                    <td class="text-end btn-col">
                         <button type="button" class="btn btn-success btn-sm" (click)="updateRule(r)" ngbTooltip="Save Updates">
                             <fa-icon [icon]="faCircleCheck" ></fa-icon>
                         </button>
