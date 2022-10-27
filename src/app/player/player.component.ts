@@ -3,8 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { combineLatest, map, skipWhile } from 'rxjs';
 import { Video } from 'src/app/state/models/video.model';
-import { getPlaylistVideos, rateVideo, removeFromPlaylist } from '../state/actions/video.actions';
-import { selectPlaylistVideos } from '../state/selectors/video.selectors';
+import { rateVideo, removeFromPlaylist } from '../state/actions/video.actions';
 import { faArrowUpRightFromSquare, faEye, faThumbsUp, faBackward, faForward, faTrashAlt, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import * as moment from 'moment';
 import { setNavState } from '../state/actions/navState.actions';
@@ -80,7 +79,7 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(
         skipWhile((r) => r[0].length === 0 || r[2]?.['length'] === 0),
         map((r: any) => ({
-          videoList: [...r[0].find((pl: Playlist) => pl.playlistId === this.playlistId).videos].sort((a: Video, b:Video) => new Date(a.publishedAt || '') > new Date(b.publishedAt || '') ? 1 : -1),
+          videoList: [...r[0].find((pl: Playlist) => pl.playlistId === this.playlistId)?.videos || []].sort((a: Video, b:Video) => new Date(a.publishedAt || '') > new Date(b.publishedAt || '') ? 1 : -1),
           titleLookup: r[1],
           routeParams: r[2]
         }))
@@ -154,10 +153,6 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   // #####################
   // PLAYER EVENTS
   // #####################
-
-  videoClicked(videoId: string): void {
-    this.goToVideo(videoId);
-  }
 
   // Fires on player state changes
   stateChanged(e: any) {

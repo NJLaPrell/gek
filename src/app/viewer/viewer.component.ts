@@ -16,6 +16,8 @@ import { selectPlaylistTitles } from '../state/selectors/list.selectors';
 import { v4 as uuid } from 'uuid';
 import { sendCommand } from '../state/actions/remote.actions';
 
+const STATE_INTERVAL = 5000;
+
 @Component({
   selector: 'app-viewer',
   templateUrl: './viewer.component.html',
@@ -33,8 +35,8 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   videoHeight: number | undefined;  // Height set on the player.
   videoTimer: any;                  // Time used for triggering the videoAlmostOver event.
   moment = moment;                  // Moment for date display
-  
   api: any;
+  playerStateTimer: any;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -70,6 +72,7 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.onResize);
+    clearTimeout(this.playerStateTimer);
   }
 
   // Fit the video player width with the page.
@@ -101,12 +104,14 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
         this.videoTimer = setTimeout(() => this.onAlmostOver(), secondsToEndMark * 1000);
       }
     }
-    setTimeout(() => this.sendPlayerState(), 200);
+    this.sendPlayerState();
   }
 
   // Fires 30 seconds before the end of a video.
   onAlmostOver() {
-    setTimeout(() => this.sendPlayerState(), 200);
+    this.sendCommand({
+      directive: 'almostOver'
+    })
   }
 
   // Fires when a video has finished.
@@ -119,13 +124,13 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
     e.target.playVideo();
     this.api = e.target;
     console.log(this.api);
-    setTimeout(() => this.sendPlayerState(), 200);
+    this.playerStateInterval();
   }
 
   // Fires with the api loads a new module.
   onApiChange(e: any) {
     console.debug('apiChange');
-    setTimeout(() => this.sendPlayerState(), 200);
+    this.sendPlayerState();
   }
 
   pause(): void {
@@ -223,6 +228,12 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
       timestamp: Date.now(),
       command
     }));
+  }
+
+  playerStateInterval() {
+    this.sendPlayerState();
+    clearTimeout(this.playerStateTimer);
+    this.playerStateTimer = setTimeout(() => this.playerStateInterval(), STATE_INTERVAL);
   }
 
 }

@@ -139,9 +139,9 @@ app.put('/api/video/:videoId/addToPlaylist/:playlistId', (req, res) => {
     const response = addToPlaylist(playlistId, videoId).then(res.status(204).send())
 });
 
-app.put('/api/video/:videoId/rate/:rating', (req, res) => {
+app.put('/api/video/:videoId/rate/:rating?', (req, res) => {
     const videoId = req.params.videoId;
-    const rating = req.params.rating;
+    const rating = req.params.rating || '';
     console.log(`PUT: /api/video/${videoId}/rate/${rating}`);
     const response = rateVideo(videoId, rating).then(res.status(204).send());
 });

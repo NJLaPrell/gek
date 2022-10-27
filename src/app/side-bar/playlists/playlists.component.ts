@@ -21,8 +21,6 @@ export class PlaylistsComponent implements OnInit {
   playlistCounts: { [key: string]: { new: number; total: number } } = {};
   videoRoute = 'player';
 
-  @Output() onPageTitleChange: EventEmitter<string> = new EventEmitter<string>();
-
   constructor(
     private store: Store,
     private router: Router

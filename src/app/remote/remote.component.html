@@ -11,25 +11,7 @@
 <!-- ############################################# -->
 <!-- VIDEO LIST.                                   -->
 <!-- ############################################# -->
-<div *ngIf="!videoId && playlistId">
-    <div *ngFor="let video of videoList" class="video-card">
-        <div class="text-center">
-            <img class="videoThumbnail" [src]="video.thumbnail" (click)="videoClicked($any(video.videoId))" />
-        </div>
-        <a [href]="'https://www.youtube.com/watch?v=' + video.videoId" target="_blank" class="video-link"><fa-icon [icon]="faArrowUpRightFromSquare"></fa-icon></a>
-        <div class="video-card-body">
-            <h3 class="video-card-title" (click)="videoClicked($any(video.videoId))" [ngbTooltip]="video.title">{{ video.title }}</h3>
-            <div class="channel">
-                <a class="channel-link" [href]="video.channelLink" target="_blank">{{ video.channelTitle }}</a>
-            </div>
-            <div class="counts">
-                <span class="view-count">{{ getViewCount(video.viewCount) }} <fa-icon [icon]="faEye"></fa-icon></span>
-                &nbsp;•&nbsp;
-                <span class="publish-date">{{ moment(video.publishedAt).fromNow() }}</span>
-            </div>
-        </div>
-    </div>
-</div>
+<app-video-list *ngIf="!videoId && playlistId" [playlistId]="playlistId" [videoList]="videoList" mode="remote"></app-video-list>
 
 
 <!-- ############################################# -->
@@ -45,10 +27,14 @@
         </div>
 
         <div #description class="video-description text-truncate" [innerHtml]="video?.description || '' | safeHtml" (click)="description.classList.toggle('text-truncate')"></div>
-        <input name="progress" [disabled]="muted" [(ngModel)]="progress" type="range" class="form-range" min="0" max="duration" step="1" id="progress" (change)="seek($event)">
-        <hr />
 
-        <p><ngb-progressbar [value]="progress" type="dark"></ngb-progressbar></p>
+        <div>
+            <input name="progress" [disabled]="muted" [(ngModel)]="progress" type="range" class="form-range" min="0" [max]="duration" step="1" id="progress" (change)="seek($event)">
+        </div>
+
+        <div class="text-center">
+            {{ formatSeconds(progress) }} / {{ formatSeconds(duration) }}
+        </div>
         
         <div class="row">
             <div class="col-sm-3 next-prev video-prev">
@@ -74,15 +60,15 @@
             </div>
             <div class="col-sm-4 text-center center-buttons">
                 <div>
-                    <button type="button" class="btn btn-dark" (click)="thumbsUp()">
+                    <button type="button" class="btn" [class.btn-dark]="!like" [class.btn-success]="like" (click)="thumbsUp()">
                         <fa-icon [icon]="faThumbsUp"></fa-icon>
                     </button>
-                    <button type="button" class="btn btn-dark" (click)="thumbsDown()">
+                    <button type="button" class="btn btn-dark" [class.btn-dark]="!dislike" [class.btn-danger]="dislike" (click)="thumbsDown()">
                         <fa-icon [icon]="faThumbsDown"></fa-icon>
                     </button>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-dark">
+                    <button type="button" class="btn btn-danger">
                         <fa-icon [icon]="faTrashAlt" (click)="remove(true)"></fa-icon>
                     </button>
                     <button type="button" class="btn btn-dark" (click)="openInNewWindow()">
@@ -129,7 +115,6 @@
                     <fa-icon *ngIf="muted" [icon]="faVolumeXmark"></fa-icon>
                 </button>
 
-                <label for="volume" class="form-label">Volume</label>
                 <input name="volume" [disabled]="muted" [(ngModel)]="volume" type="range" class="form-range" min="0" max="100" step="1" id="volume" (change)="volumeChange($event)">
             </div>
         </div>

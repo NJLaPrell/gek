@@ -5,6 +5,7 @@ const SOCKET_URL = 'ws://192.168.50.66:8080';
 const HEARTBEAT_INTERVAL = 30000 // 30 Seconds
 const RECONNECT_INTERVAL = 30000; // 30 Seconds
 const RECONNECT_ATTEMPTS = 10;
+const DEBUG = false;
 
 export interface SocketMessage {
     message?: any;
@@ -38,13 +39,13 @@ export class SocketService {
 
     // Timeout function for heartbeat.
     private heartbeat() {
-        console.debug('-heartbeat-');
+        this.debug('-heartbeat-');
         clearTimeout(this.pingTimeout);
         clearTimeout(this.reconnectInterval);
         this.retryAttempts = 0;
     
         this.pingTimeout = setTimeout(() => {
-            console.debug('[Socket Service] - Connection timed out.');
+            this.debug('[Socket Service] - Connection timed out.');
             this.connection.complete();
             this.connected = false;
             this.retry();
@@ -55,18 +56,18 @@ export class SocketService {
         clearTimeout(this.reconnectInterval);
         this.retryAttempts++;
         if (this.retryAttempts <= RECONNECT_ATTEMPTS) {
-            console.debug(`[Socket Service] - Attempting reconnect (attempt ${this.retryAttempts} of ${RECONNECT_ATTEMPTS}).`)
+            this.debug(`[Socket Service] - Attempting reconnect (attempt ${this.retryAttempts} of ${RECONNECT_ATTEMPTS}).`)
             this.connectClient(true);
             this.reconnectInterval = setTimeout(() => this.retry(), RECONNECT_INTERVAL);
         } else {
-            console.debug('[Socket Service] - Unable to reconnect.');
+            this.debug('[Socket Service] - Unable to reconnect.');
         }
     }
 
     // Handle client connect.
     private connectClient(retry = false) {
         if (!retry) {
-            console.debug('[Socket Service] - Connecting to the socket server.');
+            this.debug('[Socket Service] - Connecting to the socket server.');
         }
 
         this.connection = webSocket(SOCKET_URL);
@@ -74,7 +75,7 @@ export class SocketService {
         this.connection.subscribe({
             next: (msg: SocketMessage) => this.onRawMessageReceived(<SocketMessage>msg), // Called whenever there is a message from the server.
             error: (err: any) => {
-                console.debug('[Socket Service] - Error caught:', err);
+                this.debug('[Socket Service] - Error caught:', err);
                 this.connected = false;
                 this.errorListeners.forEach(func => func(err));
                 clearTimeout(this.reconnectInterval);
@@ -94,7 +95,7 @@ export class SocketService {
         }
         
         if (msg.type !== 'ping' && msg.type !== 'handshake') {
-            console.debug('[Socket Service] - Message Recieved.', msg);
+            this.debug('[Socket Service] - Message Recieved.', msg);
         }
         
         if(msg?.direction === 'inbound' && msg?.type === 'message') {
@@ -139,24 +140,24 @@ export class SocketService {
     }
 
     private firePeerDisconnect(client: string) {
-        console.debug(`[Socket Server] - Peer Disconnected (${client}`);
+        this.debug(`[Socket Server] - Peer Disconnected (${client}`);
         this.peerDisconnectListeners.forEach(func => func(client));
     }
 
     private fireOnConnect() {
-        console.debug('[Socket Server] - Connected');
+        this.debug('[Socket Server] - Connected');
         clearTimeout(this.pingTimeout);
         this.connectListeners.forEach(func => func());
     }
 
     private fireOnClosed() {
-        console.debug('[Socket Server] - Connection closed');
+        this.debug('[Socket Server] - Connection closed');
         clearTimeout(this.pingTimeout);
         this.closedListeners.forEach(func => func());
     }
 
     private fireOnHandshake(client: string) {
-        console.debug(`[Socket Server] - Handshake received from: ${client}`);
+        this.debug(`[Socket Server] - Handshake received from: ${client}`);
         this.handshakeListeners.forEach(func => func(client));
     }
 
@@ -174,7 +175,7 @@ export class SocketService {
     }
 
     public disconnect(clientType: string) {
-        console.debug(`[Socket Server] - Disconnect`);
+        this.debug(`[Socket Server] - Disconnect`);
         // Send peer disconnect message
         this.sendRawMessage({ type: 'peerDisconnect', direction: 'outbound', message: clientType });
         // Reset the instance
@@ -192,6 +193,12 @@ export class SocketService {
         this.connection.complete();
         delete this.connection;
         this.connected = false;  
+    }
+
+    private debug(...args: any) {
+        if(DEBUG) {
+            console.debug(...args);
+        }
     }
 
 };

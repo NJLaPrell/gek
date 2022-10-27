@@ -54,6 +54,8 @@ export class RemoteComponent implements OnInit {
   volume = 50;
   progress = 0;
   duration = 0;
+  like = false;
+  dislike = false;
 
   videoState = {};
 
@@ -79,6 +81,8 @@ export class RemoteComponent implements OnInit {
       if (this.playlistId && this.videoId) {
         this.sendCommand({ directive: 'navigate', params: { playlistId: this.playlistId, videoId: this.videoId }});
         this.playing = true;
+        this.like = false;
+        this.dislike = false;
       }
       this.store.select(selectLastCommand).pipe(skipWhile(c => c === null)).subscribe(c => this.executeCommand(c));
     });
@@ -96,7 +100,7 @@ export class RemoteComponent implements OnInit {
       .pipe(
         skipWhile((r) => r[0].length === 0 || r[2]?.['length'] === 0),
         map((r: any) => ({
-          videoList: [...r[0].find((pl: Playlist) => pl.playlistId === this.playlistId).videos].sort((a: Video, b:Video) => new Date(a.publishedAt || '') > new Date(b.publishedAt || '') ? 1 : -1),
+          videoList: [...r[0].find((pl: Playlist) => pl.playlistId === this.playlistId)?.videos || []].sort((a: Video, b:Video) => new Date(a.publishedAt || '') > new Date(b.publishedAt || '') ? 1 : -1),
           titleLookup: r[1],
           routeParams: r[2]
         }))
@@ -148,16 +152,6 @@ export class RemoteComponent implements OnInit {
   }
 
   // #####################
-  // PLAYER EVENTS
-  // #####################
-
-  videoClicked(videoId: string): void {
-    this.goToVideo(videoId);
-  }
-
-  
-
-  // #####################
   // USER ACTIONS
   // #####################
 
@@ -170,15 +164,17 @@ export class RemoteComponent implements OnInit {
 
   // Like the current video.
   thumbsUp() {
+    this.like = !this.like;
     if (this.video?.videoId) {
-      this.store.dispatch(rateVideo({ videoId: this.video.videoId, rating: 'like' }))
+      this.store.dispatch(rateVideo({ videoId: this.video.videoId, rating: this.like ? 'like' : '' }))
     }
   }
 
   // Dislike the current video
   thumbsDown() {
+    this.dislike = !this.dislike;
     if (this.video?.videoId) {
-      this.store.dispatch(rateVideo({ videoId: this.video.videoId, rating: 'dislike' }))
+      this.store.dispatch(rateVideo({ videoId: this.video.videoId, rating: this.dislike ? 'dislike' : '' }))
     }
   }
 
@@ -232,7 +228,6 @@ export class RemoteComponent implements OnInit {
         //this.progress = (c.command.params.currentTime / c.command.params.duration) * 100;
         break;
     }
-    console.log('FOO', this.videoState, c);
   }
 
   sendCommand(command: any): void {
@@ -243,5 +238,23 @@ export class RemoteComponent implements OnInit {
       command
     }));
   }
+
+  // https://stackoverflow.com/questions/6312993/javascript-seconds-to-time-string-with-format-hhmmss
+  formatSeconds(t: number): string {
+    var sec_num = parseInt(String(t), 10); 
+    let hNum   = Math.floor(sec_num / 3600);
+    var mNum = Math.floor((sec_num - (hNum * 3600)) / 60);
+    var sNum = sec_num - (hNum * 3600) - (mNum * 60);
+
+    const hString = hNum 
+      ? (hNum < 10 ? '0' : '') + String(hNum) + ':'
+      : '';
+    const mString = (mNum < 10 ? '0' : '') + String(mNum);
+    const sString = (sNum < 10 ? '0' : '') + String(sNum);
+
+    return `${hString}${mString}:${sString}`;
+  }
+
+
 
 }

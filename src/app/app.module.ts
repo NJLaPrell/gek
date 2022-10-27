@@ -28,7 +28,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PlaylistsComponent } from './side-bar/playlists/playlists.component';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 import { ErrorBufferComponent } from './modals/error-buffer/error-buffer.component';
-import { SafeHtmlPipe } from './pipes';
+import { SafeHtmlPipe, DurationFromIsoPipe, FromNowPipe, ViewCountPipe } from './pipes';
 import { UnsortedComponent } from './modals/unsorted/unsorted.component';
 import { RulesListComponent } from './modals/rules-list/rules-list.component';
 import { ConfirmPromptComponent } from './modals/confirm-prompt/confirm-prompt.component';
@@ -37,6 +37,7 @@ import { SortProgressComponent } from './modals/sort-progress/sort-progress.comp
 import { ConnectingComponent } from './connecting/connecting.component';
 import { ViewerComponent } from './viewer/viewer.component';
 import { RemoteComponent } from './remote/remote.component';
+import { VideoListComponent } from './shared/video-list/video-list.component';
 
 export const initApp = (provider: InitializerService) => () => provider.init();
 
@@ -49,6 +50,9 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     PlaylistsComponent,
     ErrorBufferComponent,
     SafeHtmlPipe,
+    DurationFromIsoPipe,
+    FromNowPipe,
+    ViewCountPipe,
     UnsortedComponent,
     RulesListComponent,
     ConfirmPromptComponent,
@@ -56,7 +60,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     SortProgressComponent,
     ConnectingComponent,
     ViewerComponent,
-    RemoteComponent
+    RemoteComponent,
+    VideoListComponent
   ],
   imports: [
     BrowserModule,

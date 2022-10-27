@@ -11,25 +11,7 @@
 <!-- ############################################# -->
 <!-- VIDEO LIST.                                   -->
 <!-- ############################################# -->
-<div *ngIf="!videoId && playlistId">
-    <div *ngFor="let video of videoList" class="video-card">
-        <div class="text-center">
-            <img class="videoThumbnail" [src]="video.thumbnail" (click)="videoClicked($any(video.videoId))" />
-        </div>
-        <a [href]="'https://www.youtube.com/watch?v=' + video.videoId" target="_blank" class="video-link"><fa-icon [icon]="faArrowUpRightFromSquare"></fa-icon></a>
-        <div class="video-card-body">
-            <h3 class="video-card-title" (click)="videoClicked($any(video.videoId))" [ngbTooltip]="video.title">{{ video.title }}</h3>
-            <div class="channel">
-                <a class="channel-link" [href]="video.channelLink" target="_blank">{{ video.channelTitle }}</a>
-            </div>
-            <div class="counts">
-                <span class="view-count">{{ getViewCount(video.viewCount) }} <fa-icon [icon]="faEye"></fa-icon></span>
-                &nbsp;•&nbsp;
-                <span class="publish-date">{{ moment(video.publishedAt).fromNow() }}</span>
-            </div>
-        </div>
-    </div>
-</div>
+<app-video-list *ngIf="!videoId && playlistId" [playlistId]="playlistId" [videoList]="videoList"></app-video-list>
 
 
 <!-- ############################################# -->

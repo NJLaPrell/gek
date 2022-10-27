@@ -1,6 +1,7 @@
 import { Inject, Pipe, PipeTransform } from '@angular/core';
 import * as sanitize from 'sanitize-html';
 import { DomSanitizer } from '@angular/platform-browser';
+import * as moment from 'moment';
 
 @Pipe({ name: 'safeHtml' })
 export class SafeHtmlPipe implements PipeTransform {
@@ -34,5 +35,32 @@ export class SafeHtmlPipe implements PipeTransform {
     // tags and attributes, run that output through domSanitizer.bypassSecurityTrustHtml
     const cleanedHtml =  sanitize(value, this.sanitizerConfig);
     return this.domSanitizer.bypassSecurityTrustHtml(cleanedHtml);
+  }
+}
+
+@Pipe({ name: 'durationFromISO' })
+export class DurationFromIsoPipe implements PipeTransform {
+  public transform(duration: string): string {
+    const d = moment.duration(duration);
+    let hrs = d.hours();
+    let min = d.minutes();
+    let s = d.seconds();
+    return (hrs ? (hrs < 10 ? '0' : '') + String(hrs) + ':' : '') +
+      (min < 10 ? '0' : '') + String(min) + ':' +
+      (s < 10 ? '0' : '') + String(s)
+  }
+}
+
+@Pipe({ name: 'fromNow' })
+export class FromNowPipe implements PipeTransform {
+  public transform(dateVal: any) {
+    return moment(dateVal).fromNow();
+  }
+}
+
+@Pipe({ name: 'viewCount' })
+export class ViewCountPipe implements PipeTransform {
+  public transform(views: number | undefined) {
+    return (views || 0 > 999) ? ((views || 0) / 1000).toFixed(1) + 'K' : String(views);
   }
 }

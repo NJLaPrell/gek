@@ -50,26 +50,16 @@ export class AppComponent implements OnInit {
       
     });
 
-    this.store.select(selectPageTitle).subscribe(t => this.pageTitle = t);
-
-    //this.socket.connect();
-    //this.socket.onMessageReceived((msg: any) => console.log(msg));
-    //setTimeout(() => this.socket.sendMessage({ foo: 'bar' }), 1000);
-
+    this.store.select(selectPageTitle).subscribe(t => this.pageTitle = t && t !== 'undefined' ? t :  'YouTube Playlists');
     this.store.select(selectRemoteMode).subscribe(m => this.mode = m);
-
     this.store.select(selectConnected).subscribe(c => {
       this.connected = c;
       this.connectionChanged();
     });
-
     this.store.select(selectPeerConnected).subscribe(c => {
       this.peerConnected = c;
       this.connectionChanged();
-    });
-
-    
-    
+    }); 
   };
 
   doAuth = () => {
@@ -96,10 +86,6 @@ export class AppComponent implements OnInit {
 
   toggleSidebar() {
     this.showSidebar = !this.showSidebar;
-  }
-
-  pageTitleChange(title: any): void {
-    this.pageTitle = title;
   }
 
   connectionChanged() {
