@@ -42,6 +42,8 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   moment = moment;                  // Moment for date display
   navState: any = {};               // Video navigation state.
   api: any;
+  like = false;
+  dislike = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -61,6 +63,8 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!this.videoId) {
           this.loading = true;
         } else if(this.api) {
+          this.like = false;
+          this.dislike = false;
           setTimeout(() => this.api.playVideo(), 200);
         }
       }
@@ -210,6 +214,7 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Like the current video.
   thumbsUp() {
+    this.like = !this.like;
     if (this.video?.videoId) {
       this.store.dispatch(rateVideo({ videoId: this.video?.videoId, rating: 'like' }))
     }
@@ -217,6 +222,7 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Dislike the current video
   thumbsDown() {
+    this.dislike = !this.dislike;
     if (this.video?.videoId) {
       this.store.dispatch(rateVideo({ videoId: this.video?.videoId, rating: 'dislike' }))
     }

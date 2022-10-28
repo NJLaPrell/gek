@@ -13,7 +13,7 @@ const RESOURCES = {
     },
     subscriptions: {
         path: path.join(process.cwd(), 'server/state/subscriptions.json'),
-        defaultExpire: 43200000,
+        defaultExpire: 3600000,
         protected: false
     },
     playlists: {

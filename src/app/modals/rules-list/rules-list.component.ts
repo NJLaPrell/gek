@@ -4,8 +4,7 @@ import { Store } from '@ngrx/store';
 import { Rule } from 'src/app/state/models/rules.model';
 import { updateRule, addRule, deleteRule } from 'src/app/state/actions/rules.actions';
 import { selectRules } from 'src/app/state/selectors/rules.selectors';
-import { selectSubscriptions } from 'src/app/state/selectors/subscriptions.selector';
-import { selectPlaylistTitles } from 'src/app/state/selectors/list.selectors';
+import { selectPlaylistTitles, selectSubscriptions } from 'src/app/state/selectors/list.selectors';
 import { faTrash, faEdit, faCircleCheck, faXmarkCircle, faSquarePlus } from '@fortawesome/free-solid-svg-icons'
 import { v4 as uuid } from 'uuid';
 import { ConfirmPromptComponent } from '../confirm-prompt/confirm-prompt.component';
@@ -38,7 +37,7 @@ export class RulesListComponent implements OnInit {
     this.store.select(selectRules).subscribe(r => this.rules = JSON.parse(JSON.stringify(r)));
     this.store.select(selectSubscriptions).subscribe(s => {
       s.forEach(sub => {
-        this.subscriptionsList[sub.title] = sub.id;
+        this.subscriptionsList[sub.title] = sub.channelId;
         this.subscriptions.push(sub.title);
       });
       this.subscriptions = this.subscriptions.sort((a: string, b: string) => a.localeCompare(b));

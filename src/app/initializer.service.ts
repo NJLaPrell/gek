@@ -3,9 +3,8 @@ import { Store } from '@ngrx/store';
 import { concat, Observable, of, skipWhile } from 'rxjs';
 import { AppState } from './state';
 import { getHistory } from './state/actions/history.actions';
-import { getLists } from './state/actions/list.actions';
+import { getLists, getSubscriptions } from './state/actions/list.actions';
 import { getRules } from './state/actions/rules.actions';
-import { getSubscriptions } from './state/actions/subscriptions.actions';
 
 
 @Injectable({

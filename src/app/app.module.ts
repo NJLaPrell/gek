@@ -12,7 +12,6 @@ import { EffectsModule } from '@ngrx/effects';
 import { VideoEffects } from './state/effects/video.effects';
 import { HistoryEffects } from './state/effects/history.effects';
 import { RulesEffects } from './state/effects/rules.effects';
-import { SubscriptionsEffects } from './state/effects/subscriptions.effects';
 import { NotificationEffects } from './state/effects/notification.effects';
 import { NavStateEffects } from './state/effects/navState.effects';
 import { RemoteEffects } from './state/effects/remote.effects';
@@ -82,7 +81,6 @@ export const initApp = (provider: InitializerService) => () => provider.init();
       VideoEffects,
       HistoryEffects,
       RulesEffects,
-      SubscriptionsEffects,
       NotificationEffects,
       NavStateEffects,
       RemoteEffects,

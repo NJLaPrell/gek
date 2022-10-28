@@ -6,6 +6,7 @@ import { Store } from '@ngrx/store';
 import { faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { selectPageTitle } from './state/selectors/navState.selectors';
 import { selectConnected, selectPeerConnected, selectRemoteMode } from './state/selectors/remote.selectors';
+import { selectLastRun } from './state/selectors/history.selectors';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,7 @@ export class AppComponent implements OnInit {
 
   pageTitle = '';
   showSidebar = true;
+  lastUpdated = 0;
 
   mode = '';
   connected = false;
@@ -45,7 +47,7 @@ export class AppComponent implements OnInit {
 
       if (code) {
       //  this.oauth2Client.getToken(code).then(resp => console.log(resp)).catch(e => console.error(e));
-        this.router.navigate(['']);
+        //this.router.navigate(['']);
       }
       
     });
@@ -60,6 +62,7 @@ export class AppComponent implements OnInit {
       this.peerConnected = c;
       this.connectionChanged();
     }); 
+    this.store.select(selectLastRun).subscribe(t => this.lastUpdated = t);
   };
 
   doAuth = () => {

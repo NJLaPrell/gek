@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { RulesResponse, Rule } from '../state/models/rules.model';
-import { SubscriptionsResponse } from "../state/models/subscriptions";
+import { Subscription } from "../state/models/list.model";
 import { Observable, shareReplay } from "rxjs";
 
 
@@ -19,7 +19,7 @@ export class ResourcesService {
     
     getRules = (): Observable<RulesResponse> => this.getResource('rules');
 
-    getSubscriptions = (): Observable<SubscriptionsResponse> => this.getResource('subscriptions');
+    getSubscriptions = (): Observable<Subscription[]> => this.getResource('subscriptions');
 
     getResource = (resource: string): Observable<any> => this.http.get<any>(`/api/getResource/${resource}`).pipe(shareReplay());
 

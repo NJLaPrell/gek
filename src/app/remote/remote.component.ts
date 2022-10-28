@@ -46,7 +46,6 @@ export class RemoteComponent implements OnInit {
   videoWidth: number | undefined;   // Width set on the player.
   videoHeight: number | undefined;  // Height set on the player.
   loading = false;                  // Loading indicator state (for the playlist).
-  videoTimer: any;                  // Time used for triggering the videoAlmostOver event.
   moment = moment;                  // Moment for date display
   navState: any = {};               // Video navigation state.
   playing = false;
@@ -218,6 +217,7 @@ export class RemoteComponent implements OnInit {
   }
 
   executeCommand(c: any) {
+    
     switch (c.command.directive) {
       case 'updateVideoState':
         this.videoState = c.command.params;
@@ -225,7 +225,11 @@ export class RemoteComponent implements OnInit {
         this.volume = c.command.params.volume;
         this.duration = c.command.params.duration;
         this.progress = c.command.params.currentTime;
-        //this.progress = (c.command.params.currentTime / c.command.params.duration) * 100;
+        break;
+
+      case 'almostOver':
+        console.log('almostOver', c);
+        this.toast.info(this.endOfVideoToast, { delay: 29000 });
         break;
     }
   }

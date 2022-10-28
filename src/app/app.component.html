@@ -10,8 +10,9 @@
   <div class="d-flex flex-row flex-grow-1 overflow-y-none">
 
     <div *ngIf="showSidebar && mode !== 'viewer'" id="side-bar" class="d-flex flex-column overflow-y-none">
-      <div id="side-bar-header" class="text-end me-2">
-        <fa-icon [icon]="faCircleChevronLeft" class="icon-button" style="font-size: 1.3em;" (click)="toggleSidebar()"></fa-icon>
+      <div id="side-bar-header" class="me-2">
+        <span class="last-updated text-muted float-start ms-2"><small>Last Updated:<br />{{ lastUpdated | fromNow }}</small></span>
+        <fa-icon [icon]="faCircleChevronLeft" class="icon-button float-end" style="font-size: 1.3em;" (click)="toggleSidebar()"></fa-icon>
       </div>
       <div id="side-bar-content" class="overflow-y-auto">
         <app-side-bar></app-side-bar>

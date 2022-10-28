@@ -6,16 +6,22 @@ import { Video } from "./video.model";
 export interface ListState {
     items: Playlist[];
     playlistLookup: { [key: string]: string };
+    subscriptions: Subscription[];
 }
 
 export const initialListState: ListState = {
     items: [],
-    playlistLookup: {}
+    playlistLookup: {},
+    subscriptions: []
 };
 
 export interface GetListResponse {
     items: Playlist[];
 }
+
+// ###################################
+// ## PLAYLIST MODEL
+// ###################################
 
 export interface Playlists {
     lastUpdated: number | false;
@@ -33,4 +39,21 @@ export interface Playlist {
     channelId?: string;       //XXXXXX
     publishedDate?: Date;     //XXXXXX
     id?: string;              //XXXXXX
+}
+
+// ###################################
+// ## SUBSCRIPTION MODEL
+// ###################################
+
+export interface Subscription {
+    channelId: string;
+    title: string;
+    description: string;
+    thumbnail: string;
+    newItemCount: number;
+}
+
+export interface GetSubscriptionsResponse {
+    lastUpdated: number;
+    items: Subscription[];
 }

@@ -3,7 +3,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { getHistory } from 'src/app/state/actions/history.actions';
 import { getRules } from 'src/app/state/actions/rules.actions';
-import { getSubscriptions } from 'src/app/state/actions/subscriptions.actions';
+import { getSubscriptions } from 'src/app/state/actions/list.actions';
 import { SortService } from '../../services/sort.service';
 
 @Component({

@@ -23,7 +23,13 @@ async function getSubscriptions() {
     console.log('Getting subscriptions...');
     subscriptionList = await loadResource('subscriptions', USE_SUBSCRIPTION_CACHE, SUBSCRIPTION_CACHE_EXPIRE);
     if (!subscriptionList) {
-        const subItems = await getSubscriptionPage();
+        const subItems = await getSubscriptionPage().then(items => items.map(i => ({
+            channelId: i.snippet.resourceId.channelId,
+            title: i.snippet.title,
+            description: i.snippet.description,
+            thumbnail: i.snippet.thumbnails.medium?.url || i.snippet.thumbnails.default?.url,
+            newItemCount: i.contentDetails.newItemCount
+        })));
         subscriptionList = { lastUpdated: Date.now(), items: subItems };
         await cacheResource('subscriptions', subscriptionList);
     }
@@ -97,11 +103,7 @@ async function loadRules() {
 
     // Get new videos for each item in the subscriptionList.
     await Promise.all(
-        subscriptionList.items.map(i => {
-            const title = i.snippet.title;
-            const id = i.snippet.resourceId.channelId;
-            return getChannelFeed(id, history.lastRun);
-        })
+        subscriptionList.items.map(i => getChannelFeed(i.channelId, history.lastRun))
     ).then((feeds) => {
         feeds.forEach(f => newVideos = newVideos.concat(f));
         cacheResource('videos', newVideos);
@@ -210,6 +212,7 @@ async function sortNewVideos() {
 async function cleanup() {
     console.log('Saving run history.');
     history.lastRun = Date.now();
+    history.runHistory = history.runHistory.slice(history.runHistory.length - 9);
     history.runHistory.push({
         runDate: Date.now(),
         sortedCount: counts.processed,

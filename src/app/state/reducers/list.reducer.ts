@@ -1,4 +1,4 @@
-import { Action, createReducer, on } from '@ngrx/store';
+import { createReducer, on } from '@ngrx/store';
 import * as ListActions from '../actions/list.actions';
 import { initialListState, Playlist } from '../models/list.model';
 
@@ -10,9 +10,11 @@ export const listReducer = createReducer(
       let playlistLookup:any = {};
       action.items.forEach((i: Playlist) => playlistLookup[i.playlistId || 1] = i.title);
       return {
+        ...state,
         items: [...action.items].sort((a, b) => a.title > b.title ? 1 : -1),
         playlistLookup 
       }
     }),
+    on(ListActions.getSubscriptionsSuccess, (state, action) => ({ ...state, subscriptions: action.response.items })),
     on(ListActions.getListsFail, state => ({ ...initialListState }))
   );

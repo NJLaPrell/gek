@@ -18,7 +18,6 @@ export const remoteReducer = createReducer(
         ...(action.clientType === 'viewer' ? { viewerConnected: true } : {} )
     })),
     on(RemoteActions.receivedCommand, (state, action) => {
-        console.log('cmd', action);
         state.receivedCommands.unshift(action);
         return {
             ...state

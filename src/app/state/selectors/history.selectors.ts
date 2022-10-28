@@ -21,3 +21,8 @@ export const selectUnsorted = createSelector(
     selectHistoryState,
     (state) => state.unsorted
 );
+
+export const selectLastRun = createSelector(
+    selectHistoryState,
+    (state) => state.lastRun
+);

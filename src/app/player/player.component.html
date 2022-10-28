@@ -117,11 +117,11 @@
 <ng-template #endOfVideoToast>
 	<p>This video is almost over...</p>
     <div class="clearfix">
-        <button type="button" class="btn btn-primary btn-sm float-start" (click)="thumbsUp()">
+        <button type="button" class="btn btn-sm float-start" [class.btn-primary]="!like" [class.btn-success]="like" (click)="thumbsUp()">
             <fa-icon [icon]="faThumbsUp"></fa-icon>
         </button>
 
-        <button type="button" class="btn btn-primary btn-sm float-start ms-2" (click)="thumbsDown()">
+        <button type="button" class="btn btn-sm float-start ms-2" [class.btn-primary]="!dislike" [class.btn-danger]="dislike" (click)="thumbsDown()">
             <fa-icon [icon]="faThumbsDown"></fa-icon>
         </button>
 

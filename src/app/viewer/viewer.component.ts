@@ -54,9 +54,11 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
       this.videoId = params['videoId'];
       if (this.videoId && this.api) {
         this.api.playVideo(this.videoId);
+        
       }
+      
     });
-
+    clearTimeout(this.videoTimer);
     this.store.select(selectLastCommand).pipe(skipWhile(c => c === null)).subscribe(c => this.executeCommand(c));
 
     // Youtube player API
@@ -73,6 +75,7 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.onResize);
     clearTimeout(this.playerStateTimer);
+    clearTimeout(this.videoTimer);
   }
 
   // Fit the video player width with the page.
@@ -95,20 +98,14 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
       this.onVideoEnded(e.target);
     } else {
       // Set a timer for when the video is 30 seconds from the end.
-      const duration = e.target.playerInfo.duration;
-      const endMark = duration - 30;
-      const currentMark = e.target.playerInfo.currentTime;
-      const secondsToEndMark = endMark - currentMark;
-      if (secondsToEndMark > 0) {
-        clearTimeout(this.videoTimer);
-        this.videoTimer = setTimeout(() => this.onAlmostOver(), secondsToEndMark * 1000);
-      }
+      this.trackAlmostOver(e.target.playerInfo.duration, e.target.playerInfo.currentTime);
     }
     this.sendPlayerState();
   }
 
   // Fires 30 seconds before the end of a video.
   onAlmostOver() {
+    console.log('ALMOST OVER');
     this.sendCommand({
       directive: 'almostOver'
     })
@@ -234,6 +231,15 @@ export class ViewerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sendPlayerState();
     clearTimeout(this.playerStateTimer);
     this.playerStateTimer = setTimeout(() => this.playerStateInterval(), STATE_INTERVAL);
+  }
+
+  trackAlmostOver(duration: number, currentTime: number) {
+    clearTimeout(this.videoTimer);
+    const endMark = duration - 30;
+    const secondsToEndMark = endMark - currentTime;
+    if (secondsToEndMark > 0) {
+      this.videoTimer = setTimeout(() => this.onAlmostOver(), secondsToEndMark * 1000);
+    }
   }
 
 }

@@ -161,7 +161,7 @@ async function getSubscriptionPage(subscriptionList = [], pageToken = '') {
     console.log('  Calling subscriptions API.');
     const response = await youtube.subscriptions.list({
         "part": [
-            "snippet"
+            "snippet,contentDetails"
         ],
         "mine": true,
         "maxResults": 50,
