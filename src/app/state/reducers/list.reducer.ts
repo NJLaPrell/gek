@@ -8,10 +8,11 @@ export const listReducer = createReducer(
     initialListState,
     on(ListActions.getListsSuccess, (state, action) => {
       let playlistLookup:any = {};
-      action.items.forEach((i: Playlist) => playlistLookup[i.playlistId || 1] = i.title);
+      const items = [...action.items].sort((a, b) => a.title.replace(/\W+/g,"") > b.title.replace(/\W+/g,"") ? 1 : -1);
+      items.forEach((i: Playlist) => playlistLookup[i.playlistId || 1] = i.title);
       return {
         ...state,
-        items: [...action.items].sort((a, b) => a.title > b.title ? 1 : -1),
+        items,
         playlistLookup 
       }
     }),

@@ -48,7 +48,6 @@ export class RulesListComponent implements OnInit {
         this.playlistsList[title] = plid;
         this.playlists.push(title);
       })
-      this.playlists = this.playlists.sort((a: string, b: string) => a.localeCompare(b));
     });
   }
 

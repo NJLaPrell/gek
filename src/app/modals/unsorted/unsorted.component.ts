@@ -44,7 +44,7 @@ export class UnsortedComponent implements OnInit {
       this.unsorted = this.unsorted.concat(e.map(f => ({...f.video, errorMessage: { errors: f.errors, failDate: f.failDate } })));
       this.sortList();
     });
-    this.store.select(selectPlaylistTitles).subscribe(pl => this.playlists = Object.keys(pl).map(plid => ({ id: plid, title: pl[plid]})).sort((a, b) => a.title.localeCompare(b.title)).map(pl => ({ title: pl.title, id: pl.id })))
+    this.store.select(selectPlaylistTitles).subscribe(pl => this.playlists = Object.keys(pl).map(plid => ({ id: plid, title: pl[plid]})).map(pl => ({ title: pl.title, id: pl.id })))
   }
 
   purge() {
