@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectConnected, selectPeerConnected, selectRemoteMode, selectRemoteState } from '../state/selectors/remote.selectors';
+import { selectConnected, selectPeerConnected, selectRemoteMode } from '../state/selectors/remote.selectors';
 
 @Component({
   selector: 'app-connecting',
@@ -21,7 +21,7 @@ export class ConnectingComponent implements OnInit {
 
     this.store.select(selectConnected).subscribe(c => this.connected = c);
 
-    this.store.select(selectPeerConnected).subscribe(c => this.peerConnected);
+    this.store.select(selectPeerConnected).subscribe(() => this.peerConnected);
   }
 
 }
