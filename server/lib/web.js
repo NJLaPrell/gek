@@ -56,11 +56,12 @@ async function getPlaylistItems(sortedList) {
 // TODO: Cleanup.
 async function getSortedList(nocache = false) {
     console.log('Getting full sorted list.');
+    let sortedList;
 
     if(nocache) {
         console.log('  Bypassing cache.');
     } else {
-        let sortedList = await loadResource('sortedList');
+        sortedList = await loadResource('sortedList');
         if (sortedList) {
             return sortedList;
         }

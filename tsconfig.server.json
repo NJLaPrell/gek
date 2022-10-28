@@ -1,0 +1,24 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+      "outDir": "./dist/server",
+      "types": [],
+      "noImplicitAny": true,
+      "target": "ES2016",
+      "module": "CommonJS",
+      "esModuleInterop": true,
+      "allowJs": true,
+      "allowSyntheticDefaultImports": true
+    },
+    "files": [
+      "server/test.ts",
+      "server/rest_server.ts"
+    ],
+    "include": [
+      "server/**/*.d.ts"
+    ]
+  }
+
+
+
