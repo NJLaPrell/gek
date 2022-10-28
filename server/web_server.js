@@ -6,7 +6,7 @@ const port = 3000
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const { spawn } = require('child_process');
-const { getSortedList } = require('./lib/web.js');
+const { getSortedList, removeVideoFromList } = require('./lib/web.js');
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.json({ extended: true }));
@@ -58,8 +58,9 @@ app.get('/api/getPlaylistFeed/:id', (req, res) => {
 });
 
 app.get('/api/getLists', (req, res) => {
-    console.log(`GET /api/getLists`);
-    const response = getSortedList().then(contents => res.json(contents));
+    const nocache = req.query.nocache === 'true';
+    console.log(`GET /api/getLists?nocache=${nocache}`);
+    const response = getSortedList(nocache).then(contents => res.json(contents));
 });
 
 app.put('/api/resources/updateRule', (req, res) => {
@@ -149,7 +150,9 @@ app.put('/api/video/:videoId/rate/:rating?', (req, res) => {
 app.put('/api/playlistItem/remove/:playlistItemId', (req,res) => {
     const playlistItemId = req.params.playlistItemId;
     console.log(`/api/playlistItem/remove/${playlistItemId}`);
-    removeVideo(playlistItemId).then(res.status(204).send());
+    removeVideo(playlistItemId).then();
+    removeVideoFromList(playlistItemId)
+    res.status(204).send()
 });
 
 app.listen(port, () => {

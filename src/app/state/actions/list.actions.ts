@@ -5,6 +5,10 @@ export const getLists = createAction(
     '[List] Get Lists'
 );
 
+export const getUncachedLists = createAction(
+    '[List] Get Uncached Lists',
+);
+
 export const getListsSuccess = createAction(
     '[List] Get Lists Success',
     props<{ items: Playlist[] }>()
@@ -27,4 +31,9 @@ export const getSubscriptionsSuccess = createAction(
 export const getSubscriptionsFail = createAction(
     '[List] Get Subscriptions Fail',
     props<{ error: string }>()
+);
+
+export const removePlaylistItem = createAction(
+    '[List] Remove Playlist Item',
+    props<{ playlistItemId: string }>()
 );

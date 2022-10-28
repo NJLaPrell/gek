@@ -5,6 +5,7 @@ import { catchError, map, mergeMap, of } from "rxjs";
 import { VideoService } from "src/app/services/video.service";
 import * as VideoActions from '../actions/video.actions';
 import * as HistoryActions from '../actions/history.actions';
+import * as ListActions from '../actions/list.actions';
 import { Video } from "../models/video.model";
 
 
@@ -50,7 +51,10 @@ export class VideoEffects {
     removeFromPlaylist$ = createEffect(() => this.actions$.pipe(
         ofType(VideoActions.removeFromPlaylist),
         mergeMap((action) => this.videoService.removeFromPlaylist(action.playlistItemId).pipe(
-            map(() => VideoActions.removeFromPlaylistSuccess({ message: 'Video removed.' })),
+            mergeMap(() => [
+                VideoActions.removeFromPlaylistSuccess({ message: 'Video removed.' }),
+                ListActions.removePlaylistItem({ playlistItemId: action.playlistItemId })
+            ]),
             catchError((error: HttpErrorResponse) => of(VideoActions.removeFromPlaylistFail({ error: error.message })))
         ))
     ));

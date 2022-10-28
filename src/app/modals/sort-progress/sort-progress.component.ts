@@ -3,7 +3,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { getHistory } from 'src/app/state/actions/history.actions';
 import { getRules } from 'src/app/state/actions/rules.actions';
-import { getSubscriptions } from 'src/app/state/actions/list.actions';
+import { getSubscriptions, getLists, getUncachedLists } from 'src/app/state/actions/list.actions';
 import { SortService } from '../../services/sort.service';
 
 @Component({
@@ -21,6 +21,7 @@ export class SortProgressComponent implements OnInit {
     //this.output$ = this.sortService.runSortService();
     this.sortService.runSortService().subscribe(r => r.text().then(v => {
       this.output = v;
+      this.store.dispatch(getUncachedLists())
       this.store.dispatch(getSubscriptions());
       this.store.dispatch(getRules());
       this.store.dispatch(getHistory());

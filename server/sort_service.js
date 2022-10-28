@@ -21,8 +21,8 @@ var counts = { processed: 0, errors: { previous: 0, new: 0 }, unsorted: 0 };
  */
 async function getSubscriptions() {
     console.log('Getting subscriptions...');
-    subscriptionList = await loadResource('subscriptions', USE_SUBSCRIPTION_CACHE, SUBSCRIPTION_CACHE_EXPIRE);
-    if (!subscriptionList) {
+    //subscriptionList = await loadResource('subscriptions', USE_SUBSCRIPTION_CACHE, SUBSCRIPTION_CACHE_EXPIRE);
+    //if (!subscriptionList) {
         const subItems = await getSubscriptionPage().then(items => items.map(i => ({
             channelId: i.snippet.resourceId.channelId,
             title: i.snippet.title,
@@ -32,7 +32,7 @@ async function getSubscriptions() {
         })));
         subscriptionList = { lastUpdated: Date.now(), items: subItems };
         await cacheResource('subscriptions', subscriptionList);
-    }
+    //}
     console.log('');
     return subscriptionList;
 };
@@ -190,10 +190,13 @@ async function sortNewVideos() {
                     //console.log('~~~~~~~~~~~~~~~')
 
                     const video = newVideos.find(v => v.id === req.snippet.resourceId.videoId);
-                    //console.log(video);
-                    // Remove the video from the errorQueue if it is already there.
-                    history.errorQueue = history.errorQueue.filter(e => e.videoId !== req.snippet.resourceId.videoId);
-                    history.errorQueue.push({ videoId: req.snippet.resourceId.videoId, playlistId: req.snippet.playlistId, errors: e.response.data.error.errors, video: video, failDate: Date.now() });
+                   
+                    // Do not re-add errored videos.
+                    if (!history.errorQueue.filter(e => e.videoId === req.snippet.resourceId.videoId)) {
+                        history.errorQueue.push({ videoId: req.snippet.resourceId.videoId, playlistId: req.snippet.playlistId, errors: e.response.data.error.errors, video: video, failDate: Date.now() });
+                    }
+                    
+                    
                 } catch(ee) {
                     console.log(e)
                 }

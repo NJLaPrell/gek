@@ -299,6 +299,7 @@ async function listPlaylistItems(id, fromTime = 0) {
     const response = await youtube.playlistItems.delete({
         "id": playlistItemId
     }).catch(e => console.log('Error calling remove playlist item API', e));
+    return response;
 }
 
 /**

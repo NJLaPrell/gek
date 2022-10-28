@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs').promises;
+//const { getSubscriptionPage } = require('./api-calls');
 
 // Map of resources and how to handle them.
 const RESOURCES = {
@@ -13,7 +14,7 @@ const RESOURCES = {
     },
     subscriptions: {
         path: path.join(process.cwd(), 'server/state/subscriptions.json'),
-        defaultExpire: 3600000,
+        //defaultExpire: 3600000,
         protected: false
     },
     playlists: {
@@ -79,6 +80,10 @@ const loadResource = async (resourceName, useCache = true, expireTime = false, l
             return data;
         } else {
             console.log(`  Cache for ${resourceName} is expired.`);
+
+            //if (resourceName === 'subscriptions') {
+            //    return await recacheSubscriptions();
+            //}
             return false;
         }
     } catch (err) {
@@ -87,6 +92,20 @@ const loadResource = async (resourceName, useCache = true, expireTime = false, l
         return false;
     }
 };
+/*
+const recacheSubscriptions = async() => {
+    const subItems = await getSubscriptionPage().then(items => items.map(i => ({
+        channelId: i.snippet.resourceId.channelId,
+        title: i.snippet.title,
+        description: i.snippet.description,
+        thumbnail: i.snippet.thumbnails.medium?.url || i.snippet.thumbnails.default?.url,
+        newItemCount: i.contentDetails.newItemCount
+    })));
+    const subscriptionList = { lastUpdated: Date.now(), items: subItems };
+    await cacheResource('subscriptions', subscriptionList);
+    return subscriptionList;
+};
+*/
 
 /**
  * Caches a resource file.

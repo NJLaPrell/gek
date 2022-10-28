@@ -16,5 +16,14 @@ export const listReducer = createReducer(
       }
     }),
     on(ListActions.getSubscriptionsSuccess, (state, action) => ({ ...state, subscriptions: action.response.items })),
-    on(ListActions.getListsFail, state => ({ ...initialListState }))
+    on(ListActions.getListsFail, state => ({ ...initialListState })),
+    on(ListActions.removePlaylistItem, (state, action) =>({ 
+      ...state, 
+      items: state.items.map(pl => ({
+        ...pl,
+        itemCount: pl.videos?.filter(v => v.playlistItemId !== action.playlistItemId).length,
+        newItemCount: pl.videos?.filter(v => new Date(v.publishedAt || '').getTime() > (Date.now() - 86400000) && v.playlistItemId !== action.playlistItemId).length,
+        videos: pl.videos?.filter(v => v.playlistItemId !== action.playlistItemId)
+      }))
+    }))
   );

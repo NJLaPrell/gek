@@ -54,12 +54,18 @@ async function getPlaylistItems(sortedList) {
 }
 
 // TODO: Cleanup.
-async function getSortedList() {
+async function getSortedList(nocache = false) {
     console.log('Getting full sorted list.');
-    let sortedList = await loadResource('sortedList');
-    if (sortedList) {
-        return sortedList;
+
+    if(nocache) {
+        console.log('  Bypassing cache.');
+    } else {
+        let sortedList = await loadResource('sortedList');
+        if (sortedList) {
+            return sortedList;
+        }
     }
+    
 
     // Get and format a list of the playlists.
     sortedList = await getPlaylistPage().then(formatPlaylists)
@@ -107,4 +113,14 @@ async function getSortedList() {
     return { items: sortedList };    
 }
 
-module.exports = { getSortedList }
+async function removeVideoFromList(playlistItemId) {
+    let sortedList = await loadResource('sortedList');
+    sortedList.items = sortedList.items.map(pl => ({
+        ...pl,
+        itemCount: pl.videos.filter(v => v.playlistItemId === playlistItemId).length ? pl.itemCount - 1 : pl.itemCount,
+        videos: pl.videos.filter(v => v.playlistItemId !== playlistItemId)
+    }));
+    await cacheResource('sortedList', sortedList)
+}
+
+module.exports = { getSortedList, removeVideoFromList }

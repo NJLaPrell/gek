@@ -9,6 +9,10 @@ import { selectHistoryState } from '../state/selectors/history.selectors';
 import { SortProgressComponent } from '../modals/sort-progress/sort-progress.component';
 import { selectRemoteMode } from '../state/selectors/remote.selectors';
 import { disconnect, initializeSocketConnection } from '../state/actions/remote.actions';
+import { getUncachedLists } from '../state/actions/list.actions';
+import { getRules } from '../state/actions/rules.actions';
+import { getHistory } from '../state/actions/history.actions';
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-top-bar',
@@ -34,7 +38,8 @@ export class TopBarComponent implements OnInit {
 
   constructor(
     private modalService: NgbModal,
-    private store: Store
+    private store: Store,
+    private toast: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -63,6 +68,13 @@ export class TopBarComponent implements OnInit {
 
   sortVideos() {
     const modalRef = this.modalService.open(SortProgressComponent, { size: 'xl', scrollable: true });
+  }
+
+  refreshLists(): void {
+    this.store.dispatch(getUncachedLists());
+    this.store.dispatch(getRules());
+    this.store.dispatch(getHistory());
+    this.toast.info('Refreshing list data...');
   }
 
   handleModeToggle(e:any){

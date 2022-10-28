@@ -118,15 +118,17 @@ export class RemoteComponent implements OnInit {
           setTimeout(() => this.loading = false, 3000);
         }
 
-        // Set the navigation state in the store.
-        this.store.dispatch(setNavState({ 
-          props: { 
-            playlistId: this.playlistId,
-            videoId: this.videoId,
-            videoList: this.videoList,
-            titleLookup: r.titleLookup
-          }
-        }));
+        // Set the navigation state in the store. (But not when triggered by a video being removed)
+        if (this.videoList.find(v => v.videoId === this.videoId)) {
+          this.store.dispatch(setNavState({ 
+            props: { 
+              playlistId: this.playlistId,
+              videoId: this.videoId,
+              videoList: this.videoList,
+              titleLookup: r.titleLookup
+            }
+          }));
+        }
       });
 
 

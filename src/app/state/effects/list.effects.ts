@@ -19,6 +19,14 @@ export class ListEffects {
         ))
     ));
 
+    getNocache$ = createEffect(() => this.actions$.pipe(
+        ofType(ListActions.getUncachedLists),
+        mergeMap(() => this.listService.getLists(true).pipe(
+            map((response: any) => ListActions.getListsSuccess({ items: response.items })),
+            catchError((error: HttpErrorResponse) => of(ListActions.getListsFail({ error: error.message })))
+        ))
+    ));
+
     getSubscriptions$ = createEffect(() => this.actions$.pipe(
         ofType(ListActions.getSubscriptions),
         mergeMap(() => this.resourcesService.getResource('subscriptions').pipe(

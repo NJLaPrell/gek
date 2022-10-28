@@ -12,7 +12,7 @@ export class ListService {
         private http: HttpClient
     ) { }
 
-    getLists = (): Observable<Playlist[]> =>this.http.get<Playlist[]>(`/api/getLists`).pipe(shareReplay());
+    getLists = (nocache = false): Observable<Playlist[]> =>this.http.get<Playlist[]>(`/api/getLists?nocache=${nocache}`).pipe(shareReplay());
 
 
 }
