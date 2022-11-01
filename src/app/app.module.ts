@@ -27,7 +27,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PlaylistsComponent } from './side-bar/playlists/playlists.component';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 import { ErrorBufferComponent } from './modals/error-buffer/error-buffer.component';
-import { SafeHtmlPipe, DurationFromIsoPipe, FromNowPipe, ViewCountPipe } from './pipes';
+import { SafeHtmlPipe, DurationFromIsoPipe, FromNowPipe, ViewCountPipe, ThumbCountPipe, DurationFromSeconds } from './pipes';
 import { UnsortedComponent } from './modals/unsorted/unsorted.component';
 import { RulesListComponent } from './modals/rules-list/rules-list.component';
 import { ConfirmPromptComponent } from './modals/confirm-prompt/confirm-prompt.component';
@@ -37,6 +37,7 @@ import { ConnectingComponent } from './connecting/connecting.component';
 import { ViewerComponent } from './viewer/viewer.component';
 import { RemoteComponent } from './remote/remote.component';
 import { VideoListComponent } from './shared/video-list/video-list.component';
+import { PlayerControlsComponent } from './player-controls/player-controls.component';
 
 export const initApp = (provider: InitializerService) => () => provider.init();
 
@@ -52,6 +53,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     DurationFromIsoPipe,
     FromNowPipe,
     ViewCountPipe,
+    ThumbCountPipe,
+    DurationFromSeconds,
     UnsortedComponent,
     RulesListComponent,
     ConfirmPromptComponent,
@@ -60,7 +63,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     ConnectingComponent,
     ViewerComponent,
     RemoteComponent,
-    VideoListComponent
+    VideoListComponent,
+    PlayerControlsComponent
   ],
   imports: [
     BrowserModule,

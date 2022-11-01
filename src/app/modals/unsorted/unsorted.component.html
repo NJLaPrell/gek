@@ -29,9 +29,9 @@
                         <div class="unsorted-details"><fa-icon [icon]="faInfoCircle" [ngbTooltip]="u?.description"></fa-icon> Published {{ moment(u?.published).fromNow() }}</div>
                     </td>
                     <td class="text-end unsorted-button-panel">
-                        <div ngbDropdown class="d-inline-block">
+                        <div ngbDropdown class="d-inline-block" container="body">
                             <button type="button" class="btn btn-dark btn-sm" [id]="'assign' + u?.id" ngbDropdownToggle>Move to Playlist...</button>
-                            <div ngbDropdownMenu style="max-height: 200px; overflow:auto">
+                            <div ngbDropdownMenu style="max-height: 60vh; overflow:auto">
                                 <ng-container *ngFor="let pl of playlists">
                                     <button (click)="moveToPlaylist(pl.id, u?.id || '')" ngbDropdownItem>{{ pl.title }}</button>
                                 </ng-container>

@@ -1,18 +1,17 @@
-import { Component, OnInit, AfterViewInit, ChangeDetectorRef, ElementRef, OnDestroy, ViewChild, Output, EventEmitter, TemplateRef } from '@angular/core';
+/* eslint-disable dot-notation */
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { combineLatest, map, skipWhile } from 'rxjs';
 import { Video } from 'src/app/state/models/video.model';
-import { rateVideo, removeFromPlaylist } from '../state/actions/video.actions';
-import { faArrowUpRightFromSquare, faEye, faThumbsUp, faBackward, faForward, faTrashAlt, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
-import * as moment from 'moment';
 import { setNavState } from '../state/actions/navState.actions';
 import { selectNavState } from '../state/selectors/navState.selectors';
-import { ToastService } from '../services/toast.service';
-import { ConfirmPromptComponent } from '../modals/confirm-prompt/confirm-prompt.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { selectLists, selectPlaylistTitles } from '../state/selectors/list.selectors';
 import { Playlist } from '../state/models/list.model';
+import { PlayerControlsComponent } from '../player-controls/player-controls.component';
+
+const DEBUG = false;
 
 @Component({
   selector: 'app-player',
@@ -20,37 +19,31 @@ import { Playlist } from '../state/models/list.model';
   styleUrls: ['./player.component.scss']
 })
 export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
-  faArrowUpRightFromSquare = faArrowUpRightFromSquare;
-  faThumbsUp = faThumbsUp;
-  faEye = faEye;
-  faBackward = faBackward;
-  faForward = faForward;
-  faTrashAlt = faTrashAlt;
-  faThumbsDown = faThumbsDown;
 
   @ViewChild('player') player: ElementRef<HTMLDivElement> | false = false;        // Youtube player element
-  @ViewChild('endOfVideoToast') endOfVideoToast: TemplateRef<any> | string = '';  // Template for the end of video toast.
+  @ViewChild(PlayerControlsComponent) private playerControls!: PlayerControlsComponent;    // Player controls
 
-  playlistId: string = '';          // From the route params.
-  videoId: string = '';             // From the route params.
+  playlistId = '';                  // From the route params.
+  videoId = '';                     // From the route params.
   videoList: Video[] = [];          // List of videos in the playlist.
   video: Video | undefined;         // Current video, if routed.
   videoWidth: number | undefined;   // Width set on the player.
   videoHeight: number | undefined;  // Height set on the player.
   loading = false;                  // Loading indicator state (for the playlist).
   videoTimer: any;                  // Time used for triggering the videoAlmostOver event.
-  moment = moment;                  // Moment for date display
   navState: any = {};               // Video navigation state.
+  pageTitle = 'YouTube Playlists';
   api: any;
   like = false;
   dislike = false;
+  muted = false;
+  playing = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private store: Store,
     private router: Router,
     private _changeDetectorRef: ChangeDetectorRef,
-    private toast: ToastService,
     private modalService: NgbModal
   ) { }
 
@@ -75,11 +68,10 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Wait until we have the video list for the playlist, the playlist title lookup, and the route params to get them.
     combineLatest([
-          this.store.select(selectLists),
-          this.store.select(selectPlaylistTitles),
-          this.activatedRoute.params
-        ]
-    )
+      this.store.select(selectLists),
+      this.store.select(selectPlaylistTitles),
+      this.activatedRoute.params
+    ])
       .pipe(
         skipWhile((r) => r[0].length === 0 || r[2]?.['length'] === 0),
         map((r: any) => ({
@@ -89,12 +81,16 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         }))
       )
       .subscribe(r => {
+        
+        
         if (this.videoList.length > 0) {
           //return;
         }
         this.videoList = [...r.videoList];
+        this.pageTitle = r.titleLookup[this.playlistId] || 'YouTube Playlists';
         if (this.videoId) {
           this.video = this.videoList.find(v => v.videoId == this.videoId);
+          this.pageTitle += ' > ' + this.video?.title;
         } 
         if(this.videoList.length) {
           this.loading = false;
@@ -138,39 +134,23 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.videoWidth = Math.min(this.player.nativeElement.clientWidth, 1200);
     this.videoHeight = this.videoWidth * 0.6;
     this._changeDetectorRef.detectChanges();
-  }
-
-  // #####################
-  // FORMATERS
-  // #####################
-  // TODO: Use pipes.
-  
-  // Format view count
-  getViewCount(views: number | undefined): string {
-    return (views || 0 > 999) ? ((views || 0) / 1000).toFixed(1) + 'K' : String(views);
-  }
-
-  // Format thumb count with commas. 
-  getThumbCount(count: number | undefined): string | void {
-    if (count) {
-      return Number(count).toLocaleString();
-    }
-  }
+  };
 
   // #####################
   // PLAYER EVENTS
   // #####################
 
   // Fires on player state changes
-  stateChanged(e: any) {
+  stateChanged(e: YT.OnStateChangeEvent) {
+    this.debug('stateChanged', e);
     if (e.data === 0) {
       // The video has ended.
-      this.onVideoEnded(e.target);
+      this.onVideoEnded(e);
     } else {
       // Set a timer for when the video is 30 seconds from the end.
-      const duration = e.target.playerInfo.duration;
+      const duration = e.target.getDuration();
       const endMark = duration - 30;
-      const currentMark = e.target.playerInfo.currentTime;
+      const currentMark = e.target.getCurrentTime();
       const secondsToEndMark = endMark - currentMark;
       if (secondsToEndMark > 0) {
         clearTimeout(this.videoTimer);
@@ -181,71 +161,42 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Fires 30 seconds before the end of a video.
   onAlmostOver() {
-    this.toast.info(this.endOfVideoToast)
+    this.debug('onAlmostOver()');
+    this.playerControls.onAlmostOver();
   }
 
   // Fires when a video has finished.
-  onVideoEnded(player: any) {
-    console.debug('Video Ended');
+  onVideoEnded(e: YT.OnStateChangeEvent) {
+    this.debug('onVideoEnded', e);
     if (this.navState.nextVideo) {
       this.router.navigate(['/', 'player', this.playlistId, this.navState.nextVideo.videoId]);
-      setTimeout(() => player.playVideo(), 2000);
     }
   }
 
   // Fires when the player API finishes loading.
-  googleReady(e: any) {
+  googleReady(e: YT.PlayerEvent) {
+    this.debug('googleReady', e);
     this.api = e.target;
     e.target.playVideo();
   }
 
   // Fires with the api loads a new module.
-  onApiChange(e: any) {
-    console.debug('apiChange');
+  onApiChange(e: YT.PlayerEvent) {
+    this.debug('onApiChange', e);
   }
-
-  // #####################
-  // USER ACTIONS
-  // #####################
 
   // Navigate to the video with the given videoId.
   goToVideo(videoId: string | undefined) {
+    this.debug(`User:goToVideo(${videoId})`);
     if (videoId) {
       this.router.navigate(['/', 'player', this.playlistId, videoId]);
     }
   }
 
-  // Like the current video.
-  thumbsUp() {
-    this.like = !this.like;
-    if (this.video?.videoId) {
-      this.store.dispatch(rateVideo({ videoId: this.video?.videoId, rating: 'like' }))
+  private debug(...args: any) {
+    if(DEBUG) {
+      console.debug(...args);
     }
-  }
-
-  // Dislike the current video
-  thumbsDown() {
-    this.dislike = !this.dislike;
-    if (this.video?.videoId) {
-      this.store.dispatch(rateVideo({ videoId: this.video?.videoId, rating: 'dislike' }))
-    }
-  }
-
-  // Remove the current video from the playlist.
-  remove(confirm = true) {
-    const doIt = () => this.video?.playlistItemId ? this.store.dispatch(removeFromPlaylist({ playlistItemId: this.video?.playlistItemId })) : null;
-    if (confirm) {
-      const modalRef = this.modalService.open(ConfirmPromptComponent);
-      modalRef.componentInstance.prompt = 'Are you sure you wish to remove this video from the playlist?';
-      modalRef.closed.subscribe(c => c === 'Continue click' ? doIt() : null);
-    } else {
-      doIt();
-    }
-  }
-
-  // Open the video in a new window
-  openInNewWindow() {
-    window.open('https://www.youtube.com/watch?v=' + this.video?.videoId);
   }
 
 }

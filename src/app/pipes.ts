@@ -1,4 +1,4 @@
-import { Inject, Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform } from '@angular/core';
 import * as sanitize from 'sanitize-html';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as moment from 'moment';
@@ -42,12 +42,30 @@ export class SafeHtmlPipe implements PipeTransform {
 export class DurationFromIsoPipe implements PipeTransform {
   public transform(duration: string): string {
     const d = moment.duration(duration);
-    let hrs = d.hours();
-    let min = d.minutes();
-    let s = d.seconds();
+    const hrs = d.hours();
+    const min = d.minutes();
+    const s = d.seconds();
     return (hrs ? (hrs < 10 ? '0' : '') + String(hrs) + ':' : '') +
       (min < 10 ? '0' : '') + String(min) + ':' +
-      (s < 10 ? '0' : '') + String(s)
+      (s < 10 ? '0' : '') + String(s);
+  }
+}
+
+@Pipe({ name: 'durationFromSeconds' })
+export class DurationFromSeconds implements PipeTransform {
+  public transform(t: number): string {
+    const secNum = parseInt(String(t), 10); 
+    const hNum   = Math.floor(secNum / 3600);
+    const mNum = Math.floor((secNum - (hNum * 3600)) / 60);
+    const sNum = secNum - (hNum * 3600) - (mNum * 60);
+
+    const hString = hNum 
+      ? (hNum < 10 ? '0' : '') + String(hNum) + ':'
+      : '';
+    const mString = (mNum < 10 ? '0' : '') + String(mNum);
+    const sString = (sNum < 10 ? '0' : '') + String(sNum);
+
+    return `${hString}${mString}:${sString}`;
   }
 }
 
@@ -62,5 +80,12 @@ export class FromNowPipe implements PipeTransform {
 export class ViewCountPipe implements PipeTransform {
   public transform(views: number | undefined) {
     return (views || 0 > 999) ? ((views || 0) / 1000).toFixed(1) + 'K' : String(views);
+  }
+}
+
+@Pipe({ name: 'thumbCount' })
+export class ThumbCountPipe implements PipeTransform {
+  public transform(count: number | undefined) {
+    return count ? Number(count).toLocaleString() : '';
   }
 }

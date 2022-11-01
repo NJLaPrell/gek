@@ -31,6 +31,7 @@
         ]
       }
     ],
+    "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/consistent-type-assertions": [
       "warn",
       {
@@ -159,7 +160,7 @@
       }
     ],
     "curly": "off",
-    "dot-notation": "error",
+    "dot-notation": "off",
     "id-denylist": [
       "error",
       "any",
@@ -204,6 +205,9 @@
       "warn",
       "always"
     ],
-    "@angular-eslint/no-output-native": "off"
+    "@angular-eslint/no-output-native": "off",
+    "angular/document-service": "off",
+    "angular/window-service": "off",
+    "angular/timeout-service": "off"
   }
 }

@@ -1,5 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { Auth } from 'googleapis';
+import { Component, OnInit } from '@angular/core';
 import { OAuth2Client } from 'google-auth-library';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -7,6 +6,7 @@ import { faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { selectPageTitle } from './state/selectors/navState.selectors';
 import { selectConnected, selectPeerConnected, selectRemoteMode } from './state/selectors/remote.selectors';
 import { selectLastRun } from './state/selectors/history.selectors';
+import { skipWhile } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -52,7 +52,7 @@ export class AppComponent implements OnInit {
       
     });
 
-    this.store.select(selectPageTitle).subscribe(t => this.pageTitle = t && t !== 'undefined' ? t :  'YouTube Playlists');
+    this.store.select(selectPageTitle).pipe(skipWhile(t => !t || t === 'undefined')).subscribe(t => this.pageTitle = t);
     this.store.select(selectRemoteMode).subscribe(m => this.mode = m);
     this.store.select(selectConnected).subscribe(c => {
       this.connected = c;
@@ -63,25 +63,25 @@ export class AppComponent implements OnInit {
       this.connectionChanged();
     }); 
     this.store.select(selectLastRun).subscribe(t => this.lastUpdated = t);
-  };
+  }
 
   doAuth = () => {
     window.location.href = this.oauth2Client.generateAuthUrl({
       // 'offline' also gets refresh_token  
-        access_type: 'offline',
+      access_type: 'offline',
       // put any scopes you need there, 
-        scope: [
-          'https://www.googleapis.com/auth/youtube.force-ssl',
-          'https://www.googleapis.com/auth/youtube.readonly',
-          'https://www.googleapis.com/auth/youtube'
-          // in the first example we want to read calendar events
-          //'https://www.googleapis.com/auth/calendar.events.readonly',
-          //'https://www.googleapis.com/auth/calendar.readonly',
-          // in the second example we read analytics data
-          //'https://www.googleapis.com/auth/analytics.readonly',
-        ],
-      });
-  }
+      scope: [
+        'https://www.googleapis.com/auth/youtube.force-ssl',
+        'https://www.googleapis.com/auth/youtube.readonly',
+        'https://www.googleapis.com/auth/youtube'
+        // in the first example we want to read calendar events
+        //'https://www.googleapis.com/auth/calendar.events.readonly',
+        //'https://www.googleapis.com/auth/calendar.readonly',
+        // in the second example we read analytics data
+        //'https://www.googleapis.com/auth/analytics.readonly',
+      ],
+    });
+  };
 
   logOauth() {
     console.log(this.oauth2Client);

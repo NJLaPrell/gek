@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { faArrowUpRightFromSquare, faEye } from '@fortawesome/free-solid-svg-icons';
 import { Video } from 'src/app/state/models/video.model';
@@ -8,21 +8,18 @@ import { Video } from 'src/app/state/models/video.model';
   templateUrl: './video-list.component.html',
   styleUrls: ['./video-list.component.scss']
 })
-export class VideoListComponent implements OnInit {
+export class VideoListComponent {
   // Fontawesome
   faArrowUpRightFromSquare = faArrowUpRightFromSquare;
   faEye = faEye;
 
-  @Input() playlistId: string = '';
+  @Input() playlistId = '';
   @Input() videoList: Video[] = [];
-  @Input() mode: string = '';
+  @Input() mode = '';
 
   constructor(
     private router: Router,
   ) { }
-
-  ngOnInit(): void {
-  }
 
   videoClicked(videoId: string) {
     this.router.navigate(['/', this.mode === 'remote' ? 'remote' : 'player', this.playlistId, videoId]);
