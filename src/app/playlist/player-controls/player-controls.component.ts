@@ -7,11 +7,11 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
-import { ConfirmPromptComponent } from '../modals/confirm-prompt/confirm-prompt.component';
-import { ToastService } from '../services/toast.service';
-import { rateVideo, removeFromPlaylist } from '../state/actions/video.actions';
-import { Video } from '../state/models/video.model';
-import { sendCommand } from '../state/actions/remote.actions';
+import { ConfirmPromptComponent } from '../../modals/confirm-prompt/confirm-prompt.component';
+import { ToastService } from '../../services/toast.service';
+import { rateVideo, removeFromPlaylist } from '../../state/actions/video.actions';
+import { Video } from '../../state/models/video.model';
+import { sendCommand } from '../../state/actions/remote.actions';
 import { v4 as uuid } from 'uuid';
 
 @Component({
@@ -158,11 +158,11 @@ export class PlayerControlsComponent {
   }
 
   goToVideo(videoId: string) {
-    this.router.navigate(['/', this.showRemote ? 'remote' : 'player', this.playlistId, videoId]);
+    this.router.navigate(['/', 'playlist', this.playlistId, 'video', videoId]);
   }
 
   toggleMute() {
-    this.sendCommand({ directive: this.muted ? 'unmute' : 'mute' });
+    this.sendCommand({ directive: this.muted ? 'mute' : 'unmute' });
   }
 
   pausePlay() {

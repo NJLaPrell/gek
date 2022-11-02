@@ -22,7 +22,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { SideBarComponent } from './side-bar/side-bar.component';
-import { PlayerComponent } from './player/player.component';
+import { PlayerComponent } from './playlist/player/player.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PlaylistsComponent } from './side-bar/playlists/playlists.component';
 import { YouTubePlayerModule } from '@angular/youtube-player';
@@ -34,10 +34,12 @@ import { ConfirmPromptComponent } from './modals/confirm-prompt/confirm-prompt.c
 import { ToastContainerComponent } from './toast-container/toast-container.component';
 import { SortProgressComponent } from './modals/sort-progress/sort-progress.component';
 import { ConnectingComponent } from './connecting/connecting.component';
-import { ViewerComponent } from './viewer/viewer.component';
-import { RemoteComponent } from './remote/remote.component';
-import { VideoListComponent } from './shared/video-list/video-list.component';
-import { PlayerControlsComponent } from './player-controls/player-controls.component';
+import { ViewerComponent } from './playlist/viewer/viewer.component';
+import { RemoteComponent } from './playlist/remote/remote.component';
+import { VideoListComponent } from './playlist/video-list/video-list.component';
+import { PlayerControlsComponent } from './playlist/player-controls/player-controls.component';
+import { PlaylistComponent } from './playlist/playlist.component';
+import { VideoEmbedComponent } from './playlist/video-embed/video-embed.component';
 
 export const initApp = (provider: InitializerService) => () => provider.init();
 
@@ -64,7 +66,9 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     ViewerComponent,
     RemoteComponent,
     VideoListComponent,
-    PlayerControlsComponent
+    PlayerControlsComponent,
+    PlaylistComponent,
+    VideoEmbedComponent
   ],
   imports: [
     BrowserModule,

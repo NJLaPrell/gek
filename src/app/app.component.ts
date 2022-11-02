@@ -19,6 +19,7 @@ export class AppComponent implements OnInit {
   pageTitle = '';
   showSidebar = true;
   lastUpdated = 0;
+  routed = false;
 
   mode = '';
   connected = false;
@@ -93,11 +94,13 @@ export class AppComponent implements OnInit {
 
   connectionChanged() {
     if (this.connected && this.peerConnected) {
-      this.router.navigate(['/', this.mode]);
+      if (this.mode === 'viewer') {
+        this.router.navigate(['/', 'viewer']);
+      } else {
+        this.router.navigate(['']);
+      }
     } else if (this.connected || this.peerConnected) {
       this.router.navigate(['/', 'connecting']);
-    } else {
-      this.router.navigate(['/', 'player']);
     }
   }
 }

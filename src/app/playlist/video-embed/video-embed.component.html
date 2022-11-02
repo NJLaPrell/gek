@@ -1,0 +1,12 @@
+<div #player>
+    <youtube-player
+        [videoId]="videoId" 
+        [suggestedQuality]="quality"
+        (stateChange)="onStateChange($event)"
+        (ready)="onReady($event)"
+        (apiChange)="onApiChange($event)"
+        [width]="width"
+        [height]="height"
+        [startSeconds]="start"
+    ></youtube-player>
+</div>

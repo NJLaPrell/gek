@@ -15,14 +15,13 @@ export class VideoListComponent {
 
   @Input() playlistId = '';
   @Input() videoList: Video[] = [];
-  @Input() mode = '';
 
   constructor(
     private router: Router,
   ) { }
 
   videoClicked(videoId: string) {
-    this.router.navigate(['/', this.mode === 'remote' ? 'remote' : 'player', this.playlistId, videoId]);
+    this.router.navigate(['/', 'playlist', this.playlistId, 'video', videoId]);
   }
 
 }

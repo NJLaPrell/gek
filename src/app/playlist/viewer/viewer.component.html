@@ -1,0 +1,7 @@
+<app-video-embed *ngIf="videoId"
+    [videoId]="videoId"
+    (almostOver)="onAlmostOver($event)"
+    (videoEnded)="onVideoEnded($event)"
+    (ready)="onReady($event)"
+    (apiChange)="onApiChange($event)"
+></app-video-embed>

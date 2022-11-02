@@ -1,0 +1,34 @@
+<h2 id="page-title">{{ pageTitle }}</h2>
+
+<!-- ############################################# -->
+<!-- Loading Indicator                             -->
+<!-- ############################################# -->
+<div *ngIf="loading && playlistId" class="text-center">
+    <div class="spinner-border" role="status"></div>
+    <div>Loading...</div>
+</div>
+
+<div *ngIf="playlistId && !loading && !videoList.length && !videoId" class="no-videos">No videos to display.</div>
+
+<!-- ############################################# -->
+<!-- VIDEO LIST.                                   -->
+<!-- ############################################# -->
+<app-video-list *ngIf="!videoId && playlistId" [playlistId]="playlistId" [videoList]="videoList"></app-video-list>
+
+<app-player *ngIf="videoId && mode === 'player'"
+    [playlistId]="playlistId"
+    [video]="video"
+    [navState]="navState"
+></app-player>
+
+<app-remote *ngIf="videoId && mode === 'remote'"
+    [playlistId]="playlistId"
+    [video]="video"
+    [navState]="navState"
+></app-remote>
+
+<app-viewer *ngIf="videoId && mode === 'viewer'"
+    [playlistId]="playlistId"
+    [video]="video"
+    [navState]="navState"
+></app-viewer>

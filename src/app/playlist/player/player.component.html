@@ -1,0 +1,17 @@
+<app-video-embed
+    [videoId]="video.videoId || ''"
+    (almostOver)="onAlmostOver($event)"
+    (videoEnded)="onVideoEnded($event)"
+    (ready)="onReady($event)"
+    (apiChange)="onApiChange($event)"
+></app-video-embed>
+
+<app-player-controls #playerControls
+    [video]="video"
+    [playlistId]="playlistId"
+    [navState]="navState"
+    [(like)]="like"
+    [(dislike)]="dislike"
+    [(muted)]="muted"
+    [(playing)]="playing"
+></app-player-controls>

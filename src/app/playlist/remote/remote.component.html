@@ -1,0 +1,14 @@
+<app-player-controls #playerControls
+    [showRemote]="true"
+    [video]="video"
+    [playlistId]="playlistId"
+    [navState]="navState"
+    [(like)]="like"
+    [(dislike)]="dislike"
+    [(muted)]="muted"
+    [(playing)]="playing"
+    [(volume)]="volume"
+    [progress]="progress"
+    [(duration)]="duration"
+    (progressChange)="onProgressChange($event)"
+></app-player-controls>

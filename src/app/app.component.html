@@ -22,10 +22,18 @@
     <div id="body" class="flex-grow-1 overflow-y-none">
       <div id="body-header"></div>
       <div id="body-content" class="overflow-y-auto">
-        <router-outlet></router-outlet>
+
+        <router-outlet
+          (activate)="routed=true"
+          (deactivate)="routed=false"
+        ></router-outlet>
+
+        <div *ngIf="!routed" class="text-center">
+          <img src="/assets/585335.jpg" class="align-middle" />
+      </div>
+
       </div>
     </div>
-
   </div>
 </div>
 

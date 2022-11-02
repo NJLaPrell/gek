@@ -1,10 +1,9 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { faList } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { Playlist } from 'src/app/state/models/list.model';
 import { Router } from '@angular/router';
 import { selectNavState } from 'src/app/state/selectors/navState.selectors';
-import { selectRemoteMode } from 'src/app/state/selectors/remote.selectors';
 import { selectLists } from 'src/app/state/selectors/list.selectors';
 
 
@@ -17,25 +16,20 @@ export class PlaylistsComponent implements OnInit {
   faList = faList;
 
   playlists: Playlist[] = [];
-  selectedPlaylist: string = '';
-  playlistCounts: { [key: string]: { new: number; total: number } } = {};
-  videoRoute = 'player';
+  selectedPlaylist = '';
 
   constructor(
     private store: Store,
     private router: Router
-  ) {
-  
-  }
+  ) { }
 
   ngOnInit(): void {
     this.store.select(selectLists).pipe().subscribe(l => this.playlists = [...l]);
     this.store.select(selectNavState).subscribe(n => this.selectedPlaylist = n.playlistId);
-    this.store.select(selectRemoteMode).subscribe(m => this.videoRoute = m === 'remote' ? 'remote' : 'player');
   }
 
   onPlaylistClicked(playlistId: string): void {
-    this.router.navigate(['/', this.videoRoute, playlistId]);
+    this.router.navigate(['/', 'playlist', playlistId]);
   }
 
 }
