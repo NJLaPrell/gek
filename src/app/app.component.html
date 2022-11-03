@@ -4,12 +4,12 @@
   </div>
 
   <div id="top-bar">
-    <app-top-bar (onPlaylistsClicked)="toggleSidebar()"></app-top-bar>
+    <app-top-bar (onPlaylistsClicked)="toggleSidebar()" [authenticated]="authenticated"></app-top-bar>
   </div>
 
   <div class="d-flex flex-row flex-grow-1 overflow-y-none">
 
-    <div *ngIf="showSidebar && mode !== 'viewer'" id="side-bar" class="d-flex flex-column overflow-y-none">
+    <div *ngIf="showSidebar && mode !== 'viewer' && authenticated" id="side-bar" class="d-flex flex-column overflow-y-none">
       <div id="side-bar-header" class="me-2">
         <span class="last-updated text-muted float-start ms-2"><small>Last Updated:<br />{{ lastUpdated | fromNow }}</small></span>
         <fa-icon [icon]="faCircleChevronLeft" class="icon-button float-end" style="font-size: 1.3em;" (click)="toggleSidebar()"></fa-icon>
@@ -20,7 +20,7 @@
     </div>
 
     <div id="body" class="flex-grow-1 overflow-y-none">
-      <div id="body-header"><button type="button" (click)="doAuth()">test</button></div>
+      <div id="body-header"></div>
       <div id="body-content" class="overflow-y-auto">
 
         <router-outlet
@@ -28,9 +28,11 @@
           (deactivate)="routed=false"
         ></router-outlet>
 
-        <div *ngIf="!routed" class="text-center">
+        <div *ngIf="!routed" class="text-center mt-5">
           <img src="/assets/585335.jpg" class="align-middle" />
-      </div>
+          <br />
+          <button *ngIf="!authenticated" type="button" class="login-with-google-btn mt-5" (click)="signIn()">Sign in with Google</button>
+        </div>
 
       </div>
     </div>

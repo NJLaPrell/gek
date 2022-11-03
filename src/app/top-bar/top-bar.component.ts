@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { faList, faClapperboard, faRotate, faHandSparkles, faTrashCan, faBomb, faArrowUpShortWide } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ErrorBufferComponent } from '../modals/error-buffer/error-buffer.component';
@@ -33,6 +33,8 @@ export class TopBarComponent implements OnInit {
   remoteMode = false;
   viewerMode = false;
   mode = '';
+
+  @Input() authenticated = false;
 
   @Output() onPlaylistsClicked: EventEmitter<void> = new EventEmitter<void>();
 

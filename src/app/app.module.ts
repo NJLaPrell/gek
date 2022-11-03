@@ -9,6 +9,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
+import { AuthEffects } from './state/effects/auth.effects';
 import { VideoEffects } from './state/effects/video.effects';
 import { HistoryEffects } from './state/effects/history.effects';
 import { RulesEffects } from './state/effects/rules.effects';
@@ -40,6 +41,7 @@ import { VideoListComponent } from './playlist/video-list/video-list.component';
 import { PlayerControlsComponent } from './playlist/player-controls/player-controls.component';
 import { PlaylistComponent } from './playlist/playlist.component';
 import { VideoEmbedComponent } from './playlist/video-embed/video-embed.component';
+import { SignInComponent } from './sign-in/sign-in.component';
 
 export const initApp = (provider: InitializerService) => () => provider.init();
 
@@ -68,7 +70,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     VideoListComponent,
     PlayerControlsComponent,
     PlaylistComponent,
-    VideoEmbedComponent
+    VideoEmbedComponent,
+    SignInComponent
   ],
   imports: [
     BrowserModule,
@@ -86,6 +89,7 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     }),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: false}),
     EffectsModule.forRoot([
+      AuthEffects,
       VideoEffects,
       HistoryEffects,
       RulesEffects,

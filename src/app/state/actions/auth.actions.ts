@@ -1,29 +1,16 @@
 import { createAction, props } from '@ngrx/store';
+import { AuthState } from '../models/auth.model';
 
-export const login = createAction(
-  '[Auth] Login'
+export const getAuthState = createAction(
+  '[Auth] Get Authentication State'
 );
 
-export const loginSuccess = createAction(
-    '[Auth] Login Success',
-    props<{ code: string }>()
+export const getAuthStateFail = createAction(
+  '[Auth] Get Authentication State Fail',
+  props<{ error: string }>()
 );
 
-export const loginFail = createAction(
-    '[Auth] Login Fail',
-    props<{ error: string }>()
-);
-
-export const getToken = createAction(
-    '[Auth] Get Auth Token',
-    props<{ code: string }>()
-);
-
-export const getTokenSuccess = createAction(
-    '[Auth] Get Auth Token Success'
-);
-
-export const getTokenFail = createAction(
-    '[Auth] Get Auth Token Fail',
-    props<{ error: string }>()
+export const getAuthStateSuccess = createAction(
+  '[Auth] Get Authentication State Success',
+  props<{ authState: AuthState }>()
 );

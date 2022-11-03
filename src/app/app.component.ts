@@ -7,6 +7,7 @@ import { selectPageTitle } from './state/selectors/navState.selectors';
 import { selectConnected, selectPeerConnected, selectRemoteMode } from './state/selectors/remote.selectors';
 import { selectLastRun } from './state/selectors/history.selectors';
 import { skipWhile } from 'rxjs';
+import { selectAuthenticated } from './state/selectors/auth.selectors';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,7 @@ export class AppComponent implements OnInit {
   showSidebar = true;
   lastUpdated = 0;
   routed = false;
+  authenticated = false;
 
   mode = '';
   connected = false;
@@ -64,6 +66,7 @@ export class AppComponent implements OnInit {
       this.connectionChanged();
     }); 
     this.store.select(selectLastRun).subscribe(t => this.lastUpdated = t);
+    this.store.select(selectAuthenticated).subscribe(auth => this.authenticated = auth);
   }
 
   doAuth = () => {
@@ -109,5 +112,9 @@ export class AppComponent implements OnInit {
     } else if (this.connected || this.peerConnected) {
       this.router.navigate(['/', 'connecting']);
     }
+  }
+
+  signIn(): void {
+    window.location.href='/login';
   }
 }
