@@ -14,7 +14,7 @@
     flex-grow: 1;
     width: 80%;
     #body-content {
-        height: calc(100vh - 114px);
+        height: calc(100vh - 60px);
         overflow:auto;
     }
 }
@@ -23,7 +23,7 @@
     overflow: hidden;
     width: 20%;
     #side-bar-content {
-        height: calc(100vh - 110px);
+        height: calc(100vh - 80px);
         overflow:auto;
     }
 }

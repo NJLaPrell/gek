@@ -15,20 +15,22 @@
 <!-- ############################################# -->
 <app-video-list *ngIf="!videoId && playlistId" [playlistId]="playlistId" [videoList]="videoList"></app-video-list>
 
-<app-player *ngIf="videoId && mode === 'player'"
-    [playlistId]="playlistId"
-    [video]="video"
-    [navState]="navState"
-></app-player>
+<div id="playerContainer">
+    <app-player *ngIf="videoId && mode === 'player'"
+        [playlistId]="playlistId"
+        [video]="video"
+        [navState]="navState"
+    ></app-player>
 
-<app-remote *ngIf="videoId && mode === 'remote'"
-    [playlistId]="playlistId"
-    [video]="video"
-    [navState]="navState"
-></app-remote>
+    <app-remote *ngIf="videoId && mode === 'remote'"
+        [playlistId]="playlistId"
+        [video]="video"
+        [navState]="navState"
+    ></app-remote>
 
-<app-viewer *ngIf="videoId && mode === 'viewer'"
-    [playlistId]="playlistId"
-    [video]="video"
-    [navState]="navState"
-></app-viewer>
+    <app-viewer *ngIf="videoId && mode === 'viewer'"
+        [playlistId]="playlistId"
+        [video]="video"
+        [navState]="navState"
+    ></app-viewer>
+</div>

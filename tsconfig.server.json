@@ -12,7 +12,6 @@
       "allowSyntheticDefaultImports": true
     },
     "files": [
-      "server/test.ts",
       "server/rest_server.ts"
     ],
     "include": [

@@ -18,7 +18,6 @@ const xmlOptions = {
 // NOTE: Delete token.json to reauth if scopes are changed.
 // TODO: Remove scopes not needed.
 const SCOPES = [
-    'https://www.googleapis.com/auth/drive.metadata.readonly',
     'https://www.googleapis.com/auth/youtube',
     'https://www.googleapis.com/auth/youtube.channel-memberships.creator',
     'https://www.googleapis.com/auth/youtube.force-ssl',
@@ -56,7 +55,8 @@ async function verifyToken(token, client) {
     const cachedToken = await loadResource('token', true, false, true);
     if (cachedToken) {
         try {
-            authClient = await google.auth.fromJSON(cachedToken);            
+            authClient = await google.auth.fromJSON(cachedToken);   
+                  
         } catch (err) {
             console.warn('  Error encountered using cached credentials:');
             console.warn(err);

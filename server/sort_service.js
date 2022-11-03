@@ -192,9 +192,9 @@ async function sortNewVideos() {
                     const video = newVideos.find(v => v.id === req.snippet.resourceId.videoId);
                    
                     // Do not re-add errored videos.
-                    if (!history.errorQueue.filter(e => e.videoId === req.snippet.resourceId.videoId)) {
+                    //if (!history.errorQueue.filter(e => e.videoId === req.snippet.resourceId.videoId)) {
                         history.errorQueue.push({ videoId: req.snippet.resourceId.videoId, playlistId: req.snippet.playlistId, errors: e.response.data.error.errors, video: video, failDate: Date.now() });
-                    }
+                    //}
                     
                     
                 } catch(ee) {

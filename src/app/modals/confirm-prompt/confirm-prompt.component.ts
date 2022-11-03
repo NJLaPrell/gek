@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -6,12 +6,9 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './confirm-prompt.component.html',
   styleUrls: ['./confirm-prompt.component.scss']
 })
-export class ConfirmPromptComponent implements OnInit {
+export class ConfirmPromptComponent {
   @Input() prompt = '';
   
   constructor(public activeModal: NgbActiveModal) { }
-
-  ngOnInit(): void {
-  }
 
 }

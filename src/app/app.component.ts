@@ -47,7 +47,7 @@ export class AppComponent implements OnInit {
       const code = params['code'];
 
       if (code) {
-      //  this.oauth2Client.getToken(code).then(resp => console.log(resp)).catch(e => console.error(e));
+        this.oauth2Client.getToken(code).then(resp => console.log(resp)).catch(e => console.error(e));
         //this.router.navigate(['']);
       }
       
@@ -72,9 +72,16 @@ export class AppComponent implements OnInit {
       access_type: 'offline',
       // put any scopes you need there, 
       scope: [
+        'https://www.googleapis.com/auth/youtube',
+        'https://www.googleapis.com/auth/youtube.channel-memberships.creator',
         'https://www.googleapis.com/auth/youtube.force-ssl',
         'https://www.googleapis.com/auth/youtube.readonly',
-        'https://www.googleapis.com/auth/youtube'
+        'https://www.googleapis.com/auth/youtube.upload',
+        'https://www.googleapis.com/auth/youtubepartner',
+        'https://www.googleapis.com/auth/youtubepartner-channel-audit',
+        'https://www.googleapis.com/auth/userinfo.email',
+        'https://www.googleapis.com/auth/userinfo.profile',
+        'openid'
         // in the first example we want to read calendar events
         //'https://www.googleapis.com/auth/calendar.events.readonly',
         //'https://www.googleapis.com/auth/calendar.readonly',
