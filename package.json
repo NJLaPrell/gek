@@ -5,6 +5,7 @@
     "ng": "ng",
     "tsc": "tsc -p tsconfig.server.json",
     "clean": "rimraf dist/*",
+    "copy-shared-resources": "ts-node utils/copySharedResources",
     "copy-assets": "ts-node utils/copyAssets",
     "build-server": "npm-run-all clean tsc copy-assets",
     "start-prod-rest": "node dist/server/rest_server.js",
