@@ -4,41 +4,41 @@ const fs = require('fs').promises;
 
 // Map of resources and how to handle them.
 const RESOURCES = {
-    token: {
-        path: path.join(process.cwd(), 'server/token.json'),
-        protected: true
-    },
-    credentials: {
-        path: path.join(process.cwd(), 'server/credentials.json'),
-        protected: true
-    },
-    subscriptions: {
-        path: path.join(process.cwd(), 'server/state/subscriptions.json'),
-        //defaultExpire: 3600000,
-        protected: false
-    },
-    playlists: {
-        path: path.join(process.cwd(), 'server/state/playlists.json'),
-        defaultExpire: 43200000,
-        protected: false
-    },
-    history: {
-        path: path.join(process.cwd(), 'server/state/history.json'),
-        protected: false
-    },
-    rules: {
-        path: path.join(process.cwd(), 'server/state/rules.json'),
-        protected: false
-    },
-    videos: {
-        path: path.join(process.cwd(), 'server/state/videos.json'),
-        protected: false
-    },
-    sortedList: {
-        path: path.join(process.cwd(), 'server/state/sortedList.json'),
-        protected: false,
-        defaultExpire: 3600000
-    }
+  token: {
+    path: path.join(process.cwd(), 'server/token.json'),
+    protected: true
+  },
+  credentials: {
+    path: path.join(process.cwd(), 'server/credentials.json'),
+    protected: true
+  },
+  subscriptions: {
+    path: path.join(process.cwd(), 'server/state/subscriptions.json'),
+    //defaultExpire: 3600000,
+    protected: false
+  },
+  playlists: {
+    path: path.join(process.cwd(), 'server/state/playlists.json'),
+    defaultExpire: 43200000,
+    protected: false
+  },
+  history: {
+    path: path.join(process.cwd(), 'server/state/history.json'),
+    protected: false
+  },
+  rules: {
+    path: path.join(process.cwd(), 'server/state/rules.json'),
+    protected: false
+  },
+  videos: {
+    path: path.join(process.cwd(), 'server/state/videos.json'),
+    protected: false
+  },
+  sortedList: {
+    path: path.join(process.cwd(), 'server/state/sortedList.json'),
+    protected: false,
+    defaultExpire: 3600000
+  }
 }
 
 /**
@@ -52,45 +52,45 @@ const RESOURCES = {
  * @return {<any|false>}
  */
 const loadResource = async (resourceName, useCache = true, expireTime = false, loadProtected = false) => {
-    const resource = RESOURCES[resourceName];
+  const resource = RESOURCES[resourceName];
 
-    // Check if cache is being bypassed
-    if (!useCache) {
-        console.log(`  Bypassing ${resourceName} cache.`)
-        return false;
+  // Check if cache is being bypassed
+  if (!useCache) {
+    console.log(`  Bypassing ${resourceName} cache.`)
+    return false;
+  }
+
+  // Validate known resource
+  if (!resource)
+    throw `No definition for resource: ${resourceName}`;
+
+  // Validate protected resources can be loaded
+  if (resource.protected && !loadProtected)
+    throw `The resource "${resourceName}" is protected, but the "loadProtected" parameter was not supplied, or is set to false.`;
+
+  // Load and return the resource
+  try {
+    const content = await fs.readFile(resource.path);
+    const data = JSON.parse(content);
+    const exp = expireTime ? expireTime : resource.defaultExpire || false;
+
+    // No expire time defaulted or passed || diff between last update and now is less than expire time.
+    if (!exp || ( exp && ( ( Date.now() - data.lastUpdated ) < exp ) ) ) {
+      console.log(`  Retrieved ${resourceName} from cache.`);
+      return data;
+    } else {
+      console.log(`  Cache for ${resourceName} is expired.`);
+
+      //if (resourceName === 'subscriptions') {
+      //    return await recacheSubscriptions();
+      //}
+      return false;
     }
-
-    // Validate known resource
-    if (!resource)
-        throw `No definition for resource: ${resourceName}`;
-
-    // Validate protected resources can be loaded
-    if (resource.protected && !loadProtected)
-        throw `The resource "${resourceName}" is protected, but the "loadProtected" parameter was not supplied, or is set to false.`;
-
-    // Load and return the resource
-    try {
-        const content = await fs.readFile(resource.path);
-        const data = JSON.parse(content);
-        const exp = expireTime ? expireTime : resource.defaultExpire || false;
-
-        // No expire time defaulted or passed || diff between last update and now is less than expire time.
-        if (!exp || ( exp && ( ( Date.now() - data.lastUpdated ) < exp ) ) ) {
-            console.log(`  Retrieved ${resourceName} from cache.`);
-            return data;
-        } else {
-            console.log(`  Cache for ${resourceName} is expired.`);
-
-            //if (resourceName === 'subscriptions') {
-            //    return await recacheSubscriptions();
-            //}
-            return false;
-        }
-    } catch (err) {
-        console.log(`  Error opening file: ${resource.path}`);
-        console.log(err);
-        return false;
-    }
+  } catch (err) {
+    console.log(`  Error opening file: ${resource.path}`);
+    console.log(err);
+    return false;
+  }
 };
 /*
 const recacheSubscriptions = async() => {
@@ -118,32 +118,32 @@ const recacheSubscriptions = async() => {
  * @return {<any|false>}
  */
 const cacheResource = async(resourceName, data, addTimestamp = true, loadProtected = false) => {
-    const resource = RESOURCES[resourceName];
-    console.log(`  Caching ${resourceName}`);
+  const resource = RESOURCES[resourceName];
+  console.log(`  Caching ${resourceName}`);
 
-    // Validate known resource
-    if (!resource)
-        throw `No definition for resource: ${resourceName}`;
+  // Validate known resource
+  if (!resource)
+    throw `No definition for resource: ${resourceName}`;
 
-    // Validate data is supplied
-    if (!data)
-        throw `No data to cache. Data variable is empty.`;
+  // Validate data is supplied
+  if (!data)
+    throw `No data to cache. Data variable is empty.`;
 
-    // Validate protected resources can be loaded
-    if (resource.protected && !loadProtected)
-        throw `The resource "${resourceName}" is protected, but the "loadProtected" parameter was not supplied, or is set to false.`;
+  // Validate protected resources can be loaded
+  if (resource.protected && !loadProtected)
+    throw `The resource "${resourceName}" is protected, but the "loadProtected" parameter was not supplied, or is set to false.`;
 
-    try {
-        if (addTimestamp) {
-            data.lastUpdated = Date.now();
-        }
-        return await fs.writeFile(resource.path, JSON.stringify(data));
-        return true;
-    } catch (err) {
-        console.log(`  Error writing file: ${resource.path}`);
-        console.log(err);
-        return false;
+  try {
+    if (addTimestamp) {
+      data.lastUpdated = Date.now();
     }
+    return await fs.writeFile(resource.path, JSON.stringify(data));
+    return true;
+  } catch (err) {
+    console.log(`  Error writing file: ${resource.path}`);
+    console.log(err);
+    return false;
+  }
 };
 
 /**
@@ -152,22 +152,22 @@ const cacheResource = async(resourceName, data, addTimestamp = true, loadProtect
  * @return {<true>}
  */
 const purgeUnsorted = async() => {
-    console.log('  Purging unsorted items.')
-    let history = await loadResource('history');
-    history.unsorted = [];
-    await cacheResource('history', history);
-    return true;
+  console.log('  Purging unsorted items.')
+  let history = await loadResource('history');
+  history.unsorted = [];
+  await cacheResource('history', history);
+  return true;
 };
 
 /**
  * Deletes the item with matching ID from the history.unsorted array.
  *
  */
- const deleteUnsortedItem = async(id) => {
-    console.log(`  Deleting unsorted item: ${id}`);
-    let history = await loadResource('history');
-    history.unsorted = history.unsorted.filter(u => u.id !== id);
-    return await cacheResource('history', history);
+const deleteUnsortedItem = async(id) => {
+  console.log(`  Deleting unsorted item: ${id}`);
+  let history = await loadResource('history');
+  history.unsorted = history.unsorted.filter(u => u.id !== id);
+  return await cacheResource('history', history);
 };
 
 /**
@@ -175,21 +175,21 @@ const purgeUnsorted = async() => {
  *
  */
 const purgeErrors = async() => {
-    console.log('  Purging the error queue.');
-    let history = await loadResource('history');
-    history.errorQueue = [];
-    await cacheResource('history', history);
+  console.log('  Purging the error queue.');
+  let history = await loadResource('history');
+  history.errorQueue = [];
+  await cacheResource('history', history);
 };
 
 /**
  * Deletes the item with matching ID from the history.unsorted array.
  *
  */
- const deleteErrorItem = async(id) => {
-    console.log(`  Deleting error item: ${id}`);
-    let history = await loadResource('history');
-    history.errorQueue = history.errorQueue.filter(e => e.video?.id !== id);
-    return await cacheResource('history', history);
+const deleteErrorItem = async(id) => {
+  console.log(`  Deleting error item: ${id}`);
+  let history = await loadResource('history');
+  history.errorQueue = history.errorQueue.filter(e => e.video?.id !== id);
+  return await cacheResource('history', history);
 };
 
 /**
@@ -199,16 +199,16 @@ const purgeErrors = async() => {
  * @return {<true>}
  */
 const deleteRule = async(id) => {
-    console.log(`  Deleting rule: ${id}`);
-    let rules = await loadResource('rules');
-    let ix = await rules.rules.findIndex(r => r.id == id);
-    if (ix >= 0) {
-        rules.rules.splice(ix, 1);
-        await cacheResource('rules', rules);
-        return true;
-    } else {
-        return false;
-    }
+  console.log(`  Deleting rule: ${id}`);
+  let rules = await loadResource('rules');
+  let ix = await rules.rules.findIndex(r => r.id == id);
+  if (ix >= 0) {
+    rules.rules.splice(ix, 1);
+    await cacheResource('rules', rules);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 /**
@@ -218,16 +218,16 @@ const deleteRule = async(id) => {
  * @return {<boolean>}
  */
 const updateRule = async(rule) => {
-    console.log(`  Updating rule: ${rule.id}`);
-    let rules = await loadResource('rules');
-    let ix =await  rules.rules.findIndex(r => r.id === rule.id);
-    if (ix >= 0) {
-        rules.rules[ix] = rule;
-        await cacheResource('rules', rules);
-        return true;
-    } else {
-        return false;
-    }
+  console.log(`  Updating rule: ${rule.id}`);
+  let rules = await loadResource('rules');
+  let ix =await  rules.rules.findIndex(r => r.id === rule.id);
+  if (ix >= 0) {
+    rules.rules[ix] = rule;
+    await cacheResource('rules', rules);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 /**
@@ -237,11 +237,28 @@ const updateRule = async(rule) => {
  * @return {<boolean>}
  */
 const addRule = async(rule) => {
-    console.log(`  Adding rule: ${rule.id}`);
-    let rules = await loadResource('rules');
-    rules.rules.push(rule);
-    await cacheResource('rules', rules);
-    return true;
+  console.log(`  Adding rule: ${rule.id}`);
+  let rules = await loadResource('rules');
+  rules.rules.push(rule);
+  await cacheResource('rules', rules);
+  return true;
 }
 
-module.exports = { loadResource, cacheResource, purgeUnsorted, deleteUnsortedItem, updateRule, deleteRule, addRule, purgeErrors, deleteErrorItem };
+
+
+
+
+const cacheCred = async(user, data) => {
+  console.log(`  Caching credentials for user: ${user}`);
+  const cachePath = path.join(process.cwd(), `server/credentials-${user}.json`);
+  try {
+    return await fs.writeFile(cachePath, JSON.stringify(data));
+  } catch (err) {
+    console.log(`  Error writing file: ${cachePath}`);
+    console.log(err);
+    return false;
+  }
+};
+
+
+module.exports = { loadResource, cacheResource, purgeUnsorted, deleteUnsortedItem, updateRule, deleteRule, addRule, purgeErrors, deleteErrorItem, cacheCred };

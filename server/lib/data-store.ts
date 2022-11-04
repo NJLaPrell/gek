@@ -1,9 +1,25 @@
-import { initializeApp, applicationDefault, cert } from 'firebase-admin/app';
+import { initializeApp, applicationDefault, cert, ServiceAccount } from 'firebase-admin/app';
+import * as firebaseAdmin from 'firebase-admin';
+
 import { getFirestore, Timestamp, FieldValue, Firestore } from 'firebase-admin/firestore';
+import { UserAuthToken } from 'server/models/auth.models';
 import { UserResource } from 'server/models/resource.models';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const serviceAccount = require('../serviceAccountKey.json');
+const serviceAccount = <ServiceAccount>{
+  type: 'service_account',
+  project_id: process.env['PROJECT_ID'],
+  private_key_id: process.env['PRIVATE_KEY_ID'],
+  private_key: process.env['PRIVATE_KEY'],
+  client_email: process.env['CLIENT_EMAIL'],
+  client_id: process.env['SERVICE_CLIENT_ID'],
+  auth_uri: 'https://accounts.google.com/o/oauth2/auth',
+  token_uri: 'https://oauth2.googleapis.com/token',
+  auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
+  client_x509_cert_url: process.env['CLIENT_X509_CERT_URL']
+};
+
+
 
 export class DataStore {
   private db!: Firestore;
@@ -11,11 +27,14 @@ export class DataStore {
 
   constructor(userId: string) {
     this.userId = userId;
-
-    initializeApp({
-      credential: cert(serviceAccount)
-    });
-
+    //console.log(serviceAccount);
+    
+    try {
+      firebaseAdmin.initializeApp({ credential: cert(serviceAccount) });
+    } catch (e) {
+      firebaseAdmin.app();
+    }
+    
     this.db = getFirestore();
   }
 
@@ -36,4 +55,18 @@ export class DataStore {
 
   public saveResource = (resourceName: string, resource: UserResource): Promise<FirebaseFirestore.WriteResult> => 
     this.db.collection(`resource:${resourceName}`).doc(this.userId).set(resource);
+
+  public cacheUserAuthToken = async (authToken: UserAuthToken): Promise<boolean> => 
+    this.db.collection('auth-tokens').doc(this.userId).set(authToken).then(() => true).catch((e) => {
+      console.log(e);
+      return false;
+    });
+
+  public getUserAuthToken = async (): Promise<UserAuthToken | false> =>
+    this.db.collection('auth-tokens').doc(this.userId).get()
+      .then((result) => {
+        const res = result.data();
+        return res ? <UserAuthToken>res : false;
+      })
+      .catch((e) => {console.log(e); return false;});
 }

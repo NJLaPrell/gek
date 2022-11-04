@@ -1,10 +1,22 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+
+import * as dotenv from 'dotenv';
+// eslint-disable-next-line angular/module-getter
+dotenv.config();
+
 import { Request, Response } from 'express';
 import { Credentials, OAuth2Client } from 'google-auth-library';
 import { GetTokenResponse } from 'google-auth-library/build/src/auth/oauth2client';
 
+import { UserAuthentication } from './lib/auth';
+import { UserAuthToken } from './models/auth.models';
+
 const google = require('googleapis').google;
 const OAuth2 = google.auth.OAuth2;
+
+import { ResourceLoader } from './lib/resource';
+
+
 
 //type ExpressRequest = Request
 
@@ -140,41 +152,44 @@ loadResource('credentials', true, false, true).then((creds: GoogleAuthCredential
     clientSecret: creds.web.client_secret,
     callbackURL: creds.web.redirect_uris[0],
   };
-  console.log(credentials);
+
   passport.use(
     new GoogleStrategy(
       credentials,
       async (accessToken: string, refreshToken: string, profile: GoogleAuthProfile, done: any) => {
-        //console.log(profile);
-        //get the user data from google 
+        console.log('  User authenticated.');
+        
         const user: AuthUser = {
           id: profile.id,
           displayName: profile.displayName,
         };
         
-        console.log(user);
-        console.log(accessToken);
-        console.log(refreshToken);
-
-        console.log('Caching credentials');
-        const payload = {
-          type: 'authorized_user',
-          client_id: credentials.clientID,
-          client_secret: credentials.clientSecret,
-          refresh_token: refreshToken
-        };
-
-        cacheCred(user.id, payload).then(() => done(null, user));
-        
+        done(null, { user, refreshToken });
         
       }
     )
   );
 
-  passport.serializeUser((user: AuthUser, done: any) => {
-    console.log(user);
+  passport.serializeUser((userObj:any, done: any) => {
+    console.log(userObj.user);
     process.nextTick(() => {
-      done(null, user);
+      console.log('  Caching user token.');
+      const token = <UserAuthToken>{
+        type: 'authorized_user',
+        client_id: process.env['CLIENT_ID'],
+        client_secret: process.env['CLIENT_SECRET'],
+        refresh_token: userObj.refreshToken
+      };
+
+      const auth = new UserAuthentication(userObj.user.id);
+      auth.cacheCredentials(token).then((success) => {
+        console.log(`  Success: ${success}`);
+        done(null, userObj.user);
+      }).catch((e) => {
+        console.log('  Success: false');
+        console.log(e);
+        done(null, userObj.user);
+      });
     });
   });
 
@@ -188,7 +203,7 @@ loadResource('credentials', true, false, true).then((creds: GoogleAuthCredential
     res.redirect('/');
   });
 
-  app.get('/login', ensureGuest, passport.authenticate('google', { scope: SCOPES, accessType: 'offline', prompt: 'consent' }), (req: ExpressRequest, res: ExpressResponse) => {
+  app.get('/login', passport.authenticate('google', { scope: SCOPES, accessType: 'offline', prompt: 'consent' }), (req: ExpressRequest, res: ExpressResponse) => {
     console.log('BAR', res);
     console.log(req);
   });
@@ -209,8 +224,13 @@ app.get('/api/test', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => 
   //  client.getTokenInfo(token).then((resp:any) => console.log(resp));
         
   //});
+  console.log(req);
+  const userId = req.user.id;
+  const loader = new ResourceLoader(userId);
+
+  const resource = loader.getResource('sortedList');
     
-  res.json({});
+  res.json({ ...resource });
 });
 
 app.get('/api/getResource/:resource', (req: ExpressRequest, res: ExpressResponse) => {
@@ -329,7 +349,7 @@ app.delete('/api/history/deleteUnsortedItem/:id', (req: ExpressRequest, res: Exp
 app.delete('/api/history/deleteErrorItem/:id', (req: ExpressRequest, res: ExpressResponse) => {
   const id = req.params['id'];
   console.log(`DELETE: /api/history/deleteErrorItem/${id}`);
-  const response = deleteErrorItem(id).catch((e: any) => res.status(e.code).json({ error: e.message })).then(res.status(204).send());
+  const response = deleteErrorItem(id).then(res.status(204).send());
   //.catch((e: any) => res.status(e.code).json({ error: e.message }));
 });
 

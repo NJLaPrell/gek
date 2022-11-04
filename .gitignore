@@ -49,3 +49,7 @@ src/environments/environment.prod.ts
 
 token.json
 credentials.json
+serviceAccountKey.json
+/server/models/shared/*
+*.log
+.env

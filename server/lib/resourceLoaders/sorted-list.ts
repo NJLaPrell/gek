@@ -1,8 +1,4 @@
-const { getPlaylistPage, getPlaylistItemsPage, getVideoDetailsPage } = require('./api-calls');
-const { loadResource, cacheResource } = require('./resources');
-const path = require('path');
-const fs = require('fs').promises;
-const SCRATCH_PATH = path.join(process.cwd(), 'server/scratch.json')
+import { getPlaylistPage, getPlaylistItemsPage, getVideoDetailsPage } from '../api';
 
 function formatPlaylists(playlists) {
   return playlists.map(pl => ({
@@ -39,63 +35,47 @@ function formatVideoList(videoList) {
     channelId: v.snippet.channelId,
     channelTitle: v.snippet.channelTitle,
     duration: v.contentDetails.duration,
-    viewCount: v.statistics.viewCount,
-    likeCount: v.statistics.likeCount,
-    commentCount: v.statistics.commentCount
+    viewCount: v.statistics.viewCount || 0,
+    likeCount: v.statistics.likeCount || 0,
+    commentCount: v.statistics.commentCount || 0
   }));
 }
 
-async function getPlaylistItems(sortedList) {
+async function getPlaylistItems(userId: string, sortedList) {
   return await Promise.all(
-    sortedList.map(i => getPlaylistItemsPage(i.playlistId))
-  )
-  return await sortedList.map(i => getPlaylistItemsPage(i.id));
-  //return [ await getPlaylistItemsPage(sortedList.items[0].playlistId)];
+    sortedList.map(i => getPlaylistItemsPage(userId, i.playlistId))
+  );
 }
 
 // TODO: Cleanup.
-async function getSortedList(nocache = false) {
+export const getSortedList = async (userId: string) => {
   console.log('Getting full sorted list.');
-  let sortedList;
-
-  if(nocache) {
-    console.log('  Bypassing cache.');
-  } else {
-    sortedList = await loadResource('sortedList');
-    if (sortedList) {
-      return sortedList;
-    }
-  }
-    
+  let sortedList;   
 
   // Get and format a list of the playlists.
-  sortedList = await getPlaylistPage().then(formatPlaylists)
+  sortedList = await getPlaylistPage(userId).then(formatPlaylists);
+
+  console.log(`Got ${sortedList.length} playlists.`);
 
   // Get and format playlist deatils for each playlist item.
-  const videoLists = await getPlaylistItems(sortedList)
+  const videoLists = await getPlaylistItems(userId, sortedList);
+  console.log(`Got ${videoLists.length} videoLists.`);
   const formatedItems =  await formatPlaylistItems(videoLists);
  
-  // Create a comma delimited string of videoIds and get the full video details for each video.
-  //let videoIds = [];
-  //formatedItems.forEach(pl => pl.forEach(v => videoIds.push(v.videoId)))
-    
-
-
-  let videoIds = formatedItems.map(i => i.videoId);
-  let batchedIds = [];
+  const videoIds = formatedItems.map(i => i.videoId);
+  const batchedIds = [];
   while(videoIds.length) {
     batchedIds.push(videoIds.splice(0,50));
   }
 
   let videoDetails = [];
   await Promise.all(
-    batchedIds.map(batch => getVideoDetailsPage(batch.join(',')))
+    batchedIds.map(batch => getVideoDetailsPage(userId, batch))
   ).then(results => results.forEach(r => r.forEach(i => videoDetails.push(i))));
 
   videoDetails = formatVideoList(videoDetails);
 
-  //let videoDetails = await getVideoDetailsPage(.join(',')).then(formatVideoList);
-
+  console.log(`Got ${videoDetails.length} videoDetails.`);
   // Combine the video details with the playlist item details.
   videoDetails = videoDetails.map(v => ({
     ...v,
@@ -109,19 +89,8 @@ async function getSortedList(nocache = false) {
     videos: videoDetails.filter(vd => pl.playlistId === vd.playlistId)
   }));
 
-  // Cache and return the results.
-  await cacheResource('sortedList', { items: sortedList });
+  console.log(sortedList);
+  
   return { items: sortedList };    
-}
+};
 
-async function removeVideoFromList(playlistItemId) {
-  let sortedList = await loadResource('sortedList');
-  sortedList.items = sortedList.items.map(pl => ({
-    ...pl,
-    itemCount: pl.videos.filter(v => v.playlistItemId === playlistItemId).length ? pl.itemCount - 1 : pl.itemCount,
-    videos: pl.videos.filter(v => v.playlistItemId !== playlistItemId)
-  }));
-  await cacheResource('sortedList', sortedList)
-}
-
-module.exports = { getSortedList, removeVideoFromList }
