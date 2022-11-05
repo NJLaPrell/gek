@@ -5,20 +5,67 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import { Request, Response } from 'express';
-import { Credentials, OAuth2Client } from 'google-auth-library';
-import { GetTokenResponse } from 'google-auth-library/build/src/auth/oauth2client';
-
 import { UserAuthentication } from './lib/auth';
 import { UserAuthToken } from './models/auth.models';
-
-const google = require('googleapis').google;
-const OAuth2 = google.auth.OAuth2;
-
 import { ResourceLoader } from './lib/resource';
+import { ServiceAccount } from 'firebase-admin';
+import { cert }from 'firebase-admin/app';
+
+
+const passport = require('passport');
+const session = require('express-session');
+
+const CLIENT_CREDENTIALS = {
+  clientID: process.env['CLIENT_ID'],
+  clientSecret: process.env['CLIENT_SECRET'],
+  callbackURL: process.env['AUTH_REDIRECT'],
+};
+
+const FIREBASE_CREDENTIALS = <ServiceAccount>{
+  type: 'service_account',
+  project_id: process.env['PROJECT_ID'],
+  private_key_id: process.env['PRIVATE_KEY_ID'],
+  private_key: process.env['PRIVATE_KEY'],
+  client_email: process.env['CLIENT_EMAIL'],
+  client_id: process.env['SERVICE_CLIENT_ID'],
+  auth_uri: 'https://accounts.google.com/o/oauth2/auth',
+  token_uri: 'https://oauth2.googleapis.com/token',
+  auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
+  client_x509_cert_url: process.env['CLIENT_X509_CERT_URL']
+};
+
+const SCOPES = [
+  'https://www.googleapis.com/auth/youtube',
+  'https://www.googleapis.com/auth/youtube.channel-memberships.creator',
+  'https://www.googleapis.com/auth/youtube.force-ssl',
+  'https://www.googleapis.com/auth/youtube.readonly',
+  'https://www.googleapis.com/auth/youtube.upload',
+  'https://www.googleapis.com/auth/youtubepartner',
+  'https://www.googleapis.com/auth/youtubepartner-channel-audit',
+  'profile',
+  'email'
+];
 
 
 
-//type ExpressRequest = Request
+
+
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const admin = require('firebase-admin');
+let firebase;
+try {
+  firebase = admin.initializeApp({ credential: cert(FIREBASE_CREDENTIALS) });
+} catch (e) {
+  firebase = admin.app();
+}
+const database = firebase.firestore();
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const FirestoreStore = require('firestore-store')(session);
+
+
+
+
 
 interface ExpressRequest extends Request {
   isAuthenticated(): boolean;
@@ -27,19 +74,6 @@ interface ExpressRequest extends Request {
 }
 
 type ExpressResponse = Response
-
-interface GoogleAuthCredentials {
-  web: {
-    client_id: string;
-    project_id: string;
-    auth_uri: string;
-    token_uri: string;
-    auth_provider_x509_cert_url: string;
-    client_secret: string;
-    redirect_uris: string[];
-    javascript_origins: string[];
-  };
-}
 
 interface GoogleAuthProfile {
   id: string;
@@ -76,41 +110,24 @@ interface AuthUser {
 
 
 
-const SCOPES = [
-  'https://www.googleapis.com/auth/youtube',
-  'https://www.googleapis.com/auth/youtube.channel-memberships.creator',
-  'https://www.googleapis.com/auth/youtube.force-ssl',
-  'https://www.googleapis.com/auth/youtube.readonly',
-  'https://www.googleapis.com/auth/youtube.upload',
-  'https://www.googleapis.com/auth/youtubepartner',
-  'https://www.googleapis.com/auth/youtubepartner-channel-audit',
-  'profile',
-  'email'
-];
+
 
 const express = require('express');
-const { loadResource, purgeUnsorted, deleteUnsortedItem, addRule, updateRule, deleteRule, purgeErrors, deleteErrorItem, cacheCred } = require('./lib/resources');
-const { getChannelFeed, getPlaylistFeed, addToPlaylist, rateVideo, removeVideo, authorize } = require('./lib/api-calls');
+const { loadResource, purgeUnsorted, deleteUnsortedItem, addRule, updateRule, deleteRule, purgeErrors, deleteErrorItem } = require('./lib/resources');
+const { getChannelFeed, getPlaylistFeed, addToPlaylist, rateVideo, removeVideo } = require('./lib/api-calls');
 const app = express();
 const port = 3000;
-const util = require('util');
-const exec = util.promisify(require('child_process').exec);
 const { spawn } = require('child_process');
 const { getSortedList, removeVideoFromList } = require('./lib/web.js');
-//const cookieSession = require('cookie-session');
-const {OAuth2Client} = require('google-auth-library');
 
 
-const passport = require('passport')
-const session = require('express-session')
+
+
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.json({ extended: true }));
 
-//app.use(cookieSession({
-//  name: 'google-auth-session',
-//  keys: ['key1', 'key2']
-//}));
+
 
 app.use(express.urlencoded({ extended:true }));
 app.use(
@@ -119,6 +136,9 @@ app.use(
     resave: false,
     saveUninitialized: false,
     //store: new MongoStore({ mongooseConnection: mongoose.connection }),
+    store: new FirestoreStore({
+      database: database,
+    }),
   })
 );
 // Passport middleware
@@ -145,92 +165,79 @@ const ensureGuest = (req: ExpressRequest, res: ExpressResponse, next: any) => {
 
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
-loadResource('credentials', true, false, true).then((creds: GoogleAuthCredentials) =>{
-  //console.log(creds);
-  const credentials = {
-    clientID: creds.web.client_id,
-    clientSecret: creds.web.client_secret,
-    callbackURL: creds.web.redirect_uris[0],
-  };
 
-  passport.use(
-    new GoogleStrategy(
-      credentials,
-      async (accessToken: string, refreshToken: string, profile: GoogleAuthProfile, done: any) => {
-        console.log('  User authenticated.');
-        
-        const user: AuthUser = {
-          id: profile.id,
-          displayName: profile.displayName,
-        };
-        
-        done(null, { user, refreshToken });
-        
-      }
-    )
-  );
 
-  passport.serializeUser((userObj:any, done: any) => {
-    console.log(userObj.user);
-    process.nextTick(() => {
-      console.log('  Caching user token.');
-      const token = <UserAuthToken>{
-        type: 'authorized_user',
-        client_id: process.env['CLIENT_ID'],
-        client_secret: process.env['CLIENT_SECRET'],
-        refresh_token: userObj.refreshToken
+
+passport.use(
+  new GoogleStrategy(
+    CLIENT_CREDENTIALS,
+    async (accessToken: string, refreshToken: string, profile: GoogleAuthProfile, done: any) => {
+      console.log('  User authenticated.');
+      const user: AuthUser = {
+        id: profile.id,
+        displayName: profile.displayName,
       };
+      done(null, { user, refreshToken });
+    }
+  )
+);
 
-      const auth = new UserAuthentication(userObj.user.id);
-      auth.cacheCredentials(token).then((success) => {
-        console.log(`  Success: ${success}`);
-        done(null, userObj.user);
-      }).catch((e) => {
-        console.log('  Success: false');
-        console.log(e);
-        done(null, userObj.user);
-      });
+passport.serializeUser((userObj:any, done: any) => {
+  console.log(userObj.user);
+  process.nextTick(() => {
+    console.log('  Caching user token.');
+    const token = <UserAuthToken>{
+      type: 'authorized_user',
+      client_id: process.env['CLIENT_ID'],
+      client_secret: process.env['CLIENT_SECRET'],
+      refresh_token: userObj.refreshToken
+    };
+
+    const auth = new UserAuthentication(userObj.user.id);
+    auth.cacheCredentials(token).then((success) => {
+      console.log(`  Success: ${success}`);
+      done(null, userObj.user);
+    }).catch((e) => {
+      console.log('  Success: false');
+      console.log(e);
+      done(null, userObj.user);
     });
   });
+});
 
-  passport.deserializeUser((id: string, done: any) => {
-    process.nextTick(() => {
-      done(null, id);
-    });
+passport.deserializeUser((id: string, done: any) => {
+  process.nextTick(() => {
+    done(null, id);
   });
+});
 
-  app.get('/auth', passport.authenticate('google', { failureRedirect: '/' }),  (req: ExpressRequest, res: ExpressResponse) => {
-    res.redirect('/');
-  });
+app.get('/auth', passport.authenticate('google', { failureRedirect: '/' }),  (req: ExpressRequest, res: ExpressResponse) => {
+  res.redirect('/');
+});
 
-  app.get('/login', passport.authenticate('google', { scope: SCOPES, accessType: 'offline', prompt: 'consent' }), (req: ExpressRequest, res: ExpressResponse) => {
-    console.log('BAR', res);
-    console.log(req);
-  });
+app.get('/login', passport.authenticate('google', { scope: SCOPES, accessType: 'offline', prompt: 'consent' }), (req: ExpressRequest, res: ExpressResponse) => {
+  console.log('BAR', res);
+  console.log(req);
+});
 
-  app.get('/logout', (req: ExpressRequest, res: ExpressResponse) => {
-    req.session = null;
-    req.logout();
-    res.redirect('/');
-  });
-
+app.get('/logout', (req: ExpressRequest, res: ExpressResponse) => {
+  req.session = null;
+  req.logout();
+  res.redirect('/');
 });
 
 
 
+
 app.get('/api/test', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
-  //const token = "eyJhbGciOiJSUzI1NiIsImtpZCI6Ijc3Y2MwZWY0YzcxODFjZjRjMGRjZWY3YjYwYWUyOGNjOTAyMmM3NmIiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI0NTgyOTQwNTkyMjItMzJ0NGEyZ3BqMHU1bmZwNmU5dnZhdGZpYnRpczY5aXYuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0NTgyOTQwNTkyMjItMzJ0NGEyZ3BqMHU1bmZwNmU5dnZhdGZpYnRpczY5aXYuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTAwOTMyNzU5MjQ4OTE4MTIwODIiLCJlbWFpbCI6InJ1c3R5anNoYWNrbGVmby02MDE1QHBhZ2VzLnBsdXNnb29nbGUuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF0X2hhc2giOiJWRGRDSW93bDBqZHQwQkJKOE1hWTRRIiwibmFtZSI6IlJ1c3R5SlNoYWNrbGVmb3JkIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FMbTV3dTFsVmVidWNjUWhEcmV1V294X3hSQ2Rpay1RbWNUX0FaSFhucWpRPXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6IlJ1c3R5SlNoYWNrbGVmb3JkIiwibG9jYWxlIjoiZW4iLCJpYXQiOjE2Njc0MjE1MzQsImV4cCI6MTY2NzQyNTEzNH0.pNd3Xr07z7FWlXs9aVSv0BciP7BIaaglwxW2ws22vtHzaT5wgrjO2mlkWrJ81TOsvluwN0MNWjaXitT8HfHMQb2DqkkU_4Daa7t5m7HizRO_cBnndgTzuq0mbbjv4zZpx0AA3ybszyKjbJcNUcOrN9otCIXPf4X2z8hdv37FYCNzCMffbvYI5QGyGxxIFylEQZHXrEZvkZ9YyRjqKN47mW3MsBgVoEcuaJ7v9Pb0Z1rv8xJqUaTqTgLmo0SB_jo0mUozNSk2N6tzWfRZaWVzn5jtqSjfnJLzLjhAjvWKUbabLls4eZYIzj6Xs4TSStNkEQMmBtxWPB3Z_o5s8eYUYg";
-  //authorize().then((client: OAuth2Client) => {
-  //  client.getTokenInfo(token).then((resp:any) => console.log(resp));
-        
-  //});
-  console.log(req);
+
   const userId = req.user.id;
   const loader = new ResourceLoader(userId);
 
-  const resource = loader.getResource('sortedList');
+  //const resource = loader.getResource('sortedList');
+  loader.getResource({ name: 'rules' }).then(test => res.json(test));
     
-  res.json({ ...resource });
+  //res.json({ ...test });
 });
 
 app.get('/api/getResource/:resource', (req: ExpressRequest, res: ExpressResponse) => {
