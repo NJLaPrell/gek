@@ -1,6 +1,62 @@
+import * as dotenv from 'dotenv';
+// eslint-disable-next-line angular/module-getter
+dotenv.config();
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { loadResource, cacheResource } = require('./lib/resources');
-const { authorize, getChannelFeed, getSubscriptionPage, getPlaylistPage, addToPlaylist } = require('./lib/api-calls');
-const { promiseAllInBatches } = require('./lib/utilities');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { getChannelFeed, getPlaylistPage, addToPlaylist } = require('./lib/api-calls');
+import { API } from './lib/api';
+import { SubscriptionResource, PlaylistResource } from './models/resource.models.js';
+import { ResourceLoader } from './lib/resource';
+
+
+
+
+class SortLists {
+  private userId: string;
+  private api!: API;
+  private resources: ResourceLoader;
+
+  private subscriptions!: SubscriptionResource;
+  private playlists!: PlaylistResource; 
+
+  constructor(userId: string) {
+    this.userId = userId;
+    this.resources = new ResourceLoader(userId);
+    this.api = new API(userId);
+  }
+
+  private getSubscriptions = async (): Promise<SubscriptionResource> => {
+    console.log('Getting subscriptions...');
+    const subItems = await this.api.getSubscriptions();
+    this.subscriptions = { lastUpdated: Date.now(), items: subItems };
+    await this.resources.cacheResource('subscriptions', this.subscriptions);
+    console.log('');
+    return subscriptionList;
+  };
+
+  private getPlaylists = async () => {
+    console.log('Gettings playlists...');
+    this.playlists = <PlaylistResource>await this.resources.getResource({ name: 'playlists', bypassCache: true });  
+    console.log('');
+    return this.playlists;
+  };
+
+  public loadAndSort = async (): Promise<boolean> => {
+    if (!await this.api.authenticate())
+      return false;
+
+    await this.getSubscriptions();
+    await this.getPlaylists();
+
+    return true;
+  };
+
+}
+
+
+
 
 
 const USE_SUBSCRIPTION_CACHE = true;
@@ -8,31 +64,15 @@ const SUBSCRIPTION_CACHE_EXPIRE = 43200000; // 12 Hours
 const USE_PLAYLIST_CACHE = true;
 const PLAYLIST_CACHE_EXPIRE = 43200000; // 12 Hours
 const USE_CACHED_VIDEOS = false;
-var subscriptionList = {};
-var playlists = {};
-var history = {};
-var newVideos = [];
-var rules = {};
-var updateQueue = [];
-var counts = { processed: 0, errors: { previous: 0, new: 0 }, unsorted: 0 };
+let subscriptionList: SubscriptionResource;
+let playlists = {};
+let history = { errorQueue: <any>[], unsorted: <any>[], runHistory: <any>[], lastRun:0 };
+let newVideos:any = [];
+let rules:any;
+const updateQueue:any = [];
+const counts = { processed: 0, errors: { previous: 0, new: 0 }, unsorted: 0 };
 
-/**
- * Get subscriptions from cache or API.
- *
- */
-async function getSubscriptions() {
-  const subItems = await getSubscriptionPage().then(items => items.map(i => ({
-    channelId: i.snippet.resourceId.channelId,
-    title: i.snippet.title,
-    description: i.snippet.description,
-    thumbnail: i.snippet.thumbnails.medium?.url || i.snippet.thumbnails.default?.url,
-    newItemCount: i.contentDetails.newItemCount
-  })));
-  subscriptionList = { lastUpdated: Date.now(), items: subItems };
-  await cacheResource('subscriptions', subscriptionList);
-  console.log('');
-  return subscriptionList;
-};
+
 
 /**
  * Get playlists from cache or API.
@@ -45,7 +85,7 @@ async function getPlaylists() {
   if (!playlists) {
     const playItems = await getPlaylistPage();
     playlists = { lastUpdated: Date.now(), items: playItems };
-    await cacheResource('playlists', playlists)
+    await cacheResource('playlists', playlists);
   }
 
   console.log('');
@@ -57,10 +97,10 @@ async function getPlaylists() {
  *
  */
 async function loadHistory() {
-  console.log('Loading history...')
+  console.log('Loading history...');
   history = await loadResource('history');
   if (!history) {
-    history = { lastRun: new Date() - 43200000, errorQueue: [], unsorted: [] };
+    history = { lastRun: Date.now() - 43200000, errorQueue: [], unsorted: [], runHistory: [] };
   }
   history.errorQueue = history.errorQueue || [];
   history.unsorted = history.unsorted || [];
@@ -73,7 +113,7 @@ async function loadHistory() {
  *
  */
 async function loadRules() {
-  console.log('Loading sort rules...')
+  console.log('Loading sort rules...');
   rules = await loadResource('rules');
   if (!rules) {
     rules = { rules: [] };
@@ -135,7 +175,7 @@ async function sortUnsorted() {
  *
  */
 async function sortErrors() {
-  const errorVideos = [...history.errorQueue.map(e => e.video)];
+  const errorVideos = [...history.errorQueue.map((e:any) => e.video)];
   history.errorQueue = [];
   console.log('Sorting previously errored videos...');
   return await sortVideos(errorVideos);
@@ -145,17 +185,17 @@ async function sortErrors() {
  * Sorts each from the given list into a playlist based on the rules.
  *
  */
-async function sortVideos(videos) {
+async function sortVideos(videos: any) {
   if (!videos.length) {
     console.log('  No videos to sort.');
     console.log('');
     return true;
   }
-  videos.forEach(v => {
-    const playlistId = rules.rules.find(r => {
+  videos.forEach((v:any) => {
+    const playlistId = rules.rules.find((r:any) => {
       const appliedRules = [];
       if (r.channelMatch !== '') {
-        appliedRules.push(r.channelMatch === v?.channelId)
+        appliedRules.push(r.channelMatch === v?.channelId);
       }
       if (r.titleMatch !== '') {
         appliedRules.push(new RegExp(r.titleMatch).test(v.title));
@@ -175,9 +215,9 @@ async function sortVideos(videos) {
   });
 
   const sortedresults = await Promise.all(
-    updateQueue.map(q => addToPlaylist(q.playlistId, q.videoId)
+    updateQueue.map((q:any) => addToPlaylist(q.playlistId, q.videoId)
       .then(() => counts.processed++)
-      .catch(e => {
+      .catch((e:any) => {
         counts.errors.new++;
         try {
           const req = JSON.parse(e.response.config.body);
@@ -186,7 +226,7 @@ async function sortVideos(videos) {
           //console.log(e.response.data.error.errors);
           //console.log('~~~~~~~~~~~~~~~')
 
-          const video = newVideos.find(v => v.id === req.snippet.resourceId.videoId);
+          const video = newVideos.find((v:any) => v.id === req.snippet.resourceId.videoId);
                    
           // Do not re-add errored videos.
           //if (!history.errorQueue.filter(e => e.videoId === req.snippet.resourceId.videoId)) {
@@ -195,7 +235,7 @@ async function sortVideos(videos) {
                     
                     
         } catch(ee) {
-          console.log(e)
+          console.log(e);
         }
       })
     )
@@ -236,6 +276,16 @@ console.log('~~~~~~~~~~~~~~~~~~~~~~~');
 console.log('~ Running Sort Service.');
 console.log('~~~~~~~~~~~~~~~~~~~~~~~');
 console.log('');
+
+const idIx = process.argv.indexOf('-id') + 1;
+if(idIx === 0)
+  throw '-id argument required.';
+
+const userId = process.argv[idIx];
+
+new SortLists(userId).loadAndSort().then(success => console.log(`Success: ${success}`));
+
+/*
 authorize()
   .then(getSubscriptions)
   .then(getPlaylists)
@@ -247,3 +297,5 @@ authorize()
   .then(sortNewVideos)
   .then(cleanup)
   .catch(console.error);
+
+  */

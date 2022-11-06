@@ -1,13 +1,14 @@
 import * as path from 'path';
 import { DataStore } from './data-store';
-import { getSortedList } from './resourceLoaders/sorted-list';
+//import { getSortedList } from './resourceLoaders/sorted-list';
 import { EmptyResource, UserResource } from 'server/models/resource.models';
+import { API } from './api';
 
 // Returns an empty resource item.
 const returnEmptyResource = async (): Promise<EmptyResource> => ({ lastUpdated: Date.now(), items: [] });
 
 // Map of resources and how to handle them.
-const RESOURCES = {
+const RESOURCES:any = {
   token: {
     path: path.join(process.cwd(), 'server/token.json'),
     protected: true
@@ -24,7 +25,7 @@ const RESOURCES = {
   playlists: {
     path: path.join(process.cwd(), 'server/state/playlists.json'),
     defaultExpire: 43200000,
-    protected: false
+    load: async (userId: string) => new API(userId).getPlaylists().then(pl => ({ lastUpdated: Date.now(), items: pl }))
   },
   history: {
     path: path.join(process.cwd(), 'server/state/history.json'),
@@ -40,7 +41,7 @@ const RESOURCES = {
   },
   sortedList: {
     defaultExpire: 3600000,
-    load: getSortedList
+    //load: getSortedList
   }
 };
 
@@ -94,7 +95,7 @@ export class ResourceLoader {
     return RESOURCES[resourceName].load(this.userId).then(((res: UserResource) => this.cacheResource(resourceName, res)));
   };
 
-  private cacheResource = (resourceName: string, data: UserResource): Promise<UserResource> => {
+  public cacheResource = (resourceName: string, data: UserResource): Promise<UserResource> => {
     console.log(`caching resource ${resourceName}`);
     return this.store.saveResource(resourceName, data).then(() => data);
   };

@@ -1,7 +1,8 @@
-import { Playlist } from './shared/list.model';
+import { Playlist, Subscription } from './shared/list.model';
 import { Rule } from './shared/rules.model';
 
-interface BasicResource {
+
+export interface BasicResource {
   lastUpdated: number;
 }
 
@@ -18,7 +19,15 @@ export interface EmptyResource extends BasicResource {
   items: [];
 }
 
-export type UserResource = SortedListResource | RulesResource | EmptyResource;
+export interface SubscriptionResource extends BasicResource {
+  items: Subscription[];
+}
+
+export interface PlaylistResource extends BasicResource {
+  items: Playlist[];
+}
+
+export type UserResource = SortedListResource | RulesResource | SubscriptionResource | PlaylistResource | EmptyResource;
 
 
 
