@@ -39,15 +39,17 @@ export class API {
   })));
 
   public getPlaylists = async (fromTime = 0): Promise<Playlist[]> => this.getPlaylistPage().then(items => 
-    items.filter((e: any) => fromTime < Date.parse(e.contentDetails.videoPublishedAt)).map((e: any) => ({
-      id: e.contentDetails.videoId,
+    <Playlist[]>items.filter((e: any) => fromTime <= Date.parse(e.snippet.publishedAt)).map((e: any) => (<Playlist>{
       playlistId: e.id,
-      channelId: e.snippet.channelId,
-      channelName: e.snippet.channelTitle,
       title: e.snippet.title,
-      published: e.snippet.videoPublishedAt,
       description: e.snippet.description,
-      thumbnail: e.snippet.thumbnails?.standard?.url || e.snippet.thumbnails?.medium?.url || e.snippet.thumbnails?.default?.url
+      thumbnail: e.snippet.thumbnails?.standard?.url || e.snippet.thumbnails?.medium?.url || e.snippet.thumbnails?.default?.url,
+      newItemCount: 0,
+      itemCount: e.contentDetails.itemCount,
+      videos: [],
+      channelId: e.snippet.channelId,
+      channelName: e.snippet.title,
+      publishedDate: e.snippet.publishedAt
     })));
 
   private checkUserAuth = async (): Promise<void> => {
@@ -87,8 +89,8 @@ export class API {
       maxResults: 50,
       pageToken: pageToken
     });
-  
     playlistList = playlistList.concat(<any>(response.data.items || []).filter(i => i.id !== 'PLLFJ6m60CtDxpqLNqJHUFNyIh0R81jZKa'));
+    
     const nextPageToken = response.data.nextPageToken;
     if (nextPageToken) {
       playlistList = await this.getPlaylistPage(playlistList, nextPageToken);
