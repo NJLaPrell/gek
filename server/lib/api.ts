@@ -2,8 +2,18 @@
 import { UserAuthentication } from './auth';
 import { google } from 'googleapis';
 import { Subscription, Playlist } from '../models/shared/list.model';
+import { httpsRequest } from './utils';
+import { XMLParser } from 'fast-xml-parser';
+import { Video } from 'server/models/shared/video.model';
 
 const youtube = google.youtube('v3');
+
+// Options for parsing XML.
+const xmlOptions = {
+  ignoreAttributes: false,
+  attributeNamePrefix : '@_',
+  allowBooleanAttributes: true
+};
 
 export class API {
   private userId: string;
@@ -51,6 +61,77 @@ export class API {
       channelName: e.snippet.title,
       publishedDate: e.snippet.publishedAt
     })));
+
+  public getChannelFeed = async (id: string, fromTime = 0) => this.getFeed('channel', id, fromTime);
+  public getPlaylistFeed = async(id: string, fromTime = 0, useGApi = true) => this.getFeed('playlist', id, fromTime, useGApi);
+
+  public addToPlaylist = async (playlistId: string, videoId: string) => {
+    await this.checkUserAuth();
+
+    return await this.google.youtube('v3').playlistItems.insert({
+      part: ['snippet'],
+      requestBody: {
+        snippet: {
+          playlistId: playlistId,
+          resourceId: {
+            kind: 'youtube#video',
+            videoId: videoId
+          }
+        }
+      }
+    });
+  };
+
+
+
+  private getFeed = async (type: string, id: string, fromTime = 0, useGApi = true) => {
+    await this.checkUserAuth();
+
+    const vmap = <{[key: string]: { playlistId: string; }}>{};
+    /*
+    if (type === 'playlist' && useGApi) {
+      const test = await listPlaylistItems(id)
+        .catch(e => console.log('  Unable to get playlist items from google.', e))
+        .then(items => items.forEach(pl => vmap[pl.id] = pl));
+    }
+    */
+     
+    return httpsRequest({ host: 'www.youtube.com', path: '/feeds/videos.xml?' + type + '_id=' + id }).then((res: any) => {
+      const parser = new XMLParser(xmlOptions);
+      const output = parser.parse(res);
+      console.log(`  Loading ${type} feed: ${output.feed.title} ${fromTime ? ' (From timestamp: ' + String(fromTime) : ''}.`);
+      const entries = output?.feed?.entry || Array([]);
+            
+      return !entries.filter ? [] : entries.filter((e: any) => fromTime < Date.parse(e.published)).map((e: any) => {
+        return <Video>{
+          id: e['yt:videoId'],
+          playlistItemId: vmap[e['yt:videoId']]?.playlistId || '',
+          channelId: e['yt:channelId'],
+          channelName: e.author.name,
+          title: e.title,
+          published: e.published,
+          updated: e.updated,
+          authorName: e.author.name,
+          channelLink: e.author.uri,
+          link: e.link['@_href'],
+          description: e['media:group']['media:description'],
+          thumbnail: e['media:group']['media:thumbnail']['@_url'],
+          viewCount: e['media:group']['media:community']['media:statistics']['@_views'],
+          thumbCount: e['media:group']['media:community']['media:starRating']['@_count']        
+        };
+      });
+    }).catch(e => {
+      console.error(`  Error loading ${type} feed: ${id}.`);
+      console.error(e);
+    });
+  };
+
+
+
+
+
+
+
 
   private checkUserAuth = async (): Promise<void> => {
     if (!await this.authenticate())

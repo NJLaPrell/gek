@@ -1,11 +1,14 @@
 import * as path from 'path';
 import { DataStore } from './data-store';
 //import { getSortedList } from './resourceLoaders/sorted-list';
-import { EmptyResource, UserResource } from 'server/models/resource.models';
+import { EmptyResource, HistoryResource, UserResource } from 'server/models/resource.models';
 import { API } from './api';
 
 // Returns an empty resource item.
 const returnEmptyResource = async (): Promise<EmptyResource> => ({ lastUpdated: Date.now(), items: [] });
+
+const returnEmptyHistory = async (): Promise<HistoryResource> => ({ lastUpdated: Date.now(), sortedCount: 0, unsortedCount: 0, errorCount: 0 });
+ 
 
 // Map of resources and how to handle them.
 const RESOURCES:any = {
@@ -17,9 +20,15 @@ const RESOURCES:any = {
     load: async (userId: string) => new API(userId).getPlaylists().then(pl => ({ lastUpdated: Date.now(), items: pl }))
   },
   history: {
-
+    load: returnEmptyHistory
   },
   rules: {
+    load: returnEmptyResource
+  },
+  errorQueue: {
+    load: returnEmptyResource
+  },
+  unsortedVideos: {
     load: returnEmptyResource
   },
   videos: {
@@ -52,7 +61,6 @@ export class ResourceLoader {
   }
 
   public getResource = (options: ResourceLoaderOptions): Promise<UserResource> => {
-    console.log(`getResource(${JSON.stringify(options)})`);
     const opts = { ...defaultOptions, ...options };
     const resource = RESOURCES[opts.name] || false;
     if (!resource) 
@@ -69,7 +77,6 @@ export class ResourceLoader {
         // Load a current version of the resource.
         return this.loadResource(opts.name);
       } else {
-        console.log(data);
         console.log('Returning cached version');
         // Return the cached version.
         return data;

@@ -8,11 +8,11 @@ import * as https from 'https';
  * @param {any} postData
  * @return {Promise<ClientRequest>}
  */
-export const httpsRequest = (params: any, postData: any) => {
+export const httpsRequest = (params: any, postData?: any) => {
   return new Promise(function(resolve, reject) {
     const req = https.request(params, (res: IncomingMessage) => {
       
-      if (res.statusCode < 200 || res.statusCode >= 300) {
+      if (<number>res.statusCode < 200 || <number>res.statusCode >= 300) {
         return reject(new Error(`statusCode=${res.statusCode}`));
       }
     
@@ -43,12 +43,12 @@ export const httpsRequest = (params: any, postData: any) => {
  * @param {int} batchSize
  * @returns {Promise<B[]>}
  */
-export const promiseAllInBatches = async (task, items, batchSize) => {
+export const promiseAllInBatches = async (task: any, items: any, batchSize: number) => {
   let position = 0;
-  let results = [];
+  let results: any = [];
   while (position < items.length) {
     const itemsForBatch = items.slice(position, position + batchSize);
-    results = [...results, ...await Promise.all(itemsForBatch.map(item => task(item)))];
+    results = [...results, ...await Promise.all(itemsForBatch.map((item: any) => task(item)))];
     position += batchSize;
   }
   return results;
