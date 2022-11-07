@@ -7,7 +7,7 @@ const { loadResource, cacheResource } = require('./lib/resources');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { getChannelFeed, getPlaylistPage, addToPlaylist } = require('./lib/api-calls');
 import { API } from './lib/api';
-import { SubscriptionResource, PlaylistResource } from './models/resource.models.js';
+import { SubscriptionResource, PlaylistResource, RulesResource, UserResource } from './models/resource.models.js';
 import { ResourceLoader } from './lib/resource';
 
 
@@ -20,6 +20,7 @@ class SortLists {
 
   private subscriptions!: SubscriptionResource;
   private playlists!: PlaylistResource; 
+  private rules!: RulesResource;
 
   constructor(userId: string) {
     this.userId = userId;
@@ -49,6 +50,8 @@ class SortLists {
 
     await this.getSubscriptions();
     await this.getPlaylists();
+    this.rules = <RulesResource>await this.resources.getResource({ name: 'rules' });
+    console.log(this.rules);
 
     return true;
   };

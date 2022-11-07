@@ -9,35 +9,21 @@ const returnEmptyResource = async (): Promise<EmptyResource> => ({ lastUpdated: 
 
 // Map of resources and how to handle them.
 const RESOURCES:any = {
-  token: {
-    path: path.join(process.cwd(), 'server/token.json'),
-    protected: true
-  },
-  credentials: {
-    path: path.join(process.cwd(), 'server/credentials.json'),
-    protected: true
-  },
   subscriptions: {
-    path: path.join(process.cwd(), 'server/state/subscriptions.json'),
     //defaultExpire: 3600000,
-    protected: false
   },
   playlists: {
-    path: path.join(process.cwd(), 'server/state/playlists.json'),
     defaultExpire: 43200000,
     load: async (userId: string) => new API(userId).getPlaylists().then(pl => ({ lastUpdated: Date.now(), items: pl }))
   },
   history: {
-    path: path.join(process.cwd(), 'server/state/history.json'),
-    protected: false
+
   },
   rules: {
-    path: path.join(process.cwd(), 'server/state/rules.json'),
     load: returnEmptyResource
   },
   videos: {
-    path: path.join(process.cwd(), 'server/state/videos.json'),
-    protected: false
+
   },
   sortedList: {
     defaultExpire: 3600000,
