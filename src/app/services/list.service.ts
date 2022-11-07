@@ -1,18 +1,18 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Playlist } from "../state/models/list.model";
-import { Observable, shareReplay } from "rxjs";
+import { Playlist } from '../state/models/list.model';
+import { Observable, shareReplay } from 'rxjs';
 
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class ListService {
-    constructor(
+  constructor(
         private http: HttpClient
-    ) { }
+  ) { }
 
-    getLists = (nocache = false): Observable<Playlist[]> =>this.http.get<Playlist[]>(`/api/getLists?nocache=${nocache}`).pipe(shareReplay());
+  getLists = (nocache = false): Observable<Playlist[]> =>this.http.get<Playlist[]>(`/api/getLists?nocache=${nocache}`).pipe(shareReplay());
 
 
 }

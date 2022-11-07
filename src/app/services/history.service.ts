@@ -1,25 +1,25 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { HistoryState } from "../state/models/history.model";
-import { map, Observable, shareReplay } from "rxjs";
+import { HistoryState } from '../state/models/history.model';
+import { Observable, shareReplay } from 'rxjs';
 
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class HistoryService {
-    constructor(
+  constructor(
         private http: HttpClient
-    ) { }
+  ) { }
 
-    get = (): Observable<HistoryState> => this.http.get<HistoryState>(`/api/getResource/history`).pipe(shareReplay());
+  get = (): Observable<HistoryState> => this.http.get<HistoryState>('/api/history/getHistory').pipe(shareReplay());
 
-    purgeUnsorted = (): Observable<any> => this.http.post<any>(`/api/history/purgeUnsorted`, '').pipe();
+  purgeUnsorted = (): Observable<any> => this.http.post<any>('/api/history/purgeUnsorted', '').pipe();
 
-    deleteUnsortedItem = (id: string): Observable<any> => this.http.delete<any>(`/api/history/deleteUnsortedItem/${id}`);
+  deleteUnsortedItem = (id: string): Observable<any> => this.http.delete<any>(`/api/history/deleteUnsortedItem/${id}`);
 
-    deleteErrorItem = (id: string): Observable<any> => this.http.delete<any>(`/api/history/deleteErrorItem/${id}`);
+  deleteErrorItem = (id: string): Observable<any> => this.http.delete<any>(`/api/history/deleteErrorItem/${id}`);
 
-    purgeErrors = (): Observable<any> => this.http.post<any>(`/api/history/purgeErrors`, '');
+  purgeErrors = (): Observable<any> => this.http.post<any>('/api/history/purgeErrors', '');
 
 }

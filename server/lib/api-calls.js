@@ -221,7 +221,7 @@ async function addToPlaylist(playlistId, videoId) {
         }
       }
     }
-  })
+  });
 }
 
 async function listPlaylistItems(id, fromTime = 0) {

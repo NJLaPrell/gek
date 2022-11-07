@@ -56,6 +56,35 @@ export class DataStore {
   public saveResource = (resourceName: string, resource: UserResource): Promise<FirebaseFirestore.WriteResult> => 
     this.db.collection(`resource:${resourceName}`).doc(this.userId).set(resource);
 
+  public updateResourceItem = async (resourceName: string, uniqueIdentifier: string, idValue: string, resourceItem: any): Promise<FirebaseFirestore.WriteResult> => {
+    const resourceItems = await (await this.db.collection(`resource:${resourceName}`).doc(this.userId).get()).data()?.['items'];
+    const updateIx = resourceItems.find((item: any) => item[uniqueIdentifier] === idValue);
+    if (updateIx === -1)
+      throw { message: `Unable to find a resource item where ${uniqueIdentifier} = "${idValue}"`, code: 404 };
+
+    resourceItems[updateIx] = resourceItem;
+    const resource = { lastUpdated: Date.now(), items: resourceItems };
+    return this.saveResource(resourceName, resource);
+  };
+
+  public deleteResourceItem = async (resourceName: string, uniqueIdentifier: string, idValue: string): Promise<FirebaseFirestore.WriteResult> => {
+    const resourceItems = await (await this.db.collection(`resource:${resourceName}`).doc(this.userId).get()).data()?.['items'];
+    const deleteIx = resourceItems.find((item: any) => item[uniqueIdentifier] === idValue);
+    if (deleteIx === -1)
+      throw { message: `Unable to find a resource item where ${uniqueIdentifier} = "${idValue}"`, code: 404 };
+
+    resourceItems.splice(deleteIx, 1);
+    const resource = { lastUpdated: Date.now(), items: resourceItems };
+    return this.saveResource(resourceName, resource);
+  };
+
+  public addResourceItem = async (resourceName: string, resourceItem: any): Promise<FirebaseFirestore.WriteResult> => {
+    const resourceItems = await (await this.db.collection(`resource:${resourceName}`).doc(this.userId).get()).data()?.['items'];
+    resourceItems.push(resourceItem);
+    const resource = { lastUpdated: Date.now(), items: resourceItems };
+    return this.saveResource(resourceName, resource);
+  };
+
   public cacheUserAuthToken = async (authToken: UserAuthToken): Promise<boolean> => 
     this.db.collection('auth-tokens').doc(this.userId).set(authToken).then(() => true).catch((e) => {
       console.log(e);

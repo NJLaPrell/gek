@@ -1,6 +1,5 @@
 const path = require('path');
 const fs = require('fs').promises;
-//const { getSubscriptionPage } = require('./api-calls');
 
 // Map of resources and how to handle them.
 const RESOURCES = {

@@ -92,5 +92,10 @@ export class ResourceLoader {
     console.log(`caching resource ${resourceName}`);
     return this.store.saveResource(resourceName, data).then(() => data);
   };
+
+  public updateResourceItem = async (resourceName: string, uniqueIdentifier: string, idValue: string, resourceItem: any) => this.store.updateResourceItem(resourceName, uniqueIdentifier, idValue, resourceItem);
+  public deleteResourceItem = async (resourceName: string, uniqueIdentifier: string, idValue: string) => this.store.deleteResourceItem(resourceName, uniqueIdentifier, idValue);
+  public addResourceItem = async (resourceName: string, resourceItem: any) => this.store.addResourceItem(resourceName, resourceItem);
+  public purgeResourceItem = async (resourceName: string) => this.cacheResource(resourceName, await returnEmptyResource());
 }
 
