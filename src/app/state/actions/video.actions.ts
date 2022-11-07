@@ -7,28 +7,28 @@ export const getChannelVideos = createAction(
 );
 
 export const getChannelVideosSuccess = createAction(
-    '[Video] Get Channel Videos Success',
-    props<{ response: Video[], channelId: string }>()
+  '[Video] Get Channel Videos Success',
+  props<{ response: Video[], channelId: string }>()
 );
 
 export const getChannelVideosFail = createAction(
-    '[Video] Get Channel Videos Fail',
-    props<{ error: string }>()
+  '[Video] Get Channel Videos Fail',
+  props<{ error: string }>()
 );
 
 export const getPlaylistVideos = createAction(
   '[Video] Get Playlist Videos',
-  props<{ playlistId: string, useGApi?: boolean }>()
+  props<{ playlistId: string, bypassCache?: boolean }>()
 );
 
 export const getPlaylistVideosSuccess = createAction(
-    '[Video] Get Playlist Videos Success',
-    props<{ response: Video[], playlistId: string, useGApi?: boolean }>()
+  '[Video] Get Playlist Videos Success',
+  props<{ response: { lastUpdated: number, items: Video[] }, playlistId: string, bypassCache?: boolean }>()
 );
 
 export const getPlaylistVideosFail = createAction(
-    '[Video] Get Playlist Videos Fail',
-    props<{ error: string }>()
+  '[Video] Get Playlist Videos Fail',
+  props<{ error: string }>()
 );
 
 export const addToPlaylist = createAction(

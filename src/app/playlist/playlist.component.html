@@ -1,4 +1,8 @@
 <h2 id="page-title">{{ pageTitle }}</h2>
+<div id="lastUpdated" class="text-muted ps-2">
+  Last Updated: {{ lastUpdated | fromNow }}
+  <button type="button" class="btn btn-sm btn-dark"><fa-icon [icon]="faRefresh" ngbTooltip="Refresh Playlist" (click)="refresh()"></fa-icon></button>
+</div>
 
 <!-- ############################################# -->
 <!-- Loading Indicator                             -->

@@ -24,6 +24,8 @@ export class SortLists {
   private updateQueue: { videoId: string; playlistId: string }[] = [];
   private counts = { processed: 0, errors: { previous: 0, new: 0 }, unsorted: 0 };
 
+  private statusCallbacks: ((status: string) => any)[] = [];
+
   constructor(userId: string) {
     this.userId = userId;
     this.resources = new ResourceLoader(userId);
@@ -31,40 +33,40 @@ export class SortLists {
   }
 
   private getSubscriptions = async (): Promise<SubscriptionResource> => {
-    console.log('Getting subscriptions...');
+    this.writeStatus('Getting subscriptions...');
     const subItems = await this.api.getSubscriptions();
     this.subscriptions = { lastUpdated: Date.now(), items: subItems };
     await this.resources.cacheResource('subscriptions', this.subscriptions);
-    console.log('');
+    this.writeStatus('');
     return this.subscriptions;
   };
 
   private getPlaylists = async () => {
-    console.log('Gettings playlists...');
+    this.writeStatus('Gettings playlists...');
     this.playlists = <PlaylistResource>await this.resources.getResource({ name: 'playlists', bypassCache: true });  
-    console.log('');
+    this.writeStatus('');
     return this.playlists;
   };
 
   private getNewVideos = async () => {
     const fromTime = new Date(this.history.lastUpdated).toISOString();
-    console.log(`Getting new videos (Since ${fromTime})...`);
+    this.writeStatus(`Getting new videos (Since ${fromTime})...`);
     
     // Get new videos for each item in the subscriptionList.
     await Promise.all(
       this.subscriptions.items.map(i => this.api.getChannelFeed(i.channelId, this.history.lastUpdated))
     ).then((feeds) => {
       feeds.forEach(f => this.newVideos = this.newVideos.concat(f));
-      console.log(`  ${this.newVideos.length} new videos since ${new Date(this.history.lastUpdated).toISOString()}.`);
-      console.log('');
+      this.writeStatus(`  ${this.newVideos.length} new videos since ${new Date(this.history.lastUpdated).toISOString()}.`);
+      this.writeStatus('');
     });
     return this.newVideos;
   };
 
   private sortVideos = async (videos: Video[]) => {
     if (!videos.length) {
-      console.log('  No videos to sort.');
-      console.log('');
+      this.writeStatus('  No videos to sort.');
+      this.writeStatus('');
       return true;
     }
 
@@ -83,7 +85,7 @@ export class SortLists {
         return r.type === 'or' ? appliedRules.some(t => t) : appliedRules.every(t => t);
       })?.playlistId;
       if (playlistId) {
-        this.updateQueue.push({ videoId: v.id, playlistId: playlistId });
+        this.updateQueue.push({ videoId: v.videoId, playlistId: playlistId });
       } else {
         this.unsortedVideos.items.push(v);
       }  
@@ -96,12 +98,12 @@ export class SortLists {
           this.counts.errors.new++;
           try {
             const req = JSON.parse(e.response.config.body);
-            console.log(`  Failed adding videoId: ${req.snippet.resourceId.videoId} to playlistId: ${req.snippet.playlistId}`);
-            //console.log('~~~~~~~~~~~~~~~')
-            //console.log(e.response.data.error.errors);
-            //console.log('~~~~~~~~~~~~~~~')
+            this.writeStatus(`  Failed adding videoId: ${req.snippet.resourceId.videoId} to playlistId: ${req.snippet.playlistId}`);
+            //this.writeStatus('~~~~~~~~~~~~~~~')
+            //this.writeStatus(e.response.data.error.errors);
+            //this.writeStatus('~~~~~~~~~~~~~~~')
   
-            const video = <Video>this.newVideos.find((v: Video) => v.id === req.snippet.resourceId.videoId);
+            const video = <Video>this.newVideos.find((v: Video) => v.videoId === req.snippet.resourceId.videoId);
                      
             // Do not re-add errored videos.
             //if (!history.errorQueue.filter(e => e.videoId === req.snippet.resourceId.videoId)) {
@@ -109,21 +111,21 @@ export class SortLists {
             //}
                       
                       
-          } catch(ee) {
-            console.log(e);
+          } catch(e) {
+            this.writeStatus(String(e));
           }
         })
       )
     );
       
-    console.log('');
+    this.writeStatus('');
     return sortedresults;
   };
 
   private sortUnsortedVideos = async () => {
     this.newVideos = [...this.unsortedVideos.items];
     this.unsortedVideos.items = [];
-    console.log('Sorting previously unsorted videos...');
+    this.writeStatus('Sorting previously unsorted videos...');
     await this.sortVideos(this.newVideos);
     this.newVideos = [];
     this.updateQueue = [];
@@ -133,23 +135,32 @@ export class SortLists {
     this.newVideos = <Video[]>[...this.errorQueue.items.map((e: ErrorQueueItem) => e.video)];
     this.counts.errors.previous = this.errorQueue.items.length;
     this.errorQueue.items = [];
-    console.log('Sorting previously errored videos...');
+    this.writeStatus('Sorting previously errored videos...');
     await this.sortVideos(this.newVideos);
     this.updateQueue = [];
     this.newVideos = [];
   };
 
   private sortNewVideos = async () => {
-    console.log('Sorting new videos...');
+    this.writeStatus('Sorting new videos...');
     await this.sortVideos(this.newVideos);
   };
 
+  private writeStatus = (status: string) => {
+    console.log(status);
+    this.statusCallbacks.forEach(cb => cb(status + '\n'));
+  };
+
+  public onStatus = (func: (status: string) => any) => {
+    this.statusCallbacks.push(func);
+  };
+
   public loadAndSort = async (): Promise<boolean> => {
-    console.log('');
-    console.log('~~~~~~~~~~~~~~~~~~~~~~~');
-    console.log('~ Running Sort Service.');
-    console.log('~~~~~~~~~~~~~~~~~~~~~~~');
-    console.log('');
+    this.writeStatus('');
+    this.writeStatus('~~~~~~~~~~~~~~~~~~~~~~~');
+    this.writeStatus('~ Running Sort Service.');
+    this.writeStatus('~~~~~~~~~~~~~~~~~~~~~~~');
+    this.writeStatus('');
 
     if (!await this.api.authenticate())
       return false;
@@ -165,7 +176,7 @@ export class SortLists {
     await this.getNewVideos();
     await this.sortNewVideos();
     
-    console.log('Saving run history.');
+    this.writeStatus('Saving run history.');
 
     this.counts.unsorted = this.unsortedVideos.items.length;
 
@@ -180,16 +191,16 @@ export class SortLists {
     await this.resources.cacheResource('errorQueue', this.errorQueue);
 
     this.unsortedVideos.lastUpdated = Date.now();
-    await this.resources.cacheResource('unsortedVideos', this.errorQueue);
+    await this.resources.cacheResource('unsortedVideos', this.unsortedVideos);
     
-    console.log('');
-    console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-    console.log(`Processed: ${this.counts.processed + this.counts.unsorted + this.counts.errors.previous}`);
-    console.log(`Sorted:    ${this.counts.processed}`);
-    console.log(`Unsorted:  ${this.counts.unsorted}`);
-    console.log(`Errors:    ${this.counts.errors.new} New / ${this.errorQueue.items.length} Total`);
-    console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-    console.log('');
+    this.writeStatus('');
+    this.writeStatus('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+    this.writeStatus(`Processed: ${this.counts.processed + this.counts.unsorted + this.counts.errors.previous}`);
+    this.writeStatus(`Sorted:    ${this.counts.processed}`);
+    this.writeStatus(`Unsorted:  ${this.counts.unsorted}`);
+    this.writeStatus(`Errors:    ${this.counts.errors.new} New / ${this.errorQueue.items.length} Total`);
+    this.writeStatus('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+    this.writeStatus('');
 
     return true;
   };

@@ -21,7 +21,7 @@ export const listReducer = createReducer(
     const ix = state.items.findIndex((pl: Playlist) => pl.playlistId === action.playlistId);
     const playlists: Playlist[] = [...state.items];
     
-    playlists[ix] = { ...playlists[ix], videos: [ ...action.response ] };
+    playlists[ix] = { ...playlists[ix], lastUpdated: action.response.lastUpdated, videos: [ ...action.response.items ] };
     return {
       ...state,
       items: playlists

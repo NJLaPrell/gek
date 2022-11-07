@@ -73,7 +73,6 @@ export class TopBarComponent implements OnInit {
   }
 
   refreshLists(): void {
-    this.store.dispatch(getUncachedLists());
     this.store.dispatch(getRules());
     this.store.dispatch(getHistory());
     this.toast.info('Refreshing list data...');

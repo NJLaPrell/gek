@@ -63,9 +63,9 @@ export class UnsortedComponent implements OnInit {
 
   deleteItem(video: Video) {
     if (video?.errorMessage) {
-      this.store.dispatch(deleteErrorItem({ id: video.id || '' }));
+      this.store.dispatch(deleteErrorItem({ id: video.videoId || '' }));
     } else {
-      this.store.dispatch(deleteUnsortedItem({ id: video.id || '' }));
+      this.store.dispatch(deleteUnsortedItem({ id: video.videoId || '' }));
     }
   }
 

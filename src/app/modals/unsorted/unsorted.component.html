@@ -33,7 +33,7 @@
                             <button type="button" class="btn btn-dark btn-sm" [id]="'assign' + u?.id" ngbDropdownToggle>Move to Playlist...</button>
                             <div ngbDropdownMenu style="max-height: 60vh; overflow:auto">
                                 <ng-container *ngFor="let pl of playlists">
-                                    <button (click)="moveToPlaylist(pl.id, u?.id || '')" ngbDropdownItem>{{ pl.title }}</button>
+                                    <button (click)="moveToPlaylist(pl.id, u?.videoId || '')" ngbDropdownItem>{{ pl.title }}</button>
                                 </ng-container>
                             </div>
                         </div>

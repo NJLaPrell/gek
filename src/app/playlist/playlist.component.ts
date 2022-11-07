@@ -8,6 +8,8 @@ import { Video } from '../state/models/video.model';
 import { selectLists, selectPlaylistTitles } from '../state/selectors/list.selectors';
 import { selectNavState } from '../state/selectors/navState.selectors';
 import { selectRemoteMode } from '../state/selectors/remote.selectors';
+import { faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { getPlaylistVideos } from '../state/actions/video.actions';
 
 @Component({
   selector: 'app-playlist',
@@ -15,6 +17,8 @@ import { selectRemoteMode } from '../state/selectors/remote.selectors';
   styleUrls: ['./playlist.component.scss']
 })
 export class PlaylistComponent implements OnInit {
+  faRefresh = faRefresh;
+
   mode!: string;
   playlistId = '';                  // From the route params.
   videoId = '';                     // From the route params.
@@ -23,6 +27,7 @@ export class PlaylistComponent implements OnInit {
   loading = false;
   navState: any = {};               // Video navigation state.
   pageTitle = 'YouTube Playlists';
+  lastUpdated!: number;
   
 
   constructor(
@@ -57,12 +62,14 @@ export class PlaylistComponent implements OnInit {
         map((r: any) => ({
           videoList: [...r[0].find((pl: Playlist) => pl.playlistId === this.playlistId)?.videos || []].sort((a: Video, b:Video) => new Date(a.publishedAt || '') > new Date(b.publishedAt || '') ? 1 : -1),
           titleLookup: r[1],
-          routeParams: r[2]
+          routeParams: r[2],
+          lastUpdated: r[0].find((pl: Playlist) => pl.playlistId === this.playlistId).lastUpdated
         }))
       )
       .subscribe(r => {
         this.videoList = [...r.videoList];
         this.pageTitle = r.titleLookup[this.playlistId] || 'YouTube Playlists';
+        this.lastUpdated = r.lastUpdated;
         if (this.videoId) {
           const v = this.videoList.find(v => v.videoId == this.videoId);
           if (v) {
@@ -89,6 +96,10 @@ export class PlaylistComponent implements OnInit {
         }
         
       });
+  }
+
+  refresh(): void {
+    this.store.dispatch(getPlaylistVideos({ playlistId: this.playlistId, bypassCache: true }));
   }
 
 }

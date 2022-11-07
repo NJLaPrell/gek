@@ -1,4 +1,4 @@
-import { Video } from "./video.model";
+import { Video } from './video.model';
 
 // ###################################
 // ## LIST MODEL
@@ -10,9 +10,9 @@ export interface ListState {
 }
 
 export const initialListState: ListState = {
-    items: [],
-    playlistLookup: {},
-    subscriptions: []
+  items: [],
+  playlistLookup: {},
+  subscriptions: []
 };
 
 export interface GetListResponse {
@@ -33,6 +33,7 @@ export interface Playlist {
     title: string;
     description: string;
     thumbnail: string;
+    lastUpdated?: number;
     newItemCount?: number;    // TODO
     itemCount?: number;       //------
     videos?: Video[];         //------

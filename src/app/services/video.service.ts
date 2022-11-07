@@ -1,25 +1,25 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Video } from "../state/models/video.model";
-import { map, Observable, shareReplay } from "rxjs";
+import { Video } from '../state/models/video.model';
+import { map, Observable, shareReplay } from 'rxjs';
 
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class VideoService {
-    constructor(
+  constructor(
         private http: HttpClient
-    ) { }
+  ) { }
 
-    getChannelVideos = (channelId: string): Observable<Video[]> =>this.http.get<Video[]>(`/api/getChannelFeed/${channelId}`).pipe(shareReplay());
+  getChannelVideos = (channelId: string): Observable<Video[]> =>this.http.get<Video[]>(`/api/getChannelFeed/${channelId}`).pipe(shareReplay());
 
-    getPlaylistVideos = (playlistId: string, useGApi: boolean = true): Observable<Video[]> =>this.http.get<Video[]>(`/api/getPlaylistFeed/${playlistId}?useGApi=${useGApi}`).pipe(shareReplay());
+  getPlaylistVideos = (playlistId: string, bypassCache = false): Observable<{ lastUpdated: number; items: Video[]}> =>this.http.get<{ lastUpdated: number; items: Video[]}>(`/api/getPlaylistFeed/${playlistId}?bypassCache=${bypassCache}`).pipe(shareReplay());
 
-    rateVideo = (videoId: string, rating: string): Observable<any> => this.http.put(`/api/video/${videoId}/rate/${rating}`, '');
+  rateVideo = (videoId: string, rating: string): Observable<any> => this.http.put(`/api/video/${videoId}/rate/${rating}`, '');
 
-    removeFromPlaylist = (playlistItemId: string): Observable<any> => this.http.put(`/api/playlistItem/remove/${playlistItemId}`, '');
+  removeFromPlaylist = (playlistItemId: string): Observable<any> => this.http.put(`/api/playlistItem/remove/${playlistItemId}`, '');
 
-    addToPlaylist = (videoId: string, playlistId: string): Observable<any> => this.http.put(`/api/video/${videoId}/addToPlaylist/${playlistId}`, '');
+  addToPlaylist = (videoId: string, playlistId: string): Observable<any> => this.http.put(`/api/video/${videoId}/addToPlaylist/${playlistId}`, '');
 
 }

@@ -145,7 +145,4 @@ routes.apply();
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
-}).catch((e: any) => {
-  console.log('EXCEPTION:');
-  console.log(e);
 });

@@ -10,10 +10,13 @@ export class APIRoutes {
   public apply = (app: any, ensureAuth: any) => {
     
     app.get('/api/test', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
-      const loader = new ResourceLoader(req.user.id);
-    
       //const resource = loader.getResource('sortedList');
-      loader.getResource({ name: 'rules' }).then(test => res.json(test));
+      new ResourceLoader(req.user.id).getResource({ name: 'playlist', resourceId: 'PLLFJ6m60CtDwK9wca0UW4shViNd6-ti-7', bypassCache: true })
+        .then((contents: any) => res.json(contents))
+        .catch((e: any) => {
+          console.log(e);
+          res.status(404).json({ error: e });
+        });   
         
       //res.json({ ...test });
     });
@@ -63,15 +66,16 @@ export class APIRoutes {
     });
     
     app.get('/api/getPlaylistFeed/:id', (req: ExpressRequest, res: ExpressResponse) => {
-        
       const id = req.params['id'];
-      const useGApi = req.query['useGApi'] === 'true';
-      console.log(`GET: /api/getPlaylistFeed/${id}?useGApi=${useGApi}`);
-      new API(req.user.id).getPlaylistFeed(id, 0, useGApi)
-        .then((contents: any) => {
-          res.json(contents);
-        })
-        .catch((e: any) => res.status(404).json({ error: e }));
+      const bypassCache = req.query['bypassCache'] === 'true';
+      console.log(`GET: /api/getPlaylistFeed/${id}?bypassCache=${bypassCache}`);
+      new ResourceLoader(req.user.id).getResource({ name: 'playlist', resourceId: id, bypassCache })
+        .then((contents: any) => res.json(contents))
+        .catch((e: any) => {
+          console.log(e);
+          res.status(404).json({ error: e });
+
+        });       
     });
     
     app.get('/api/getLists', (req: ExpressRequest, res: ExpressResponse) => {
@@ -129,13 +133,9 @@ export class APIRoutes {
       console.log('POST: /api/runSort');
       res.setHeader('Content-Type', 'text/plain; charset=utf-8');
       res.setHeader('Transfer-Encoding', 'chunked');
-      new SortLists(req.user.id).loadAndSort().then(() =>  res.send());
-     
-      //runSort().then(results => res.status(201).json(results));
-      //const child = spawn('npm', ['run', 'sort']);
-      //child.stdout.pipe(res);
-      //child.stdout.on('error', (e) => console.log(e)).on('data', (m) => res.write(m)).on('close', () => res.end());
-    
+      const sl = new SortLists(req.user.id);
+      sl.onStatus((status: string) => res.write(status));
+      sl.loadAndSort().then(() =>  res.end());    
     });
     
     app.delete('/api/history/deleteUnsortedItem/:id', (req: ExpressRequest, res: ExpressResponse) => {

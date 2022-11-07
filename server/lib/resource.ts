@@ -1,4 +1,3 @@
-import * as path from 'path';
 import { DataStore } from './data-store';
 //import { getSortedList } from './resourceLoaders/sorted-list';
 import { EmptyResource, HistoryResource, UserResource } from 'server/models/resource.models';
@@ -31,8 +30,9 @@ const RESOURCES:any = {
   unsortedVideos: {
     load: returnEmptyResource
   },
-  videos: {
-
+  playlist: {
+    defaultExpire: 3600000,
+    load: async (userId: string, opts: ResourceLoaderOptions) => new API(userId).getPlaylistFeed(opts.resourceId || '', 0, true).then(items => ({ lastUpdated: Date.now(), items }))
   },
   sortedList: {
     defaultExpire: 3600000,
@@ -44,6 +44,7 @@ export interface ResourceLoaderOptions {
   name: string;
   expireDuration?: string;
   bypassCache?: boolean;
+  resourceId?: string;
 }
 
 const defaultOptions = {
@@ -61,12 +62,13 @@ export class ResourceLoader {
   }
 
   public getResource = (options: ResourceLoaderOptions): Promise<UserResource> => {
-    const opts = { ...defaultOptions, ...options };
+    const opts = <ResourceLoaderOptions>{ ...defaultOptions, ...options };
     const resource = RESOURCES[opts.name] || false;
     if (!resource) 
       throw `"${opts.name}" is not a recognized resource.`;
     
-    return this.store.getResource(opts.name).then((data: UserResource | undefined) => {
+    const resourceName = opts.name + (opts.resourceId ? `:${opts.resourceId}` : '');
+    return this.store.getResource(resourceName).then((data: UserResource | undefined) => {
       const expireDuration = typeof opts.expireDuration !== undefined ? opts.expireDuration : resource.defaultExpire || false;
       if (
         opts.bypassCache // Bypass the cache.
@@ -75,7 +77,7 @@ export class ResourceLoader {
       ) {
         console.log('getting current version');
         // Load a current version of the resource.
-        return this.loadResource(opts.name);
+        return this.loadResource(opts);
       } else {
         console.log('Returning cached version');
         // Return the cached version.
@@ -84,8 +86,9 @@ export class ResourceLoader {
     });
   };
 
-  public loadResource = (resourceName: string): Promise<UserResource> => {
-    return RESOURCES[resourceName].load(this.userId).then(((res: UserResource) => this.cacheResource(resourceName, res)));
+  public loadResource = (opts: ResourceLoaderOptions): Promise<UserResource> => {
+    const resourceName = opts.name + (opts.resourceId ? `:${opts.resourceId}` : '');
+    return RESOURCES[opts.name].load(this.userId, opts).then(((res: UserResource) => this.cacheResource(resourceName, res)));
   };
 
   public cacheResource = (resourceName: string, data: UserResource): Promise<UserResource> => {
