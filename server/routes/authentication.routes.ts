@@ -19,14 +19,13 @@ export class AuthenticationRoutes {
       res.redirect('/');
     });
     
-    app.get('/login', passport.authenticate('google', { scope: SCOPES, accessType: 'offline', prompt: 'consent' }), (req: ExpressRequest, res: ExpressResponse) => {
-      console.log('BAR', res);
-      console.log(req);
+    app.get('/login', ensureGuest, passport.authenticate('google', { scope: SCOPES, accessType: 'offline', prompt: 'consent' }), (req: ExpressRequest, res: ExpressResponse) => {
+      console.log('GET: /login');
     });
     
     app.get('/logout', (req: ExpressRequest, res: ExpressResponse) => {
-      req.session = null;
-      req.logout();
+      req.session.destroy();
+      //req.logout();
       res.redirect('/');
     });
 

@@ -1,7 +1,7 @@
-import { initializeApp, applicationDefault, cert, ServiceAccount } from 'firebase-admin/app';
+import { cert, ServiceAccount } from 'firebase-admin/app';
 import * as firebaseAdmin from 'firebase-admin';
 
-import { getFirestore, Timestamp, FieldValue, Firestore } from 'firebase-admin/firestore';
+import { getFirestore, Firestore } from 'firebase-admin/firestore';
 import { UserAuthToken } from 'server/models/auth.models';
 import { UserResource } from 'server/models/resource.models';
 

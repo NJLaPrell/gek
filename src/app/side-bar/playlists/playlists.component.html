@@ -1,5 +1,8 @@
 <div id="playlist-panel">
-    <div *ngIf="playlists.length === 0" class="alert alert-danger ms-2 me-2" role="alert">No Playlists Found.</div>
+    <div *ngIf="playlists.length === 0" class="text-center">
+      <div class="spinner-border" role="status"></div>
+      <div>Loading...</div>
+    </div>
     <ul id="playlist-list">
         <li *ngFor="let item of playlists" class="playlist-item" [class.selected]="selectedPlaylist === item.playlistId" (click)="onPlaylistClicked($any(item.playlistId))">
             {{ item.title }}
