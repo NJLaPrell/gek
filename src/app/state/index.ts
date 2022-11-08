@@ -1,6 +1,5 @@
 import { ActionReducerMap, MetaReducer } from '@ngrx/store';
 import * as fromAuth from './reducers/auth.reducer';
-import * as fromVideo from './reducers/video.reducer';
 import * as fromHistory from './reducers/history.reducer';
 import * as fromRules from './reducers/rules.reducer';
 import * as fromNavState from './reducers/navState.reducer';
@@ -9,7 +8,6 @@ import * as fromListState from './reducers/list.reducer';
 
 export interface AppState {
   [fromAuth.authFeatureKey]: any;
-  [fromVideo.videoFeatureKey]: any;
   [fromHistory.historyFeatureKey]: any;
   [fromRules.rulesFeatureKey]: any;
   [fromNavState.navStateFeatureKey]: any;
@@ -19,7 +17,6 @@ export interface AppState {
 
 export const reducers: ActionReducerMap<AppState> = {
   [fromAuth.authFeatureKey]: fromAuth.authReducer,
-  [fromVideo.videoFeatureKey]: fromVideo.videoReducer,
   [fromHistory.historyFeatureKey]: fromHistory.historyReducer,
   [fromRules.rulesFeatureKey]: fromRules.rulesReducer,
   [fromNavState.navStateFeatureKey]: fromNavState.navStateReducer,

@@ -21,7 +21,7 @@ export interface RulesState {
 }
 
 export const initialRulesState = <RulesState>{
-    rules: []
+  rules: []
 };
 
 // ###################################
@@ -29,6 +29,7 @@ export const initialRulesState = <RulesState>{
 // ###################################
 
 export interface RulesResponse {
-    rules: []
+    lastUpdated: number;
+    items: []
 }
 

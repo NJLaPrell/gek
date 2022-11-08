@@ -9,7 +9,6 @@ import { selectHistoryState } from '../state/selectors/history.selectors';
 import { SortProgressComponent } from '../modals/sort-progress/sort-progress.component';
 import { selectRemoteMode } from '../state/selectors/remote.selectors';
 import { disconnect, initializeSocketConnection } from '../state/actions/remote.actions';
-import { getUncachedLists } from '../state/actions/list.actions';
 import { getRules } from '../state/actions/rules.actions';
 import { getHistory } from '../state/actions/history.actions';
 import { ToastService } from '../services/toast.service';
@@ -57,19 +56,19 @@ export class TopBarComponent implements OnInit {
   }
 
   openErrorBuffer() {
-    const modalRef = this.modalService.open(ErrorBufferComponent, { size: 'xl', scrollable: true });
+    this.modalService.open(ErrorBufferComponent, { size: 'xl', scrollable: true });
   }
 
   openUnsorted() {
-    const modalRef = this.modalService.open(UnsortedComponent, { size: 'xl', scrollable: true });
+    this.modalService.open(UnsortedComponent, { size: 'xl', scrollable: true });
   }
 
   openRules() {
-    const modalRef = this.modalService.open(RulesListComponent, { size: 'xl', scrollable: true });
+    this.modalService.open(RulesListComponent, { size: 'xl', scrollable: true });
   }
 
   sortVideos() {
-    const modalRef = this.modalService.open(SortProgressComponent, { size: 'xl', scrollable: true });
+    this.modalService.open(SortProgressComponent, { size: 'xl', scrollable: true });
   }
 
   refreshLists(): void {
@@ -80,10 +79,10 @@ export class TopBarComponent implements OnInit {
 
   handleModeToggle(e:any){
     if(e.target.id === 'viewerToggle' && e.target.checked) {
-      this.store.dispatch(initializeSocketConnection({clientType: 'viewer' }));
+      this.store.dispatch(initializeSocketConnection({ clientType: 'viewer' }));
       this.remoteMode = false;
     } else if(e.target.checked) {
-      this.store.dispatch(initializeSocketConnection({clientType: 'remote' }));
+      this.store.dispatch(initializeSocketConnection({ clientType: 'remote' }));
       this.viewerMode = false;
     } else if (e.target.id === 'viewerToggle') {
       this.store.dispatch(disconnect());

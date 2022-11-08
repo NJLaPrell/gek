@@ -7,7 +7,7 @@ export const getRules = createAction(
 
 export const getRulesSuccess = createAction(
   '[Rules] Get Rules Success',
-  props<{ response: Rule[] }>()
+  props<{ response: { lastUpdated: number; items: Rule[] } }>()
 );
 
 export const getRulesFail = createAction(

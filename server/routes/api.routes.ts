@@ -10,7 +10,6 @@ export class APIRoutes {
   public apply = (app: any, ensureAuth: any) => {
     
     app.get('/api/test', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
-      //const resource = loader.getResource('sortedList');
       new ResourceLoader(req.user.id).getResource({ name: 'playlist', resourceId: 'PLLFJ6m60CtDwK9wca0UW4shViNd6-ti-7', bypassCache: true })
         .then((contents: any) => res.json(contents))
         .catch((e: any) => {

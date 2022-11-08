@@ -19,7 +19,7 @@ export class AuthenticationRoutes {
       res.redirect('/');
     });
     
-    app.get('/login', ensureGuest, passport.authenticate('google', { scope: SCOPES, accessType: 'offline', prompt: 'consent' }), (req: ExpressRequest, res: ExpressResponse) => {
+    app.get('/login', ensureGuest, passport.authenticate('google', { scope: SCOPES, accessType: 'offline', prompt: 'consent' }), () => {
       console.log('GET: /login');
     });
     

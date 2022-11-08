@@ -7,10 +7,6 @@ export interface BasicResource {
   lastUpdated: number;
 }
 
-export interface SortedListResource extends BasicResource {
-  items: Playlist[];
-}
-
 export interface RulesResource extends BasicResource {
   items: Rule[];
 }
@@ -50,7 +46,7 @@ export interface HistoryResource extends BasicResource {
   errorCount: number;
 }
 
-export type UserResource = SortedListResource | RulesResource | SubscriptionResource | PlaylistResource | EmptyResource | ErrorQueueResource | UnsortedVideosResource | HistoryResource;
+export type UserResource = RulesResource | SubscriptionResource | PlaylistResource | EmptyResource | ErrorQueueResource | UnsortedVideosResource | HistoryResource;
 
 
 

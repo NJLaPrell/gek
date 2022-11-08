@@ -1,5 +1,4 @@
 import { DataStore } from './data-store';
-//import { getSortedList } from './resourceLoaders/sorted-list';
 import { EmptyResource, HistoryResource, UserResource } from 'server/models/resource.models';
 import { API } from './api';
 
@@ -33,10 +32,6 @@ const RESOURCES:any = {
   playlist: {
     defaultExpire: 3600000,
     load: async (userId: string, opts: ResourceLoaderOptions) => new API(userId).getPlaylistFeed(opts.resourceId || '', 0, true).then(items => ({ lastUpdated: Date.now(), items }))
-  },
-  sortedList: {
-    defaultExpire: 3600000,
-    //load: getSortedList
   }
 };
 
