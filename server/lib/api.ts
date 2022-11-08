@@ -200,11 +200,17 @@ export class API {
     await this.checkUserAuth();
 
     // Create a map of data from the Google API to include in the RSS feed response.
-    const vmap = <{[key: string]: { playlistId: string; }}>{};
+    const vmap = <any>{};
     if (type === 'playlist' && useGApi) {
       await this.listPlaylistItems(id)
         .catch(e => console.log('  Unable to get playlist items from google.', e))
         .then((items) => items.forEach((pl: any) => vmap[pl.id] = pl));
+      const videoIds = Object.keys(vmap);
+      const videoDetails = await this.getVideoDetailsPage(videoIds);
+      this.formatVideoList(videoDetails).forEach((vi: any) => {
+        vmap[vi.videoId].duration = vi.duration;
+        vmap[vi.videoId].commentCount = vi.commentCount;
+      });
     }
     
     // Get the RSS Feed.
@@ -223,6 +229,8 @@ export class API {
           title: e.title,
           published: e.published,
           updated: e.updated,
+          duration: vmap[e['yt:videoId']]?.duration,
+          commentCount: vmap[e['yt:videoId']]?.commentCount,
           authorName: e.author.name,
           channelLink: e.author.uri,
           link: e.link['@_href'],
@@ -255,6 +263,53 @@ export class API {
       published: e.snippet.videoPublishedAt,
       description: e.snippet.description,
       thumbnail: e.snippet.thumbnails?.standard?.url || e.snippet.thumbnails?.medium?.url || e.snippet.thumbnails?.default?.url
+    }));
+  };
+
+  /**
+   * Google API call for additional video details.
+   * @param videoIds 
+   * @param videoList 
+   * @param pageToken 
+   * @returns 
+   */
+  private getVideoDetailsPage = async (videoIds: string[], videoList = [], pageToken = '') => {
+    console.log('  Calling videos API.');
+    await this.checkUserAuth();   
+    const response = await this.google.youtube('v3').videos.list({
+      'part': [
+        'snippet,contentDetails,statistics,id'
+      ],
+      'id': videoIds,
+      'maxResults': 50,
+      pageToken: pageToken
+    });
+    videoList = videoList.concat(<any>response.data.items);
+    const nextPageToken = response.data.nextPageToken;
+    if (nextPageToken) {
+      videoList = await this.getVideoDetailsPage(videoIds, videoList, nextPageToken);
+    }
+    return videoList;
+  };
+
+  /**
+   * Format function for video details list.
+   * @param videoList
+   * @returns 
+   */
+  private formatVideoList = (videoList: any) => {
+    return videoList.map((v: any) => ({
+      videoId: v.id,
+      publishedAt: v.snippet.publishedAt,
+      title: v.snippet.title,
+      description: v.snippet.description,
+      thumbnail: v.snippet.thumbnails?.medium?.url || v.snippet.thumbnails?.default?.url,
+      channelId: v.snippet.channelId,
+      channelTitle: v.snippet.channelTitle,
+      duration: v.contentDetails.duration,
+      viewCount: v.statistics.viewCount,
+      likeCount: v.statistics.likeCount,
+      commentCount: v.statistics.commentCount
     }));
   };
 
@@ -339,55 +394,3 @@ export class API {
     return playlistList;
   };
 }
-
-
-
-
-
-
-
-
-/*
-
-export const getVideoDetailsPage = async (userId: string, videoIds: string[], videoList = [], pageToken = '') => {
-  await authorize(userId);
-
-  console.log('  Calling videos API.');
-  const response = await google.youtube('v3').videos.list({
-    'part': [
-      'snippet,contentDetails,statistics,id'
-    ],
-    'id': videoIds,
-    'maxResults': 50,
-    pageToken: pageToken
-  });
-  videoList = videoList.concat(<any>response.data.items);
-  const nextPageToken = response.data.nextPageToken;
-  if (nextPageToken) {
-    videoList = await getVideoDetailsPage(userId, videoIds, videoList, nextPageToken);
-  }
-  return videoList;
-};
-
-
-
-function formatVideoList(videoList) {
-  return videoList.map(v => ({
-    videoId: v.id,
-    publishedAt: v.snippet.publishedAt,
-    title: v.snippet.title,
-    description: v.snippet.description,
-    thumbnail: v.snippet.thumbnails?.medium?.url || v.snippet.thumbnails?.default?.url,
-    channelId: v.snippet.channelId,
-    channelTitle: v.snippet.channelTitle,
-    duration: v.contentDetails.duration,
-    viewCount: v.statistics.viewCount,
-    likeCount: v.statistics.likeCount,
-    commentCount: v.statistics.commentCount
-  }));
-}
-
-
-
-
-*/
