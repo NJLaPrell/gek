@@ -2,13 +2,14 @@
     cursor: pointer;
     display: inline-block;
     width: 25%;
-    height: 240px;
+    height: 260px;
     overflow: hidden;
     padding: 6px;
     position: relative;
 
     .videoThumbnail {
         max-width: 260px;
+        height: auto;
         object-fit: contain;
     }
 

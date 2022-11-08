@@ -1,10 +1,10 @@
-<div *ngFor="let video of videoList" class="video-card">
-    <div class="text-center position-relative d-inline-block">
+<div *ngFor="let video of videoList" class="video-card text-center ">
+    <div class="position-relative d-inline-block">
         <img class="videoThumbnail" [src]="video.thumbnail" (click)="videoClicked($any(video.videoId))" />
-        <span class="badge text-bg-dark" style="position: absolute; bottom: 10px; right: 10px;">{{ video.duration || '' | durationFromISO }}</span>
+        <span class="badge text-bg-dark" style="position: absolute; bottom: 10px; right: 50px;">{{ video.duration || '' | durationFromISO }}</span>
     </div>
     <a [href]="'https://www.youtube.com/watch?v=' + video.videoId" target="_blank" class="video-link"><fa-icon [icon]="faArrowUpRightFromSquare"></fa-icon></a>
-    <div class="video-card-body">
+    <div class="video-card-body text-start">
         <h3 class="video-card-title" (click)="videoClicked($any(video.videoId))" [ngbTooltip]="video.title">{{ video.title }}</h3>
         <div class="channel">
             <a class="channel-link" [href]="video.channelLink" target="_blank">{{ video.channelTitle }}</a>

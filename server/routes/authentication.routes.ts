@@ -2,12 +2,12 @@ import { ExpressRequest, ExpressResponse } from 'server/models/rest.models';
 
 const SCOPES = [
   'https://www.googleapis.com/auth/youtube',
-  'https://www.googleapis.com/auth/youtube.channel-memberships.creator',
+  //'https://www.googleapis.com/auth/youtube.channel-memberships.creator',
   'https://www.googleapis.com/auth/youtube.force-ssl',
-  'https://www.googleapis.com/auth/youtube.readonly',
-  'https://www.googleapis.com/auth/youtube.upload',
-  'https://www.googleapis.com/auth/youtubepartner',
-  'https://www.googleapis.com/auth/youtubepartner-channel-audit',
+  //'https://www.googleapis.com/auth/youtube.readonly',
+  //'https://www.googleapis.com/auth/youtube.upload',
+  //'https://www.googleapis.com/auth/youtubepartner',
+  //'https://www.googleapis.com/auth/youtubepartner-channel-audit',
   'profile',
   'email'
 ];
@@ -25,6 +25,7 @@ export class AuthenticationRoutes {
     
     app.get('/logout', (req: ExpressRequest, res: ExpressResponse) => {
       req.session.destroy();
+      req.session = null;
       //req.logout();
       res.redirect('/');
     });
