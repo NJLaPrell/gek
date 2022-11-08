@@ -368,4 +368,26 @@ export const getVideoDetailsPage = async (userId: string, videoIds: string[], vi
   }
   return videoList;
 };
+
+
+
+function formatVideoList(videoList) {
+  return videoList.map(v => ({
+    videoId: v.id,
+    publishedAt: v.snippet.publishedAt,
+    title: v.snippet.title,
+    description: v.snippet.description,
+    thumbnail: v.snippet.thumbnails?.medium?.url || v.snippet.thumbnails?.default?.url,
+    channelId: v.snippet.channelId,
+    channelTitle: v.snippet.channelTitle,
+    duration: v.contentDetails.duration,
+    viewCount: v.statistics.viewCount,
+    likeCount: v.statistics.likeCount,
+    commentCount: v.statistics.commentCount
+  }));
+}
+
+
+
+
 */
