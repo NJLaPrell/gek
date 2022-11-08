@@ -25,7 +25,9 @@ export class ListEffects {
   getNocache$ = createEffect(() => this.actions$.pipe(
     ofType(ListActions.getUncachedLists),
     mergeMap(() => this.listService.getLists(true).pipe(
-      map((response: any) => ListActions.getListsSuccess({ items: response.items })),
+      mergeMap((response: any) => [ListActions.getListsSuccess({ items: response.items })]
+        .concat(response.items.map((i: Playlist) => VideoActions.getPlaylistVideos({ playlistId: i.playlistId || '', bypassCache: true })))
+      ),
       catchError((error: HttpErrorResponse) => of(ListActions.getListsFail({ error: error.message })))
     ))
   ));

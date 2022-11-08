@@ -21,7 +21,13 @@ export const listReducer = createReducer(
     const ix = state.items.findIndex((pl: Playlist) => pl.playlistId === action.playlistId);
     const playlists: Playlist[] = [...state.items];
     
-    playlists[ix] = { ...playlists[ix], lastUpdated: action.response.lastUpdated, videos: [ ...action.response.items ] };
+    playlists[ix] = { 
+      ...playlists[ix],
+      lastUpdated: action.response.lastUpdated,
+      itemCount: action.response.items.length,
+      newItemCount: action.response.items.filter(v => new Date(v.publishedAt || '').getTime() > (Date.now() - 86400000)).length,
+      videos: [ ...action.response.items ]
+    };
     return {
       ...state,
       items: playlists

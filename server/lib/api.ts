@@ -210,6 +210,7 @@ export class API {
       this.formatVideoList(videoDetails).forEach((vi: any) => {
         vmap[vi.videoId].duration = vi.duration;
         vmap[vi.videoId].commentCount = vi.commentCount;
+        vmap[vi.videoId].publishedAt = vi.publishedAt;
       });
     }
     
@@ -227,10 +228,11 @@ export class API {
           channelId: e['yt:channelId'],
           channelName: e.author.name,
           title: e.title,
-          published: e.published,
+          publishedAt: vmap[e['yt:videoId']]?.publishedAt || e.published,
+          published: vmap[e['yt:videoId']]?.publishedAt || e.published,
           updated: e.updated,
-          duration: vmap[e['yt:videoId']]?.duration,
-          commentCount: vmap[e['yt:videoId']]?.commentCount,
+          duration: vmap[e['yt:videoId']]?.duration || 0,
+          commentCount: vmap[e['yt:videoId']]?.commentCount || 0,
           authorName: e.author.name,
           channelLink: e.author.uri,
           link: e.link['@_href'],
@@ -274,16 +276,20 @@ export class API {
    * @returns 
    */
   private getVideoDetailsPage = async (videoIds: string[], videoList = [], pageToken = '') => {
+    if(videoIds.length === 0)
+      return videoList;
+
     console.log('  Calling videos API.');
     await this.checkUserAuth();   
     const response = await this.google.youtube('v3').videos.list({
       'part': [
         'snippet,contentDetails,statistics,id'
       ],
-      'id': videoIds,
+      'id': videoIds.slice(0, 50),
       'maxResults': 50,
       pageToken: pageToken
     });
+    videoIds = videoIds.slice(50);
     videoList = videoList.concat(<any>response.data.items);
     const nextPageToken = response.data.nextPageToken;
     if (nextPageToken) {

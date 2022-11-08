@@ -2,38 +2,38 @@ import { createAction, props } from '@ngrx/store';
 import { GetSubscriptionsResponse, Playlist } from '../models/list.model';
 
 export const getLists = createAction(
-    '[List] Get Lists'
+  '[List] Get Lists'
 );
 
 export const getUncachedLists = createAction(
-    '[List] Get Uncached Lists',
+  '[List] Get Uncached Lists',
 );
 
 export const getListsSuccess = createAction(
-    '[List] Get Lists Success',
-    props<{ items: Playlist[] }>()
+  '[List] Get Lists Success',
+  props<{ items: Playlist[] }>()
 );
 
 export const getListsFail = createAction(
-    '[List] Get Lists Fail',
-    props<{ error: string }>()
+  '[List] Get Lists Fail',
+  props<{ error: string }>()
 );
 
 export const getSubscriptions = createAction(
-    '[List] Get Subscriptions'
+  '[List] Get Subscriptions'
 );
 
 export const getSubscriptionsSuccess = createAction(
-    '[List] Get Subscriptions Success',
-    props<{ response: GetSubscriptionsResponse }>()
+  '[List] Get Subscriptions Success',
+  props<{ response: GetSubscriptionsResponse }>()
 );
 
 export const getSubscriptionsFail = createAction(
-    '[List] Get Subscriptions Fail',
-    props<{ error: string }>()
+  '[List] Get Subscriptions Fail',
+  props<{ error: string }>()
 );
 
 export const removePlaylistItem = createAction(
-    '[List] Remove Playlist Item',
-    props<{ playlistItemId: string }>()
+  '[List] Remove Playlist Item',
+  props<{ playlistItemId: string }>()
 );

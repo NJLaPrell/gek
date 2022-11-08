@@ -73,17 +73,24 @@ export class APIRoutes {
         .catch((e: any) => {
           console.log(e);
           res.status(404).json({ error: e });
-
         });       
     });
     
     app.get('/api/getLists', (req: ExpressRequest, res: ExpressResponse) => {
-      const nocache = req.query['nocache'] === 'true';
-      console.log(`GET /api/getLists?nocache=${nocache}`);
+      const bypassCache = req.query['nocache'] === 'true';
+      console.log(`GET /api/getLists?nocache=${bypassCache}`);
       //getSortedList(nocache).then((contents: any) => res.json(contents));
+      /*
       new API(req.user.id).getPlaylists()
         .then((playlists: Playlist[]) => res.status(200).json({ items: playlists }))
         .catch((e: any) => res.status(404).json({ error: e }));
+        */
+      new ResourceLoader(req.user.id).getResource({ name: 'playlists', bypassCache })
+        .then((contents: any) => res.json(contents))
+        .catch((e: any) => {
+          console.log(e);
+          res.status(404).json({ error: e });
+        }); 
     });
     
     app.put('/api/resources/updateRule', (req: ExpressRequest, res: ExpressResponse) => {

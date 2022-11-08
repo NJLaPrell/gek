@@ -4,7 +4,7 @@ import { concat, Observable, of } from 'rxjs';
 import { AppState } from './state';
 import { getAuthState } from './state/actions/auth.actions';
 import { getHistory } from './state/actions/history.actions';
-import { getLists, getSubscriptions } from './state/actions/list.actions';
+import { getSubscriptions, getUncachedLists } from './state/actions/list.actions';
 import { getRules } from './state/actions/rules.actions';
 import { selectAuthenticated } from './state/selectors/auth.selectors';
 
@@ -32,7 +32,7 @@ export class InitializerService {
   }
 
   private getLists(): Observable<any> {
-    this.store.dispatch(getLists());
+    this.store.dispatch(getUncachedLists());
     return of([]);
   }
 

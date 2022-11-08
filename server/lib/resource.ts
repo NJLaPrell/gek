@@ -11,10 +11,10 @@ const returnEmptyHistory = async (): Promise<HistoryResource> => ({ lastUpdated:
 // Map of resources and how to handle them.
 const RESOURCES:any = {
   subscriptions: {
-    //defaultExpire: 3600000,
+    defaultExpire: 3600000,
   },
   playlists: {
-    defaultExpire: 43200000,
+    defaultExpire: 3600000,
     load: async (userId: string) => new API(userId).getPlaylists().then(pl => ({ lastUpdated: Date.now(), items: pl }))
   },
   history: {
@@ -70,7 +70,7 @@ export class ResourceLoader {
         || (expireDuration && data?.lastUpdated && (Date.now() - expireDuration) > data?.lastUpdated) // Cached version expired.
         || !data // No data was returned.
       ) {
-        console.log('getting current version');
+        console.log('Getting current version');
         // Load a current version of the resource.
         return this.loadResource(opts);
       } else {
@@ -87,7 +87,7 @@ export class ResourceLoader {
   };
 
   public cacheResource = (resourceName: string, data: UserResource): Promise<UserResource> => {
-    console.log(`caching resource ${resourceName}`);
+    console.log(`Caching resource ${resourceName}`);
     return this.store.saveResource(resourceName, data).then(() => data);
   };
 
