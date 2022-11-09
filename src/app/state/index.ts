@@ -5,6 +5,7 @@ import * as fromRules from './reducers/rules.reducer';
 import * as fromNavState from './reducers/navState.reducer';
 import * as fromRemoteState from './reducers/remote.reducer';
 import * as fromListState from './reducers/list.reducer';
+import * as fromPreferences from './reducers/preferences.reducer';
 
 export interface AppState {
   [fromAuth.authFeatureKey]: any;
@@ -13,6 +14,7 @@ export interface AppState {
   [fromNavState.navStateFeatureKey]: any;
   [fromRemoteState.remoteFeatureKey]: any;
   [fromListState.listFeatureKey]: any;
+  [fromPreferences.preferencesFeatureKey]: any;
 }
 
 export const reducers: ActionReducerMap<AppState> = {
@@ -21,7 +23,8 @@ export const reducers: ActionReducerMap<AppState> = {
   [fromRules.rulesFeatureKey]: fromRules.rulesReducer,
   [fromNavState.navStateFeatureKey]: fromNavState.navStateReducer,
   [fromRemoteState.remoteFeatureKey]: fromRemoteState.remoteReducer,
-  [fromListState.listFeatureKey]: fromListState.listReducer
+  [fromListState.listFeatureKey]: fromListState.listReducer,
+  [fromPreferences.preferencesFeatureKey] : fromPreferences.preferencesReducer
 };
 
 export const metaReducers: MetaReducer<AppState>[] = [];

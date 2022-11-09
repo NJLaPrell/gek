@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { environment } from 'src/environments/environment';
-import { OAuth2Client } from 'google-auth-library';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
@@ -17,6 +16,7 @@ import { NotificationEffects } from './state/effects/notification.effects';
 import { NavStateEffects } from './state/effects/navState.effects';
 import { RemoteEffects } from './state/effects/remote.effects';
 import { ListEffects } from './state/effects/list.effects';
+import { PreferencesEffects } from './state/effects/preferences.effects';
 import { metaReducers, reducers } from './state';
 import { InitializerService } from './initializer.service';
 import { HttpClientModule } from '@angular/common/http';
@@ -87,7 +87,7 @@ export const initApp = (provider: InitializerService) => () => provider.init();
         strictActionImmutability: true
       }
     }),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: false}),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: false }),
     EffectsModule.forRoot([
       AuthEffects,
       VideoEffects,
@@ -96,7 +96,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
       NotificationEffects,
       NavStateEffects,
       RemoteEffects,
-      ListEffects
+      ListEffects,
+      PreferencesEffects
     ]),
     HttpClientModule,
     NgbModule,
@@ -105,16 +106,6 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     FormsModule
   ],
   providers: [
-    {
-      provide: OAuth2Client,
-      useValue: new OAuth2Client(
-      // You get this in GCP project credentials
-        environment.G_API_CLIENT_ID,
-        environment.G_API_CLIENT_SECRET,
-      // URL where you'll handle succesful authentication
-        environment.G_API_REDIRECT,
-      )
-    },
     InitializerService, {
       provide: APP_INITIALIZER,
       useFactory: initApp,

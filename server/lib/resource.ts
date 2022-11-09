@@ -32,6 +32,9 @@ const RESOURCES:any = {
   playlist: {
     defaultExpire: 3600000,
     load: async (userId: string, opts: ResourceLoaderOptions) => new API(userId).getPlaylistFeed(opts.resourceId || '', 0).then(items => ({ lastUpdated: Date.now(), items }))
+  },
+  preferences: {
+    load: returnEmptyResource
   }
 };
 

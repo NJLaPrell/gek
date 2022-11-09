@@ -192,5 +192,23 @@ export class APIRoutes {
     app.get('/api/getAuthState', (req: ExpressRequest, res: ExpressResponse) => {
       res.json({ authenticated: req.isAuthenticated() });
     });
+
+    app.get('/api/preferences/getPreferences', (req: ExpressRequest, res: ExpressResponse) => {
+      new ResourceLoader(req.user.id).getResource({ name: 'preferences' })
+        .then((contents: any) => res.json(contents))
+        .catch((e: any) => {
+          console.log(e);
+          res.status(404).json({ error: e });
+        }); 
+    });
+
+    app.post('/api/preferences/setPreferences', (req: ExpressRequest, res: ExpressResponse) => {
+      new ResourceLoader(req.user.id).cacheResource('preferences', req.body)
+        .then((contents: any) => res.json(contents))
+        .catch((e: any) => {
+          console.log(e);
+          res.status(404).json({ error: e });
+        }); 
+    });
   };
 }

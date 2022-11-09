@@ -46,7 +46,11 @@ export interface HistoryResource extends BasicResource {
   errorCount: number;
 }
 
-export type UserResource = RulesResource | SubscriptionResource | PlaylistResource | EmptyResource | ErrorQueueResource | UnsortedVideosResource | HistoryResource;
+export interface PreferencesResource extends BasicResource {
+  items: {[key: string]: any};
+}
+
+export type UserResource = RulesResource | SubscriptionResource | PlaylistResource | EmptyResource | ErrorQueueResource | UnsortedVideosResource | HistoryResource |PreferencesResource;
 
 
 
