@@ -1,5 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { faList, faClapperboard, faRotate, faHandSparkles, faTrashCan, faBomb, faArrowUpShortWide } from '@fortawesome/free-solid-svg-icons';
+import {
+  faList, faClapperboard, faRotate, faHandSparkles, faTrashCan,
+  faBomb, faArrowUpShortWide, faUserGear
+} from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ErrorBufferComponent } from '../modals/error-buffer/error-buffer.component';
 import { UnsortedComponent } from '../modals/unsorted/unsorted.component';
@@ -13,6 +16,7 @@ import { getRules } from '../state/actions/rules.actions';
 import { getHistory } from '../state/actions/history.actions';
 import { ToastService } from '../services/toast.service';
 import { Router } from '@angular/router';
+import { PreferencesComponent } from '../modals/preferences/preferences.component';
 
 @Component({
   selector: 'app-top-bar',
@@ -27,6 +31,7 @@ export class TopBarComponent implements OnInit {
   faTrashCan = faTrashCan;
   faBomb = faBomb;
   faArrowUpShortWide = faArrowUpShortWide;
+  faUserGear = faUserGear;
 
   errorCount = 0;
   unsortedCount = 0;
@@ -67,6 +72,10 @@ export class TopBarComponent implements OnInit {
 
   openRules() {
     this.modalService.open(RulesListComponent, { size: 'xl', scrollable: true });
+  }
+
+  openPreferences() {
+    this.modalService.open(PreferencesComponent, { size: 'xl', scrollable: true });
   }
 
   sortVideos() {

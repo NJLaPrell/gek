@@ -23,6 +23,9 @@
         <fa-icon [icon]="faArrowUpShortWide"></fa-icon> Unsorted 
         <span *ngIf="unsortedCount" class="badge text-bg-primary">{{ unsortedCount }}</span>
     </button>
+    <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="openPreferences()">
+      <fa-icon [icon]="faUserGear"></fa-icon> Preferences 
+    </button>
 
     <div *ngIf="authenticated" id="modeControl" [class.viewer]="mode === 'viewer'">
         <div class="form-check form-check-inline form-switch">

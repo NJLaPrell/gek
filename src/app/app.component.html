@@ -30,7 +30,7 @@
         <div *ngIf="!routed" class="text-center mt-5">
           <img src="/assets/585335.jpg" class="align-middle" />
           <br />
-          <div class="p4 text-center">Sort Last Run: {{ lastUpdated | fromNow }}</div>
+          <div *ngIf="lastUpdated" class="p4 text-center">Sort Last Run: {{ lastUpdated | fromNow }}</div>
           <button *ngIf="!authenticated" type="button" class="login-with-google-btn mt-5" (click)="signIn()">Sign in with Google</button>
         </div>
 

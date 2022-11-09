@@ -1,11 +1,21 @@
 import { DataStore } from './data-store';
-import { EmptyResource, HistoryResource, UserResource } from 'server/models/resource.models';
+import { EmptyResource, HistoryResource, PreferencesResource, UserResource } from 'server/models/resource.models';
 import { API } from './api';
 
 // Returns an empty resource item.
 const returnEmptyResource = async (): Promise<EmptyResource> => ({ lastUpdated: Date.now(), items: [] });
 
 const returnEmptyHistory = async (): Promise<HistoryResource> => ({ lastUpdated: Date.now(), sortedCount: 0, unsortedCount: 0, errorCount: 0 });
+
+const returnEmptyPreferences = async (): Promise<PreferencesResource> => ({
+  lastUpdated: Date.now(),
+  items: [
+    { name: 'autoSort', value:true },
+    { name: 'autoSortInterval', value: 3600000 },
+    { name: 'autoNext', value: true },
+    { name: 'almostDonePrompt', value: true }
+  ]
+});
  
 
 // Map of resources and how to handle them.
@@ -34,7 +44,7 @@ const RESOURCES:any = {
     load: async (userId: string, opts: ResourceLoaderOptions) => new API(userId).getPlaylistFeed(opts.resourceId || '', 0).then(items => ({ lastUpdated: Date.now(), items }))
   },
   preferences: {
-    load: returnEmptyResource
+    load: returnEmptyPreferences
   }
 };
 

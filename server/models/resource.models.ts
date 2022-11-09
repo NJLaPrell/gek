@@ -47,7 +47,7 @@ export interface HistoryResource extends BasicResource {
 }
 
 export interface PreferencesResource extends BasicResource {
-  items: {[key: string]: any};
+  items: { name: string, value: any }[];
 }
 
 export type UserResource = RulesResource | SubscriptionResource | PlaylistResource | EmptyResource | ErrorQueueResource | UnsortedVideosResource | HistoryResource |PreferencesResource;

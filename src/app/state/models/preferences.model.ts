@@ -1,4 +1,9 @@
+export interface PreferenceItem {
+  name: string;
+  value: any;
+}
+
 export interface Preferences {
   lastUpdated: number | false;
-  items: {[key: string]: any}[];
+  items: PreferenceItem[];
 }

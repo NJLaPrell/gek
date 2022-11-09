@@ -1,0 +1,49 @@
+<div class="modal-header">
+  <h4 class="modal-title">User Preferences</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="autoSortToggle" name="autoSortToggle" [(ngModel)]="prefs.autoSort" />
+          <label class="form-check-label" for="autoSortToggle">Automatic Sorting</label>
+        </div>
+        <div class="form-text">When automatic sorting is enabled, the new videos you are subscribed to will be automatically sorted into your playlists at a regular interval.</div>
+      </div>
+      <div class="col-md-6">
+        <div class="row">
+          <label class="col-md-8" for="autoSortInterval">Automatic Sorting Interval:</label>
+          <div class="col-md-4">
+            <input type="text" class="form-control display-inline" id="autoSortInterval" name="autoSortInterval" size="3" [(ngModel)]="prefs.autoSortInterval" [disabled]="!prefs.autoSort" />
+          </div>
+        </div>
+        <div class="form-text">The number of minutes to wait before running sorting again. (Applies only when Automatic Sorting is enabled.)</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="autoNextToggle" name="autoNextToggle" [(ngModel)]="prefs.autoNext" />
+          <label class="form-check-label" for="autoNextToggle">Automatic Next Video</label>
+        </div>
+        <div class="form-text">Automatically display the next video in the playlist when the current video ends.</div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="almostDonePromptToggle" name="almostDonePromptToggle" [(ngModel)]="prefs.almostDonePrompt" />
+          <label class="form-check-label" for="almostDonePromptToggle">Prompt When Video Ending</label>
+        </div>
+        <div class="form-text">30 seconds before the end of a video, prompt to like, dislike, or remove the video from the playlist.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary" (click)="activeModal.close('Close click')">Close</button>
+  <button type="button" class="btn btn-success" (click)="savePreferences()"><fa-icon [icon]="faSave"></fa-icon> Save Preferences</button>
+</div>

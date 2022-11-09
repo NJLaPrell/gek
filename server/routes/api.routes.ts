@@ -203,7 +203,7 @@ export class APIRoutes {
     });
 
     app.post('/api/preferences/setPreferences', (req: ExpressRequest, res: ExpressResponse) => {
-      new ResourceLoader(req.user.id).cacheResource('preferences', req.body)
+      new ResourceLoader(req.user.id).cacheResource('preferences', { lastUpdated: Date.now(), items: req.body.items })
         .then((contents: any) => res.json(contents))
         .catch((e: any) => {
           console.log(e);
