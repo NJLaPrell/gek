@@ -103,7 +103,7 @@ export class API {
    */
   //public getPlaylistFeed = async(id: string, fromTime = 0, useGApi = true): Promise<Video[]> => this.getFeed('playlist', id, fromTime, useGApi);
 
-  public getPlaylistFeed = async(id: string, fromTime = 0, useGApi = true): Promise<Video[]> => {
+  public getPlaylistFeed = async(id: string, fromTime = 0): Promise<Video[]> => {
     const videos = await this.listPlaylistItems(id, fromTime)
       .catch(e => console.log('  Unable to get playlist items from google.', e))
       .then((items) => items.map((i: any) => ({
@@ -124,12 +124,6 @@ export class API {
     }));
     return finalDetailsList;
   };
-
-
-
-
-
-
 
   /**
    * Add a video to a playlist.
