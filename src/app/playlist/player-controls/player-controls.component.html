@@ -26,7 +26,7 @@
                 <div *ngIf="navState.previousVideo" class="text-truncate">
                     <span class="view-count">{{ navState.previousVideo.viewCount | viewCount }} <fa-icon [icon]="faEye"></fa-icon></span>
                     &nbsp;•&nbsp;
-                    <span class="publish-date">{{ navState.previousVideo.publishedPa | fromNow }}</span>
+                    <span class="publish-date">{{ navState.previousVideo.publishedAt | fromNow }}</span>
                 </div>
             </div>
             <div class="col-sm-1">

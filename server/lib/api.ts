@@ -101,7 +101,35 @@ export class API {
    * @ga
    * @returns Video list promise.
    */
-  public getPlaylistFeed = async(id: string, fromTime = 0, useGApi = true): Promise<Video[]> => this.getFeed('playlist', id, fromTime, useGApi);
+  //public getPlaylistFeed = async(id: string, fromTime = 0, useGApi = true): Promise<Video[]> => this.getFeed('playlist', id, fromTime, useGApi);
+
+  public getPlaylistFeed = async(id: string, fromTime = 0, useGApi = true): Promise<Video[]> => {
+    const videos = await this.listPlaylistItems(id, fromTime)
+      .catch(e => console.log('  Unable to get playlist items from google.', e))
+      .then((items) => items.map((i: any) => ({
+        videoId: i.id,
+        playlistItemId: i.playlistId,
+        channelId: i.channelId,
+        channelName: i.channelName,
+        title: i.title,
+        published: i.published,
+        description: i.description,
+        thumbnail: i.thumbnail
+      })));
+    const videoIds = videos.map((v: any) => v.videoId);
+    const videoDetails = await this.getVideoDetailsPage(videoIds);
+    const finalDetailsList = this.formatVideoList(videoDetails).map((vi: any) => ({
+      ...videos.find((v: any) => v.videoId === vi.videoId),
+      ...vi
+    }));
+    return finalDetailsList;
+  };
+
+
+
+
+
+
 
   /**
    * Add a video to a playlist.
@@ -262,7 +290,7 @@ export class API {
       channelId: e.snippet.channelId,
       channelName: e.snippet.channelTitle,
       title: e.snippet.title,
-      published: e.snippet.videoPublishedAt,
+      published: e.contentDetails.videoPublishedAt,
       description: e.snippet.description,
       thumbnail: e.snippet.thumbnails?.standard?.url || e.snippet.thumbnails?.medium?.url || e.snippet.thumbnails?.default?.url
     }));
@@ -312,10 +340,10 @@ export class API {
       thumbnail: v.snippet.thumbnails?.medium?.url || v.snippet.thumbnails?.default?.url,
       channelId: v.snippet.channelId,
       channelTitle: v.snippet.channelTitle,
-      duration: v.contentDetails.duration,
-      viewCount: v.statistics.viewCount,
-      likeCount: v.statistics.likeCount,
-      commentCount: v.statistics.commentCount
+      duration: v.contentDetails.duration || 0,
+      viewCount: v.statistics.viewCount || 0,
+      likeCount: v.statistics.likeCount || 0,
+      commentCount: v.statistics.commentCount || 0
     }));
   };
 

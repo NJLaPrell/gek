@@ -26,7 +26,7 @@ export class ListEffects {
     ofType(ListActions.getUncachedLists),
     mergeMap(() => this.listService.getLists(true).pipe(
       mergeMap((response: any) => [ListActions.getListsSuccess({ items: response.items })]
-        .concat(response.items.map((i: Playlist) => VideoActions.getPlaylistVideos({ playlistId: i.playlistId || '', bypassCache: true })))
+        .concat(response.items.map((i: Playlist) => VideoActions.getPlaylistVideos({ playlistId: i.playlistId || '', bypassCache: false })))
       ),
       catchError((error: HttpErrorResponse) => of(ListActions.getListsFail({ error: error.message })))
     ))
