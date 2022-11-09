@@ -76,7 +76,16 @@ export class PlaylistComponent implements OnInit {
             this.video = v;
           }
           this.pageTitle += ' > ' + this.video?.title;
-        } 
+        } else {
+          this.store.dispatch(setNavState({ 
+            props: { 
+              playlistId: this.playlistId,
+              videoId: '',
+              videoList: this.videoList,
+              titleLookup: r.titleLookup
+            }
+          }));
+        }
         if(this.videoList.length) {
           this.loading = false;
         } else {
