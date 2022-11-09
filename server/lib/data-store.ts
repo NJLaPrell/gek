@@ -27,7 +27,6 @@ export class DataStore {
 
   constructor(userId: string) {
     this.userId = userId;
-    //console.log(serviceAccount);
     
     try {
       firebaseAdmin.initializeApp({ credential: cert(serviceAccount) });
@@ -98,4 +97,20 @@ export class DataStore {
         return res ? <UserAuthToken>res : false;
       })
       .catch((e) => {console.log(e); return false;});
+
+  public getAutoSortUsers = async (): Promise<any> => {
+    // TODO: Refactor using firestore features. May need to change schema.
+    const users = await this.db.collection('resource:preferences').get()
+      .then(
+        (result) => result.docs.map(
+          d => ({ userId: d.id, autoSort: d.data()['items'].find((i: any) => i.name === 'autoSort').value, autoSortInterval: d.data()['items'].find((i: any) => i.name === 'autoSortInterval').value })
+        ).filter(d => d.autoSort === true)
+      );
+    const usersList = users.map(d => d.userId);
+    // TODO: Refactor this mess as well.
+    return await this.db.collection('resource:history').get()
+      .then(
+        (result) => result.docs.filter(d => usersList.indexOf(d.id) !== -1).map(doc => ({ userId: doc.id, lastRun: doc.data()['lastUpdated'], autoSortInterval: users.find(u => u.userId === doc.id)?.autoSortInterval }))
+      );
+  };
 }
