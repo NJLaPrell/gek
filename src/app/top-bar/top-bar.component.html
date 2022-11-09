@@ -23,23 +23,7 @@
         <fa-icon [icon]="faArrowUpShortWide"></fa-icon> Unsorted 
         <span *ngIf="unsortedCount" class="badge text-bg-primary">{{ unsortedCount }}</span>
     </button>
-<!--
-    <div id="g_id_onload"
-     data-client_id="458294059222-32t4a2gpj0u5nfp6e9vvatfibtis69iv.apps.googleusercontent.com"
-     data-context="signin"
-     data-ux_mode="popup"
-     data-login_uri="http://localhost:4200">
-</div>
 
-<div class="g_id_signin"
-     data-type="standard"
-     data-shape="pill"
-     data-theme="filled_black"
-     data-text="signin"
-     data-size="medium"
-     data-logo_alignment="left">
-</div>
--->
     <div *ngIf="authenticated" id="modeControl" [class.viewer]="mode === 'viewer'">
         <div class="form-check form-check-inline form-switch">
             <input class="form-check-input" type="checkbox" id="viewerToggle" [(ngModel)]="viewerMode" (change)="handleModeToggle($event)">

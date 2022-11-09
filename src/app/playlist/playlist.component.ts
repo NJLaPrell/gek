@@ -28,6 +28,7 @@ export class PlaylistComponent implements OnInit {
   navState: any = {};               // Video navigation state.
   pageTitle = 'YouTube Playlists';
   lastUpdated!: number;
+  playlistLoading = false;
   
 
   constructor(
@@ -67,6 +68,7 @@ export class PlaylistComponent implements OnInit {
         }))
       )
       .subscribe(r => {
+        this.playlistLoading = false;
         this.videoList = [...r.videoList];
         this.pageTitle = r.titleLookup[this.playlistId] || 'YouTube Playlists';
         this.lastUpdated = r.lastUpdated;
@@ -108,6 +110,7 @@ export class PlaylistComponent implements OnInit {
   }
 
   refresh(): void {
+    this.playlistLoading = true;
     this.store.dispatch(getPlaylistVideos({ playlistId: this.playlistId, bypassCache: true }));
   }
 
