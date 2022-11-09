@@ -8,7 +8,8 @@
     position: relative;
 
     .videoThumbnail {
-        max-width: 260px;
+        //max-width: 260px;
+        width: 100%;
         height: auto;
         object-fit: contain;
     }
@@ -52,6 +53,7 @@
             -webkit-box-orient: vertical;
             font-size: 0.8em;
             margin-bottom: 0px;
+            margin-top: 8px;
             overflow:hidden;
         }
 

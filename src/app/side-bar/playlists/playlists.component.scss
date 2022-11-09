@@ -7,7 +7,7 @@
         .playlist-item {
             cursor: pointer;
             padding-left: 20px;
-            padding-right: 20px;
+            padding-right: 40px;
             padding-top: 12px;
             padding-bottom: 12px;
             border-bottom: 1px solid #333333;
@@ -18,20 +18,23 @@
 
         .selected {
             background-color: #000000;
-            border: 1px solid #999;
+            border: 1px solid #555;
         }
     }
 }
 
 .new-badge {
     font-size: 0.6em;
-    margin-top: 12px;
-    margin-right: -30px;
+    margin-top: 14px;
+    margin-right: -36px;
     float: right;
     padding: 2px;
     z-index: 200;
+    min-width: 16px;
+    
 }
 
 .total-badge {
-    width: 30px;
+    width: 30px;  
+    margin-right: -34px;
 }

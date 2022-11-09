@@ -11,7 +11,6 @@
 
     <div *ngIf="showSidebar && mode !== 'viewer' && authenticated" id="side-bar" class="d-flex flex-column overflow-y-none">
       <div id="side-bar-header" class="me-2">
-        <span class="last-updated text-muted float-start ms-2"><small>Last Updated:<br />{{ lastUpdated | fromNow }}</small></span>
         <fa-icon [icon]="faCircleChevronLeft" class="icon-button float-end" style="font-size: 1.3em;" (click)="toggleSidebar()"></fa-icon>
       </div>
       <div id="side-bar-content" class="overflow-y-auto">
@@ -31,6 +30,7 @@
         <div *ngIf="!routed" class="text-center mt-5">
           <img src="/assets/585335.jpg" class="align-middle" />
           <br />
+          <div class="p4 text-center">Sort Last Run: {{ lastUpdated | fromNow }}</div>
           <button *ngIf="!authenticated" type="button" class="login-with-google-btn mt-5" (click)="signIn()">Sign in with Google</button>
         </div>
 

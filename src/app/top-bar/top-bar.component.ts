@@ -12,6 +12,7 @@ import { disconnect, initializeSocketConnection } from '../state/actions/remote.
 import { getRules } from '../state/actions/rules.actions';
 import { getHistory } from '../state/actions/history.actions';
 import { ToastService } from '../services/toast.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-top-bar',
@@ -40,7 +41,8 @@ export class TopBarComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private store: Store,
-    private toast: ToastService
+    private toast: ToastService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -69,6 +71,10 @@ export class TopBarComponent implements OnInit {
 
   sortVideos() {
     this.modalService.open(SortProgressComponent, { size: 'xl', scrollable: true });
+  }
+
+  home() {
+    this.router.navigate(['/']);
   }
 
   refreshLists(): void {
