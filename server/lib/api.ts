@@ -278,7 +278,7 @@ export class API {
    */
   private listPlaylistItems = async (id: string, fromTime = 0): Promise<any> => {
     const items = await this.getPlaylistItemsPage(id).catch(e => console.log(e)) || [];
-    return <any>items.filter((e: any) => fromTime < Date.parse(e.contentDetails.videoPublishedAt)).map((e: any) => ({
+    return <any>items.filter((e: any) => (e.contentDetails.videoPublishedAt && fromTime) ? fromTime < Date.parse(e.contentDetails.videoPublishedAt) : true).map((e: any) => ({
       id: e.contentDetails.videoId,
       playlistId: e.id,
       channelId: e.snippet.channelId,
@@ -302,7 +302,9 @@ export class API {
       return videoList;
 
     console.log('  Calling videos API.');
-    await this.checkUserAuth();   
+    await this.checkUserAuth();
+    // Strange API behavior: If you send more than 50 IDs, it sends a 500 "invalid filter parameter."
+    // Instead, we batch the IDs and ignore the nextPageToken.
     const response = await this.google.youtube('v3').videos.list({
       'part': [
         'snippet,contentDetails,statistics,id'
@@ -314,8 +316,8 @@ export class API {
     videoIds = videoIds.slice(50);
     videoList = videoList.concat(<any>response.data.items);
     const nextPageToken = response.data.nextPageToken;
-    if (nextPageToken) {
-      videoList = await this.getVideoDetailsPage(videoIds, videoList, nextPageToken);
+    if (nextPageToken || videoIds.length) {
+      videoList = await this.getVideoDetailsPage(videoIds, videoList, nextPageToken || '');
     }
     return videoList;
   };
