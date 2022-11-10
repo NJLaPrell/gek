@@ -278,7 +278,14 @@ export class API {
    */
   private listPlaylistItems = async (id: string, fromTime = 0): Promise<any> => {
     const items = await this.getPlaylistItemsPage(id).catch(e => console.log(e)) || [];
-    return <any>items.filter((e: any) => (e.contentDetails.videoPublishedAt && fromTime) ? fromTime < Date.parse(e.contentDetails.videoPublishedAt) : true).map((e: any) => ({
+    const videoIds: string[] = [];
+    return <any>items.filter((e: any) => {
+      const videoId = e.contentDetails.videoId;
+      const meetsDateConstraint = (e.contentDetails.videoPublishedAt && fromTime) ? fromTime < Date.parse(e.contentDetails.videoPublishedAt) : true;
+      const isDuplicate = videoIds.indexOf(videoId) !== -1;
+      videoIds.push(videoId);
+      return meetsDateConstraint && !isDuplicate;
+    }).map((e: any) => ({
       id: e.contentDetails.videoId,
       playlistId: e.id,
       channelId: e.snippet.channelId,
