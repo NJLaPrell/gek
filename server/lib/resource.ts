@@ -56,7 +56,6 @@ export interface ResourceLoaderOptions {
 }
 
 const defaultOptions = {
-  expireDuration: false,
   bypassCache: false
 };
 
@@ -77,7 +76,7 @@ export class ResourceLoader {
     
     const resourceName = opts.name + (opts.resourceId ? `:${opts.resourceId}` : '');
     return this.store.getResource(resourceName).then((data: UserResource | undefined) => {
-      const expireDuration = typeof opts.expireDuration !== undefined ? opts.expireDuration : resource.defaultExpire || false;
+      const expireDuration = typeof opts.expireDuration != 'undefined' ? opts.expireDuration : resource.defaultExpire || false;
       if (
         opts.bypassCache // Bypass the cache.
         || (expireDuration && data?.lastUpdated && (Date.now() - expireDuration) > data?.lastUpdated) // Cached version expired.
