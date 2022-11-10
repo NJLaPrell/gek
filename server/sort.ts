@@ -48,7 +48,8 @@ class SortQueue {
     });
     if (this.autoSortUserCount !== false && this.autoSortUserCount !== this.sortQueue.length) {
       const dif = this.sortQueue.length - this.autoSortUserCount;
-      console.log(`${Math.abs(dif)} net user(s) turned ${dif < 0 ? 'on' : 'off' } Auto Sort.`);
+      console.log(`${this.sortQueue.length} Users using Auto Sort.`);
+      console.log(`${Math.abs(dif)} net user(s) turned ${dif < 0 ? 'off' : 'on' } Auto Sort.`);
       this.autoSortUserCount = this.sortQueue.length;
     } else if (this.autoSortUserCount === false ) {
       console.log(`${this.sortQueue.length} Users using Auto Sort.`);
