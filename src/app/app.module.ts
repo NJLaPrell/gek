@@ -28,7 +28,9 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PlaylistsComponent } from './side-bar/playlists/playlists.component';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 import { ErrorBufferComponent } from './modals/error-buffer/error-buffer.component';
-import { SafeHtmlPipe, DurationFromIsoPipe, FromNowPipe, ViewCountPipe, ThumbCountPipe, DurationFromSeconds } from './pipes';
+import {
+  SafeHtmlPipe, DurationFromIsoPipe, FromNowPipe, ViewCountPipe, ThumbCountPipe,
+  DurationFromSeconds, TimeAgoPipe } from './pipes';
 import { UnsortedComponent } from './modals/unsorted/unsorted.component';
 import { RulesListComponent } from './modals/rules-list/rules-list.component';
 import { ConfirmPromptComponent } from './modals/confirm-prompt/confirm-prompt.component';
@@ -60,6 +62,7 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     ViewCountPipe,
     ThumbCountPipe,
     DurationFromSeconds,
+    TimeAgoPipe,
     UnsortedComponent,
     RulesListComponent,
     ConfirmPromptComponent,
