@@ -31,4 +31,9 @@ export class PreferencesEffects {
     ))
   ));
 
+  setPreferencesSuccess$ = createEffect(() => this.actions$.pipe(
+    ofType(PreferencesActions.setPreferencesSuccess),
+    map(() => PreferencesActions.getPreferences())
+  ));
+
 }
