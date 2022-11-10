@@ -18,6 +18,7 @@
     "pm2:start:prod:app-server": "pm2 start npm --name 'App Server' --log ./AppServer.log -- run start:dev:ui",
     "start:dev:ui": "ng serve --host ytlist.laprell.org --proxy-config proxy.config.json",
     "start:dev:rest-server": "ts-node-dev --project tsconfig.server.json --respawn --transpile-only -- ./server/rest_server.ts",
+    "start:dev:sort-service": "ts-node-dev --project tsconfig.server.json --respawn --transpile-only -- ./server/sort.ts",
     "OLDstart:dev:socket-server": "ts-node-dev --project tsconfig.server.json --respawn --transpile-only -- ./server/socket_server.ts",
     "start:dev:socket-server": "node server/socket_server.js",
     "OLD-prod-rest": "node dist/server/rest_server.js",
