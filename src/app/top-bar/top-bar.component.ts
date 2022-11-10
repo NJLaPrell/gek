@@ -86,12 +86,6 @@ export class TopBarComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  refreshLists(): void {
-    this.store.dispatch(getRules());
-    this.store.dispatch(getHistory());
-    this.toast.info('Refreshing list data...');
-  }
-
   handleModeToggle(e:any){
     if(e.target.id === 'viewerToggle' && e.target.checked) {
       this.store.dispatch(initializeSocketConnection({ clientType: 'viewer' }));

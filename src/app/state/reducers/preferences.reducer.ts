@@ -11,5 +11,6 @@ export const initialState: Preferences = {
 
 export const preferencesReducer = createReducer(
   initialState,
-  on(PreferencesActions.getPreferencesSuccess, (state, action) => ({ ...action.preferences }))
+  on(PreferencesActions.getPreferencesSuccess, (state, action) => ({ ...action.preferences })),
+  on(PreferencesActions.setPreferencesSuccess, (state, action) => ({ ...action.preferences }))
 );

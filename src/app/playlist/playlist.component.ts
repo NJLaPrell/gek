@@ -95,7 +95,7 @@ export class PlaylistComponent implements OnInit {
         }
 
         // Set the navigation state in the store. (But not when triggered by a video being removed)
-        if (this.videoList.find(v => v.videoId === this.videoId)) {
+        if (this.videoId && this.videoList.find(v => v.videoId === this.videoId)) {
           this.store.dispatch(setNavState({ 
             props: { 
               playlistId: this.playlistId,

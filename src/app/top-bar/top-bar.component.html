@@ -9,9 +9,6 @@
     <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="sortVideos()">
         <fa-icon [icon]="faClapperboard"></fa-icon> Sort Videos
     </button>
-    <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="refreshLists()">
-        <fa-icon [icon]="faRotate"></fa-icon> Refresh Lists
-    </button>
     <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="openRules()">
         <fa-icon [icon]="faHandSparkles"></fa-icon> Edit Rules
     </button>

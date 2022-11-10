@@ -27,5 +27,5 @@ export const setPreferencesFail = createAction(
 
 export const setPreferencesSuccess = createAction(
   '[Preferences] Set Preferences Success',
-  props<{ message: string }>()
+  props<{ message: string, preferences: Preferences }>()
 );

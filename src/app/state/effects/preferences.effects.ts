@@ -26,14 +26,9 @@ export class PreferencesEffects {
   setPreferences$ = createEffect(() => this.actions$.pipe(
     ofType(PreferencesActions.setPreferences),
     mergeMap((action: Preferences) => this.prefService.set(action.items).pipe(
-      map(() => PreferencesActions.setPreferencesSuccess({ message: 'Preferences saved.' })),
+      map(() => PreferencesActions.setPreferencesSuccess({ message: 'Preferences saved.', preferences: action })),
       catchError((error: HttpErrorResponse) => of(PreferencesActions.setPreferencesFail({ error: error.message })))
     ))
-  ));
-
-  setPreferencesSuccess$ = createEffect(() => this.actions$.pipe(
-    ofType(PreferencesActions.setPreferencesSuccess),
-    map(() => PreferencesActions.getPreferences())
   ));
 
 }
