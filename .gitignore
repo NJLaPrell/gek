@@ -50,5 +50,5 @@ src/environments/environment.prod.ts
 /server/models/shared/*
 *.log
 .env
-/docker/ui/dist
-/docker/server/dist
+/ytlist-docker/ui/dist
+/ytlist-docker/server/dist
