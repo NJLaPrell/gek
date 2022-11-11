@@ -19,6 +19,12 @@ export class APIRoutes {
         
       //res.json({ ...test });
     });
+
+    /********************************************************
+     * 
+     * RESOURCE ROUTES
+     * 
+     ********************************************************/
     
     app.get('/api/getResource/:resource', (req: ExpressRequest, res: ExpressResponse) => {
       const resource = req.params['resource'];
@@ -48,51 +54,7 @@ export class APIRoutes {
         unsorted: unsorted.items
       });
     });
-    
-    app.get('/api/getChannelFeed/:id', (req: ExpressRequest, res: ExpressResponse) => {
-      console.log('GET: /api/getChannelFeed/:id');
-      const id = req.params['id'];
-      const api = new API(req.user.id);
-      api.getChannelFeed(id)
-        .then((contents: any) => {
-          if (contents) {
-            res.json(contents);
-          } else {
-            res.status(500).json({ error: `Unable to load channel feed: ${id}` });
-          }
-        })
-        .catch((e: any) => res.status(404).json({ error: e }));
-    });
-    
-    app.get('/api/getPlaylistFeed/:id', (req: ExpressRequest, res: ExpressResponse) => {
-      const id = req.params['id'];
-      const bypassCache = req.query['bypassCache'] === 'true';
-      console.log(`GET: /api/getPlaylistFeed/${id}?bypassCache=${bypassCache}`);
-      new ResourceLoader(req.user.id).getResource({ name: 'playlist', resourceId: id, bypassCache })
-        .then((contents: any) => res.json(contents))
-        .catch((e: any) => {
-          console.log(e);
-          res.status(404).json({ error: e });
-        });       
-    });
-    
-    app.get('/api/getLists', (req: ExpressRequest, res: ExpressResponse) => {
-      const bypassCache = req.query['nocache'] === 'true';
-      console.log(`GET /api/getLists?nocache=${bypassCache}`);
-      //getSortedList(nocache).then((contents: any) => res.json(contents));
-      /*
-      new API(req.user.id).getPlaylists()
-        .then((playlists: Playlist[]) => res.status(200).json({ items: playlists }))
-        .catch((e: any) => res.status(404).json({ error: e }));
-        */
-      new ResourceLoader(req.user.id).getResource({ name: 'playlists', bypassCache })
-        .then((contents: any) => res.json(contents))
-        .catch((e: any) => {
-          console.log(e);
-          res.status(404).json({ error: e });
-        }); 
-    });
-    
+
     app.put('/api/resources/updateRule', (req: ExpressRequest, res: ExpressResponse) => {
       console.log('PUT: /api/resources/updateRule');
       new ResourceLoader(req.user.id).updateResourceItem('rules', 'id', req.body.id, req.body)
@@ -134,16 +96,7 @@ export class APIRoutes {
         .then(() => res.status(204).send())
         .catch((e: any) => res.status(e.code || 500).json({ error: e.message || e }));
     });
-    
-    app.post('/api/runSort', (req: ExpressRequest, res: ExpressResponse) => {
-      console.log('POST: /api/runSort');
-      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-      res.setHeader('Transfer-Encoding', 'chunked');
-      const sl = new SortLists(req.user.id);
-      sl.onStatus((status: string) => res.write(status));
-      sl.loadAndSort().then(() =>  res.end());    
-    });
-    
+
     app.delete('/api/history/deleteUnsortedItem/:id', (req: ExpressRequest, res: ExpressResponse) => {
       const id = req.params['id'];
       console.log(`DELETE: /api/history/deleteUnsortedItem/${id}`);
@@ -159,6 +112,80 @@ export class APIRoutes {
         .then(() => res.status(204).send())
         .catch((e: any) => res.status(e?.code || 500).json({ error: e?.message || e }));
     });
+
+    app.get('/api/preferences/getPreferences', (req: ExpressRequest, res: ExpressResponse) => {
+      new ResourceLoader(req.user.id).getResource({ name: 'preferences' })
+        .then((contents: any) => res.json(contents))
+        .catch((e: any) => {
+          console.log(e);
+          res.status(404).json({ error: e });
+        }); 
+    });
+
+    app.post('/api/preferences/setPreferences', (req: ExpressRequest, res: ExpressResponse) => {
+      new ResourceLoader(req.user.id).cacheResource('preferences', { lastUpdated: Date.now(), items: req.body.items })
+        .then((contents: any) => res.json(contents))
+        .catch((e: any) => {
+          console.log(e);
+          res.status(404).json({ error: e });
+        }); 
+    });
+
+    /********************************************************
+     * 
+     * SUBSCRIPTIONS
+     * 
+     ********************************************************/
+    
+    app.get('/api/getChannelFeed/:id', (req: ExpressRequest, res: ExpressResponse) => {
+      console.log('GET: /api/getChannelFeed/:id');
+      const id = req.params['id'];
+      const api = new API(req.user.id);
+      api.getChannelFeed(id)
+        .then((contents: any) => {
+          if (contents) {
+            res.json(contents);
+          } else {
+            res.status(500).json({ error: `Unable to load channel feed: ${id}` });
+          }
+        })
+        .catch((e: any) => res.status(404).json({ error: e }));
+    });
+
+    /********************************************************
+     * 
+     * PLAYLISTS
+     * 
+     ********************************************************/
+    
+    app.get('/api/getPlaylistFeed/:id', (req: ExpressRequest, res: ExpressResponse) => {
+      const id = req.params['id'];
+      const bypassCache = req.query['bypassCache'] === 'true';
+      console.log(`GET: /api/getPlaylistFeed/${id}?bypassCache=${bypassCache}`);
+      new ResourceLoader(req.user.id).getResource({ name: 'playlist', resourceId: id, bypassCache })
+        .then((contents: any) => res.json(contents))
+        .catch((e: any) => {
+          console.log(e);
+          res.status(404).json({ error: e });
+        });       
+    });
+    
+    app.get('/api/getLists', (req: ExpressRequest, res: ExpressResponse) => {
+      const bypassCache = req.query['nocache'] === 'true';
+      console.log(`GET /api/getLists?nocache=${bypassCache}`);
+      new ResourceLoader(req.user.id).getResource({ name: 'playlists', bypassCache })
+        .then((contents: any) => res.json(contents))
+        .catch((e: any) => {
+          console.log(e);
+          res.status(404).json({ error: e });
+        }); 
+    });
+
+    /********************************************************
+     * 
+     * VIDEOS
+     * 
+     ********************************************************/
     
     app.put('/api/video/:videoId/addToPlaylist/:playlistId', (req: ExpressRequest, res: ExpressResponse) => {
       const videoId = req.params['videoId'];
@@ -189,26 +216,24 @@ export class APIRoutes {
         .catch((e: any) => res.status(e?.code || 500).json({ error: e?.message || e }));
     });
     
+    /********************************************************
+     * 
+     * APP
+     * 
+     ********************************************************/
+
+    app.post('/api/runSort', (req: ExpressRequest, res: ExpressResponse) => {
+      console.log('POST: /api/runSort');
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+      res.setHeader('Transfer-Encoding', 'chunked');
+      const sl = new SortLists(req.user.id);
+      sl.onStatus((status: string) => res.write(status));
+      sl.loadAndSort().then(() =>  res.end());    
+    });
+    
     app.get('/api/getAuthState', (req: ExpressRequest, res: ExpressResponse) => {
       res.json({ authenticated: req.isAuthenticated() });
     });
 
-    app.get('/api/preferences/getPreferences', (req: ExpressRequest, res: ExpressResponse) => {
-      new ResourceLoader(req.user.id).getResource({ name: 'preferences' })
-        .then((contents: any) => res.json(contents))
-        .catch((e: any) => {
-          console.log(e);
-          res.status(404).json({ error: e });
-        }); 
-    });
-
-    app.post('/api/preferences/setPreferences', (req: ExpressRequest, res: ExpressResponse) => {
-      new ResourceLoader(req.user.id).cacheResource('preferences', { lastUpdated: Date.now(), items: req.body.items })
-        .then((contents: any) => res.json(contents))
-        .catch((e: any) => {
-          console.log(e);
-          res.status(404).json({ error: e });
-        }); 
-    });
   };
 }

@@ -27,7 +27,6 @@ export class NotificationEffects {
         RulesActions.deleteRuleFail,
         RulesActions.getRulesFail,
         RulesActions.updateRuleFail,
-        VideoActions.getChannelVideosFail,
         VideoActions.getPlaylistVideosFail,
         VideoActions.addToPlaylistFail,
         VideoActions.rateVideoFail,

@@ -12,8 +12,6 @@ export class VideoService {
         private http: HttpClient
   ) { }
 
-  getChannelVideos = (channelId: string): Observable<Video[]> =>this.http.get<Video[]>(`/api/getChannelFeed/${channelId}`).pipe(shareReplay());
-
   getPlaylistVideos = (playlistId: string, bypassCache = false): Observable<{ lastUpdated: number; items: Video[]}> =>this.http.get<{ lastUpdated: number; items: Video[]}>(`/api/getPlaylistFeed/${playlistId}?bypassCache=${bypassCache}`).pipe(shareReplay());
 
   rateVideo = (videoId: string, rating: string): Observable<any> => this.http.put(`/api/video/${videoId}/rate/${rating}`, '');
