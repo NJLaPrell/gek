@@ -1,10 +1,10 @@
-<div class="modal-header">
+<div class="modal-header bg-dark text-light">
     <h4 class="modal-title">Sort Rules</h4>
-    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+    <button type="button" class="btn-close btn-dark" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
-<div class="modal-body" style="min-height: 400px;">
+<div class="modal-body bg-dark" style="min-height: 400px;">
     <form>
-    <table class="table table-striped table-hover table-sm" style="table-layout:fixed;">
+    <table class="table table-striped table-dark table-hover table-sm" style="table-layout:fixed;">
         <thead>
             <tr>
                 <th class="type-col">Type</th>
@@ -19,7 +19,10 @@
             <tr *ngFor="let r of rules">
                 <ng-template [ngIf]="!r?.edit">
                     <td class="type-col">{{ r.type }}</td>
-                    <td class="channel-col" [class.text-center]="!r.channelMatch">{{ subTitleById(r.channelMatch) || '---' }}</td>
+                    <td class="channel-col" [class.text-center]="!r.channelMatch">
+                      <a *ngIf="r.channelMatch" [href]="'https://www.youtube.com/channel/' + r.channelMatch" target="_blank">{{ subTitleById(r.channelMatch) }}</a>
+                      <span *ngIf="!r.channelMatch">---</span>
+                    </td>
                     <td class="title-col" [class.text-center]="!r.titleMatch">{{ r.titleMatch || '---'}}</td>
                     <td class="desc-col" [class.text-center]="!r.descriptionMatch">{{ r.descriptionMatch || '---'}}</td>
                     <td class="playlist-col">{{ playlistTitleById(r.playlistId) }}</td>
@@ -82,7 +85,7 @@
     </table>
 </form>
 </div>
-<div class="modal-footer">
+<div class="modal-footer bg-dark">
     <button type="button" class="btn btn-secondary" (click)="addRule()"><fa-icon [icon]="faSquarePlus"></fa-icon> Add Rule</button>
     <button type="button" class="btn btn-primary" (click)="activeModal.close('Close click')">Close</button>
 </div>

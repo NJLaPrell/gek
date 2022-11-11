@@ -1,22 +1,4 @@
-/* width */
-::-webkit-scrollbar {
-  width: 4px;
-}
 
-/* Track */
-::-webkit-scrollbar-track {
-  background: #000; 
-}
- 
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #444; 
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #999; 
-}
 
 #app {
     background-color: #1E1E1E;

@@ -5,7 +5,7 @@ import { Rule } from 'src/app/state/models/rules.model';
 import { updateRule, addRule, deleteRule } from 'src/app/state/actions/rules.actions';
 import { selectRules } from 'src/app/state/selectors/rules.selectors';
 import { selectPlaylistTitles, selectSubscriptions } from 'src/app/state/selectors/list.selectors';
-import { faTrash, faEdit, faCircleCheck, faXmarkCircle, faSquarePlus } from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faEdit, faCircleCheck, faXmarkCircle, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { v4 as uuid } from 'uuid';
 import { ConfirmPromptComponent } from '../confirm-prompt/confirm-prompt.component';
 
@@ -44,20 +44,20 @@ export class RulesListComponent implements OnInit {
     });
     this.store.select(selectPlaylistTitles).subscribe(pl => {
       Object.keys(pl).forEach(plid => {
-        let title = pl[plid];
+        const title = pl[plid];
         this.playlistsList[title] = plid;
         this.playlists.push(title);
-      })
+      });
     });
   }
 
   updateRule(r: any) {
     r.edit = false;
     if (r.id) {
-      this.store.dispatch(updateRule({rule:r}));
+      this.store.dispatch(updateRule({ rule:r }));
     } else {
       r.id = uuid();
-      this.store.dispatch(addRule({rule:r}));
+      this.store.dispatch(addRule({ rule:r }));
     }
   }
 
@@ -70,7 +70,7 @@ export class RulesListComponent implements OnInit {
   }
 
   addRule(): void {
-    this.rules.unshift({ id: '', name: '', type: 'and', channelMatch: '', descriptionMatch: '', titleMatch: '', playlistId: '', edit: true })
+    this.rules.unshift({ id: '', name: '', type: 'and', channelMatch: '', descriptionMatch: '', titleMatch: '', playlistId: '', edit: true });
   }
 
   confirmDelete(id: string) {

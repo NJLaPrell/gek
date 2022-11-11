@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { Video } from 'src/app/state/models/video.model';
 import { selectErrorQueue, selectUnsorted } from 'src/app/state/selectors/history.selectors';
 import * as moment from 'moment';
-import { faTrash, faInfoCircle, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faInfoCircle, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { deleteErrorItem, deleteUnsortedItem, purgeUnsorted } from 'src/app/state/actions/history.actions';
 import { ConfirmPromptComponent } from '../confirm-prompt/confirm-prompt.component';
 import { selectPlaylistTitles } from 'src/app/state/selectors/list.selectors';
@@ -41,10 +41,10 @@ export class UnsortedComponent implements OnInit {
       this.sortList();
     });
     this.store.select(selectErrorQueue).subscribe(e => {
-      this.unsorted = this.unsorted.concat(e.map(f => ({...f.video, errorMessage: { errors: f.errors, failDate: f.failDate } })));
+      this.unsorted = this.unsorted.concat(e.map(f => ({ ...f.video, errorMessage: { errors: f.errors, failDate: f.failDate } })));
       this.sortList();
     });
-    this.store.select(selectPlaylistTitles).subscribe(pl => this.playlists = Object.keys(pl).map(plid => ({ id: plid, title: pl[plid]})).map(pl => ({ title: pl.title, id: pl.id })))
+    this.store.select(selectPlaylistTitles).subscribe(pl => this.playlists = Object.keys(pl).map(plid => ({ id: plid, title: pl[plid] })).map(pl => ({ title: pl.title, id: pl.id })));
   }
 
   purge() {

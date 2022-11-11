@@ -1,8 +1,8 @@
-<div class="modal-header">
+<div class="modal-header bg-dark text-light">
   <h4 class="modal-title">User Preferences</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+  <button type="button" class="btn-close  btn-dark" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
-<div class="modal-body">
+<div class="modal-body  bg-dark text-light">
   <div class="container">
 
     <div class="row">
@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row mt-2">
       <div class="col-md-6">
         <div class="form-check form-switch">
           <input class="form-check-input" type="checkbox" id="autoNextToggle" name="autoNextToggle" [(ngModel)]="prefs.autoNext" />
@@ -43,7 +43,7 @@
   </div>
 
 </div>
-<div class="modal-footer">
+<div class="modal-footer bg-dark">
   <button type="button" class="btn btn-primary" (click)="activeModal.close('Close click')">Close</button>
   <button type="button" class="btn btn-success" (click)="savePreferences()"><fa-icon [icon]="faSave"></fa-icon> Save Preferences</button>
 </div>
