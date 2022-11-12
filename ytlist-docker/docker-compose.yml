@@ -16,8 +16,10 @@ services:
     build: server
     expose:
       - "3000"
+      - "8080"
     ports:
       - "3000:3000"
+      - "8080:8080"
     hostname: 'ytlist.server'
     container_name: 'server'
     networks:

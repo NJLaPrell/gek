@@ -6,14 +6,14 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN npm ci --only=production
+RUN npm install
 RUN npm install pm2 -g
 
 COPY dist server
 COPY ecosystem.config.js .
 #COPY .env .
 
-EXPOSE 3000
+EXPOSE 3000 8080
 
 CMD [ "npm", "start" ]
 

@@ -12,6 +12,8 @@
     "copy-assets-prod": "ts-node utils/copyAssetsProd",
     "build-server": "npm-run-all clean tsc copy-assets copy-shared-resources",
     "build:prod:server": "npm-run-all clean-prod tsc-prod copy-assets-prod copy-shared-resources",
+    "make-deploy-package": "tar -cvzf dist/ytlist.tar.gz ytlist-docker",
+    "build:package": "npm-run-all build:prod:server make-deploy-package",
     "start:dev": "npm-run-all pm2:start:dev:socket-server pm2:start:dev:rest-server pm2:start:dev:app-server watch-logs",
     "pm2:start:dev:socket-server": "pm2 start npm --watch --name 'Socket Server' --log ./SocketServer.log --ignore-watch='node_modules' -- run start:dev:socket-server",
     "pm2:start:dev:rest-server": "pm2 start npm --watch --name 'Rest Server' --log ./RestServer.log --ignore-watch='node_modules' -- run start:dev:rest-server",
