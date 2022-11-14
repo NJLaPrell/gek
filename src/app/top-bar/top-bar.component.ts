@@ -17,6 +17,7 @@ import { getHistory } from '../state/actions/history.actions';
 import { ToastService } from '../services/toast.service';
 import { Router } from '@angular/router';
 import { PreferencesComponent } from '../modals/preferences/preferences.component';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-top-bar',
@@ -38,6 +39,8 @@ export class TopBarComponent implements OnInit {
   remoteMode = false;
   viewerMode = false;
   mode = '';
+
+  environment = environment;
 
   @Input() authenticated = false;
 

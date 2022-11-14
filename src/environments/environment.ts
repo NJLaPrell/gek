@@ -4,9 +4,7 @@
 
 export const environment = {
   production: false,
-  G_API_CLIENT_ID: '',
-  G_API_CLIENT_SECRET: '',
-  G_API_REDIRECT: ''
+  socket_url: ''
 };
 
 /*

@@ -29,4 +29,5 @@ services:
 
 networks:
   ytlist:
-
+    name: nginx-proxy-manager_default
+    external: true
