@@ -98,8 +98,10 @@ export class TopBarComponent implements OnInit {
       this.viewerMode = false;
     } else if (e.target.id === 'viewerToggle') {
       this.store.dispatch(disconnect());
+      this.home();
     } else {
       this.store.dispatch(disconnect());
+      this.home();
     }
   }
 

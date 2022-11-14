@@ -1,5 +1,6 @@
 # Ytlist
 
+
 **IMPORTANT -- ytlist is in development:** No, not like "Beta" or even early "Alpha" testing. More like a proof of concept that has not been vetted for security, user experience, or even sanity. Any experimenting should be done in the relative safety of private network.
 
 ## So what is it?
@@ -25,4 +26,18 @@ And that is the second main feature of ytlist. Toggle the viewer switch on a dev
 
 ## fin...
 
-Proper documentation will come later as the project starts to stabilize. 
+Proper documentation will come later as the project starts to stabilize.
+
+
+## Deploy
+
+Deployment is done by creating a deploy zip consisting of the required source along with a docker compose file. Docker compose builds two services and joins them to an existing [Nginx Proxy Manager](https://nginxproxymanager.com/) reverse proxy. Adjust the network config appropriately. 
+
+### Steps:
+
+1. Ensure there is a .env file in the **ytlist-docker/server** directory.
+1. Run `npm run build:package`. This cleans and builds the project with production configurations and environment, copies everything required to the **ytlist-docker** directory, then creates **/dist/ytlist.tar.gz**.
+1. Copy **ytlist.tar.gz** to the production server and unzip it (`tar -xf ytlist.tar.gz`).
+1. Build the containers and start them:
+   * `docker-compose build`
+   * `docker-compose up -d`
