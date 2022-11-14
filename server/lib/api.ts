@@ -103,7 +103,7 @@ export class API {
    */
   //public getPlaylistFeed = async(id: string, fromTime = 0, useGApi = true): Promise<Video[]> => this.getFeed('playlist', id, fromTime, useGApi);
 
-  public getPlaylistFeed = async(id: string, fromTime = 0, useGApi = true): Promise<Video[]> => {
+  public getPlaylistFeed = async(id: string, fromTime = 0): Promise<Video[]> => {
     const videos = await this.listPlaylistItems(id, fromTime)
       .catch(e => console.log('  Unable to get playlist items from google.', e))
       .then((items) => items.map((i: any) => ({
@@ -124,12 +124,6 @@ export class API {
     }));
     return finalDetailsList;
   };
-
-
-
-
-
-
 
   /**
    * Add a video to a playlist.
@@ -284,7 +278,14 @@ export class API {
    */
   private listPlaylistItems = async (id: string, fromTime = 0): Promise<any> => {
     const items = await this.getPlaylistItemsPage(id).catch(e => console.log(e)) || [];
-    return <any>items.filter((e: any) => fromTime < Date.parse(e.contentDetails.videoPublishedAt)).map((e: any) => ({
+    const videoIds: string[] = [];
+    return <any>items.filter((e: any) => {
+      const videoId = e.contentDetails.videoId;
+      const meetsDateConstraint = (e.contentDetails.videoPublishedAt && fromTime) ? fromTime < Date.parse(e.contentDetails.videoPublishedAt) : true;
+      const isDuplicate = videoIds.indexOf(videoId) !== -1;
+      videoIds.push(videoId);
+      return meetsDateConstraint && !isDuplicate;
+    }).map((e: any) => ({
       id: e.contentDetails.videoId,
       playlistId: e.id,
       channelId: e.snippet.channelId,
@@ -308,7 +309,9 @@ export class API {
       return videoList;
 
     console.log('  Calling videos API.');
-    await this.checkUserAuth();   
+    await this.checkUserAuth();
+    // Strange API behavior: If you send more than 50 IDs, it sends a 500 "invalid filter parameter."
+    // Instead, we batch the IDs and ignore the nextPageToken.
     const response = await this.google.youtube('v3').videos.list({
       'part': [
         'snippet,contentDetails,statistics,id'
@@ -320,8 +323,8 @@ export class API {
     videoIds = videoIds.slice(50);
     videoList = videoList.concat(<any>response.data.items);
     const nextPageToken = response.data.nextPageToken;
-    if (nextPageToken) {
-      videoList = await this.getVideoDetailsPage(videoIds, videoList, nextPageToken);
+    if (nextPageToken || videoIds.length) {
+      videoList = await this.getVideoDetailsPage(videoIds, videoList, nextPageToken || '');
     }
     return videoList;
   };

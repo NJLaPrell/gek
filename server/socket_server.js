@@ -1,7 +1,7 @@
 const WebSocket = require('ws');
 
-HEARTBEAT_INTERVAL = 30000 // 30 Seconds
-PORT = 8080;
+const HEARTBEAT_INTERVAL = 30000 // 30 Seconds
+const PORT = 8080;
 
 function heartbeat() {
     console.log('-heartbeat-');

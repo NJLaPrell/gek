@@ -8,7 +8,7 @@
 /build
 
 # Node
-/node_modules
+*node_modules
 npm-debug.log
 yarn-error.log
 
@@ -50,3 +50,5 @@ src/environments/environment.prod.ts
 /server/models/shared/*
 *.log
 .env
+/ytlist-docker/ui/dist
+/ytlist-docker/server/dist

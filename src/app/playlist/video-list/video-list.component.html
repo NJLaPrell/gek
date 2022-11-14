@@ -7,7 +7,7 @@
     <div class="video-card-body text-start">
         <h3 class="video-card-title" (click)="videoClicked($any(video.videoId))" [ngbTooltip]="video.title">{{ video.title }}</h3>
         <div class="channel">
-            <a class="channel-link" [href]="video.channelLink" target="_blank">{{ video.channelTitle }}</a>
+            <a class="channel-link" [href]="'https://www.youtube.com/channel/' + video.channelId" target="_blank">{{ video.channelTitle }}</a>
         </div>
         <div class="counts">
             <span class="view-count">{{ video.viewCount | viewCount }} <fa-icon [icon]="faEye"></fa-icon></span>

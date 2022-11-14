@@ -43,7 +43,6 @@ export interface Video {
     link?: string;             //XXXXX
     thumbnail?: string;
     authorName?: string;       //XXXXX
-    channelLink?: string;      //XXXXX
     thumbCount?: number;       //XXXXX
 }
 

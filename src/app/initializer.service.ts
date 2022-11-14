@@ -5,6 +5,7 @@ import { AppState } from './state';
 import { getAuthState } from './state/actions/auth.actions';
 import { getHistory } from './state/actions/history.actions';
 import { getSubscriptions, getUncachedLists } from './state/actions/list.actions';
+import { getPreferences } from './state/actions/preferences.actions';
 import { getRules } from './state/actions/rules.actions';
 import { selectAuthenticated } from './state/selectors/auth.selectors';
 
@@ -26,7 +27,8 @@ export class InitializerService {
         this.getLists(),
         this.getHistory(),
         this.getRules(),
-        this.getSubscriptions()
+        this.getSubscriptions(),
+        this.getPreferences()
       ).toPromise();
     }
   }
@@ -51,6 +53,10 @@ export class InitializerService {
   }
   private getAuthenticated(): Observable<any> {
     this.store.dispatch(getAuthState());
+    return of([]);
+  }
+  private getPreferences(): Observable<any> {
+    this.store.dispatch(getPreferences());
     return of([]);
   }
 

@@ -1,5 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { faList, faClapperboard, faRotate, faHandSparkles, faTrashCan, faBomb, faArrowUpShortWide } from '@fortawesome/free-solid-svg-icons';
+import {
+  faList, faClapperboard, faRotate, faHandSparkles, faTrashCan,
+  faBomb, faArrowUpShortWide, faUserGear
+} from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ErrorBufferComponent } from '../modals/error-buffer/error-buffer.component';
 import { UnsortedComponent } from '../modals/unsorted/unsorted.component';
@@ -12,6 +15,9 @@ import { disconnect, initializeSocketConnection } from '../state/actions/remote.
 import { getRules } from '../state/actions/rules.actions';
 import { getHistory } from '../state/actions/history.actions';
 import { ToastService } from '../services/toast.service';
+import { Router } from '@angular/router';
+import { PreferencesComponent } from '../modals/preferences/preferences.component';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-top-bar',
@@ -26,12 +32,15 @@ export class TopBarComponent implements OnInit {
   faTrashCan = faTrashCan;
   faBomb = faBomb;
   faArrowUpShortWide = faArrowUpShortWide;
+  faUserGear = faUserGear;
 
   errorCount = 0;
   unsortedCount = 0;
   remoteMode = false;
   viewerMode = false;
   mode = '';
+
+  environment = environment;
 
   @Input() authenticated = false;
 
@@ -40,7 +49,8 @@ export class TopBarComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private store: Store,
-    private toast: ToastService
+    private toast: ToastService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -67,14 +77,16 @@ export class TopBarComponent implements OnInit {
     this.modalService.open(RulesListComponent, { size: 'xl', scrollable: true });
   }
 
+  openPreferences() {
+    this.modalService.open(PreferencesComponent, { size: 'xl', scrollable: true });
+  }
+
   sortVideos() {
     this.modalService.open(SortProgressComponent, { size: 'xl', scrollable: true });
   }
 
-  refreshLists(): void {
-    this.store.dispatch(getRules());
-    this.store.dispatch(getHistory());
-    this.toast.info('Refreshing list data...');
+  home() {
+    this.router.navigate(['/']);
   }
 
   handleModeToggle(e:any){
@@ -86,8 +98,10 @@ export class TopBarComponent implements OnInit {
       this.viewerMode = false;
     } else if (e.target.id === 'viewerToggle') {
       this.store.dispatch(disconnect());
+      this.home();
     } else {
       this.store.dispatch(disconnect());
+      this.home();
     }
   }
 

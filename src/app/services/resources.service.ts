@@ -1,32 +1,32 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { RulesResponse, Rule } from '../state/models/rules.model';
-import { Subscription } from "../state/models/list.model";
-import { Observable, shareReplay } from "rxjs";
+import { Subscription } from '../state/models/list.model';
+import { Observable, shareReplay } from 'rxjs';
 
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class ResourcesService {
-    headers: HttpHeaders;
+  headers: HttpHeaders;
 
-    constructor(
+  constructor(
         private http: HttpClient
-    ) {
-        this.headers = new HttpHeaders().set("Content-Type", "application/json");
-    }
+  ) {
+    this.headers = new HttpHeaders().set('Content-Type', 'application/json');
+  }
     
-    getRules = (): Observable<RulesResponse> => this.getResource('rules');
+  getRules = (): Observable<RulesResponse> => this.getResource('rules');
 
-    getSubscriptions = (): Observable<Subscription[]> => this.getResource('subscriptions');
+  getSubscriptions = (): Observable<Subscription[]> => this.getResource('subscriptions');
 
-    getResource = (resource: string): Observable<any> => this.http.get<any>(`/api/getResource/${resource}`).pipe(shareReplay());
+  getResource = (resource: string): Observable<any> => this.http.get<any>(`/api/getResource/${resource}`).pipe(shareReplay());
 
-    addRule = (rule: Rule): Observable<any> => this.http.post<any>(`/api/resources/addRule`, { ...rule }, { headers: this.headers });
+  addRule = (rule: Rule): Observable<any> => this.http.post<any>('/api/resources/addRule', { ...rule }, { headers: this.headers });
 
-    updateRule = (rule: Rule): Observable<any> => this.http.put<any>(`/api/resources/updateRule`, rule);
+  updateRule = (rule: Rule): Observable<any> => this.http.put<any>('/api/resources/updateRule', rule);
 
-    deleteRule = (id: string): Observable<any> => this.http.delete<any>(`/api/resources/deleteRule/${id}`);
+  deleteRule = (id: string): Observable<any> => this.http.delete<any>(`/api/resources/deleteRule/${id}`);
 
 }

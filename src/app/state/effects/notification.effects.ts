@@ -5,6 +5,7 @@ import * as HistoryActions from '../actions/history.actions';
 import * as RulesActions from '../actions/rules.actions';
 import * as VideoActions from '../actions/video.actions';
 import * as ListActions from '../actions/list.actions';
+import * as PreferencesActions from '../actions/preferences.actions';
 import { ToastService } from 'src/app/services/toast.service';
 
 
@@ -26,12 +27,13 @@ export class NotificationEffects {
         RulesActions.deleteRuleFail,
         RulesActions.getRulesFail,
         RulesActions.updateRuleFail,
-        VideoActions.getChannelVideosFail,
         VideoActions.getPlaylistVideosFail,
         VideoActions.addToPlaylistFail,
         VideoActions.rateVideoFail,
         VideoActions.removeFromPlaylistFail,
-        ListActions.getListsFail
+        ListActions.getListsFail,
+        PreferencesActions.getPreferencesFail,
+        PreferencesActions.setPreferencesFail
       ),
       tap((action) => {
         this.notifyFail(action.error);
@@ -52,7 +54,8 @@ export class NotificationEffects {
         RulesActions.updateRuleSuccess,
         VideoActions.addToPlaylistSuccess,
         VideoActions.rateVideoSuccess,
-        VideoActions.removeFromPlaylistSuccess
+        VideoActions.removeFromPlaylistSuccess,
+        PreferencesActions.setPreferencesSuccess
       ),
       tap((action) => {
         this.notifySuccess(action.message);

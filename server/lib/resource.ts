@@ -1,11 +1,21 @@
 import { DataStore } from './data-store';
-import { EmptyResource, HistoryResource, UserResource } from 'server/models/resource.models';
+import { EmptyResource, HistoryResource, PreferencesResource, UserResource } from 'server/models/resource.models';
 import { API } from './api';
 
 // Returns an empty resource item.
 const returnEmptyResource = async (): Promise<EmptyResource> => ({ lastUpdated: Date.now(), items: [] });
 
 const returnEmptyHistory = async (): Promise<HistoryResource> => ({ lastUpdated: Date.now(), sortedCount: 0, unsortedCount: 0, errorCount: 0 });
+
+const returnEmptyPreferences = async (): Promise<PreferencesResource> => ({
+  lastUpdated: Date.now(),
+  items: [
+    { name: 'autoSort', value:true },
+    { name: 'autoSortInterval', value: 3600000 },
+    { name: 'autoNext', value: true },
+    { name: 'almostDonePrompt', value: true }
+  ]
+});
  
 
 // Map of resources and how to handle them.
@@ -31,7 +41,10 @@ const RESOURCES:any = {
   },
   playlist: {
     defaultExpire: 3600000,
-    load: async (userId: string, opts: ResourceLoaderOptions) => new API(userId).getPlaylistFeed(opts.resourceId || '', 0, true).then(items => ({ lastUpdated: Date.now(), items }))
+    load: async (userId: string, opts: ResourceLoaderOptions) => new API(userId).getPlaylistFeed(opts.resourceId || '', 0).then(items => ({ lastUpdated: Date.now(), items }))
+  },
+  preferences: {
+    load: returnEmptyPreferences
   }
 };
 
@@ -43,7 +56,6 @@ export interface ResourceLoaderOptions {
 }
 
 const defaultOptions = {
-  expireDuration: false,
   bypassCache: false
 };
 
@@ -64,7 +76,7 @@ export class ResourceLoader {
     
     const resourceName = opts.name + (opts.resourceId ? `:${opts.resourceId}` : '');
     return this.store.getResource(resourceName).then((data: UserResource | undefined) => {
-      const expireDuration = typeof opts.expireDuration !== undefined ? opts.expireDuration : resource.defaultExpire || false;
+      const expireDuration = typeof opts.expireDuration != 'undefined' ? opts.expireDuration : resource.defaultExpire || false;
       if (
         opts.bypassCache // Bypass the cache.
         || (expireDuration && data?.lastUpdated && (Date.now() - expireDuration) > data?.lastUpdated) // Cached version expired.

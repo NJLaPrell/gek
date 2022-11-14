@@ -1,0 +1,33 @@
+version: '3.5'
+services:
+  ui:
+    build: ui
+    expose:
+      - "4200"
+    ports:
+      - "4200:80"
+    hostname: "ytlist.ui"
+    container_name: 'ui'
+    networks:
+    - "ytlist"
+    restart: unless-stopped
+
+  server:
+    build: server
+    expose:
+      - "3000"
+      - "8080"
+    ports:
+      - "3000:3000"
+      - "8080:8080"
+    hostname: 'ytlist.server'
+    container_name: 'server'
+    networks:
+    - "ytlist"
+    restart: unless-stopped
+    env_file: ../.env
+
+networks:
+  ytlist:
+    name: nginx-proxy-manager_default
+    external: true

@@ -1,7 +1,7 @@
 <div *ngIf="video" id="playerControls" class="pb-5 text-center">
     <div class="text-start">
         <div class="video-title">
-            <a [href]="video.channelLink" target="_blank" class="channel-link">{{ video.channelTitle }}</a>
+            <a [href]="'https://www.youtube.com/channel/' + video.channelId" target="_blank" class="channel-link">{{ video.channelTitle }}</a>
             &nbsp; | &nbsp; {{ video.viewCount | viewCount }} <fa-icon [icon]="faEye"></fa-icon>
             &nbsp; | &nbsp; {{ video.likeCount | thumbCount }} <fa-icon [icon]="faThumbsUp"></fa-icon>
             &nbsp; | &nbsp; Published: {{ video.publishedAt | fromNow }}

@@ -12,14 +12,6 @@ import { Video } from '../models/video.model';
 @Injectable()
 export class VideoEffects {
 
-  getChannelVideos$ = createEffect(() => this.actions$.pipe(
-    ofType(VideoActions.getChannelVideos),
-    mergeMap((action) => this.videoService.getChannelVideos(action.channelId).pipe(
-      map((response: Video[]) => VideoActions.getChannelVideosSuccess({ response, channelId: action.channelId })),
-      catchError((error: HttpErrorResponse) => of(VideoActions.getChannelVideosFail({ error: error.message })))
-    ))
-  ));
-
   getPlaylistVideos$ = createEffect(() => this.actions$.pipe(
     ofType(VideoActions.getPlaylistVideos),
     mergeMap((action) => this.videoService.getPlaylistVideos(action.playlistId, action.bypassCache).pipe(

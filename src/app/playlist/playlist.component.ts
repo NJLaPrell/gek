@@ -28,6 +28,7 @@ export class PlaylistComponent implements OnInit {
   navState: any = {};               // Video navigation state.
   pageTitle = 'YouTube Playlists';
   lastUpdated!: number;
+  playlistLoading = false;
   
 
   constructor(
@@ -67,6 +68,7 @@ export class PlaylistComponent implements OnInit {
         }))
       )
       .subscribe(r => {
+        this.playlistLoading = false;
         this.videoList = [...r.videoList];
         this.pageTitle = r.titleLookup[this.playlistId] || 'YouTube Playlists';
         this.lastUpdated = r.lastUpdated;
@@ -76,7 +78,16 @@ export class PlaylistComponent implements OnInit {
             this.video = v;
           }
           this.pageTitle += ' > ' + this.video?.title;
-        } 
+        } else {
+          this.store.dispatch(setNavState({ 
+            props: { 
+              playlistId: this.playlistId,
+              videoId: '',
+              videoList: this.videoList,
+              titleLookup: r.titleLookup
+            }
+          }));
+        }
         if(this.videoList.length) {
           this.loading = false;
         } else {
@@ -84,7 +95,7 @@ export class PlaylistComponent implements OnInit {
         }
 
         // Set the navigation state in the store. (But not when triggered by a video being removed)
-        if (this.videoList.find(v => v.videoId === this.videoId)) {
+        if (this.videoId && this.videoList.find(v => v.videoId === this.videoId)) {
           this.store.dispatch(setNavState({ 
             props: { 
               playlistId: this.playlistId,
@@ -99,6 +110,7 @@ export class PlaylistComponent implements OnInit {
   }
 
   refresh(): void {
+    this.playlistLoading = true;
     this.store.dispatch(getPlaylistVideos({ playlistId: this.playlistId, bypassCache: true }));
   }
 
