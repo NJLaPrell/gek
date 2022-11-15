@@ -3,7 +3,7 @@ module.exports = {
     name   : 'Socket Server',
     script : 'npm',
     args: 'run start:dev:socket-server',
-    watch: ['server/socket_server.js'],
+    watch: ['server/socket_server.ts', 'server/lib/socket-server.ts'],
     log_file: 'SocketServer.log'
   },
   {

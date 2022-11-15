@@ -14,7 +14,7 @@
     "start:dev:ui": "ng serve --configuration development --host dev-ytlist.laprell.org --port 4200 --proxy-config proxy.config.json",
     "start:dev:rest-server": "ts-node-dev --project tsconfig.server.json --respawn --transpile-only -- ./server/rest_server.ts",
     "start:dev:sort-service": "ts-node-dev --project tsconfig.server.json --respawn --transpile-only -- ./server/sort.ts",
-    "start:dev:socket-server": "node server/socket_server.js",
+    "start:dev:socket-server": "ts-node-dev --project tsconfig.server.json --respawn --transpile-only -- ./server/socket_server.ts",
     "watch-logs": "pm2 log",
     "stop-all": "pm2 kill",
     "start": "ng serve",
