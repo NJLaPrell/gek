@@ -39,7 +39,13 @@ export interface RemoteConnectAck {
 }
 
 export interface RemoteHandshake {
+    //userId: string;
     clientType: 'remote' | 'viewer'| 'player';
+}
+
+export interface RemoteInit {
+  userId: string;
+  clientType: 'remote' | 'viewer'| 'player';
 }
 
 export interface ClientType {

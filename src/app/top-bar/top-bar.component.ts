@@ -10,7 +10,7 @@ import { RulesListComponent } from '../modals/rules-list/rules-list.component';
 import { Store } from '@ngrx/store';
 import { selectHistoryState } from '../state/selectors/history.selectors';
 import { SortProgressComponent } from '../modals/sort-progress/sort-progress.component';
-import { selectRemoteMode } from '../state/selectors/remote.selectors';
+import { selectRemoteMode, selectPeerConnected, selectConnected } from '../state/selectors/remote.selectors';
 import { disconnect, initializeSocketConnection } from '../state/actions/remote.actions';
 import { getRules } from '../state/actions/rules.actions';
 import { getHistory } from '../state/actions/history.actions';
@@ -39,6 +39,9 @@ export class TopBarComponent implements OnInit {
   remoteMode = false;
   viewerMode = false;
   mode = '';
+  waitingPeerReconnect = false;
+  private peerConnected = false;
+  private selfConnected = false;
 
   environment = environment;
 
@@ -59,6 +62,14 @@ export class TopBarComponent implements OnInit {
       this.unsortedCount = h.unsorted.length;
     });
     this.store.select(selectRemoteMode).subscribe(m => this.mode = m);
+    this.store.select(selectPeerConnected).subscribe(c => {
+      this.waitingPeerReconnect = this.peerConnected && this.selfConnected && !c;
+      this.peerConnected = c;
+    });
+    this.store.select(selectConnected).subscribe(c => {
+      this.waitingPeerReconnect = this.peerConnected && this.selfConnected && !c;
+      this.selfConnected = c;
+    });
   }
 
   togglePlaylists() {
@@ -91,10 +102,10 @@ export class TopBarComponent implements OnInit {
 
   handleModeToggle(e:any){
     if(e.target.id === 'viewerToggle' && e.target.checked) {
-      this.store.dispatch(initializeSocketConnection({ clientType: 'viewer' }));
+      this.store.dispatch(initializeSocketConnection({ clientType: 'viewer', userId: '123456' }));
       this.remoteMode = false;
     } else if(e.target.checked) {
-      this.store.dispatch(initializeSocketConnection({ clientType: 'remote' }));
+      this.store.dispatch(initializeSocketConnection({ clientType: 'remote', userId: '123456' }));
       this.viewerMode = false;
     } else if (e.target.id === 'viewerToggle') {
       this.store.dispatch(disconnect());

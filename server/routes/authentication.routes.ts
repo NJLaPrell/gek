@@ -1,13 +1,11 @@
 import { ExpressRequest, ExpressResponse } from 'server/models/rest.models';
+import { Logger } from '../lib/logger';
+
+const log = new Logger('rest');
 
 const SCOPES = [
   'https://www.googleapis.com/auth/youtube',
-  //'https://www.googleapis.com/auth/youtube.channel-memberships.creator',
   'https://www.googleapis.com/auth/youtube.force-ssl',
-  //'https://www.googleapis.com/auth/youtube.readonly',
-  //'https://www.googleapis.com/auth/youtube.upload',
-  //'https://www.googleapis.com/auth/youtubepartner',
-  //'https://www.googleapis.com/auth/youtubepartner-channel-audit',
   'profile',
   'email'
 ];
@@ -20,13 +18,13 @@ export class AuthenticationRoutes {
     });
     
     app.get('/login', ensureGuest, passport.authenticate('google', { scope: SCOPES, accessType: 'offline', prompt: 'consent' }), () => {
-      console.log('GET: /login');
+      log.debug('GET: /login');
     });
     
     app.get('/logout', (req: ExpressRequest, res: ExpressResponse) => {
+      log.debug('GET: /logout');
       req.session.destroy();
       req.session = null;
-      //req.logout();
       res.redirect('/');
     });
 

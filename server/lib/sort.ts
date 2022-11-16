@@ -7,6 +7,9 @@ import {
 import { ResourceLoader } from './resource';
 import { Video } from '../models/shared/video.model';
 import { Rule } from '../models/shared/rules.model';
+import { Logger } from './logger';
+
+const log = new Logger('sort');
 
 export class SortLists {
   private userId: string;
@@ -28,8 +31,8 @@ export class SortLists {
 
   constructor(userId: string) {
     this.userId = userId;
-    this.resources = new ResourceLoader(userId);
-    this.api = new API(userId);
+    this.resources = new ResourceLoader(userId, log);
+    this.api = new API(userId, log);
   }
 
   private getSubscriptions = async (): Promise<SubscriptionResource> => {

@@ -5,9 +5,10 @@ import { sendCommand } from 'src/app/state/actions/remote.actions';
 import { Video } from 'src/app/state/models/video.model';
 import { selectLastCommand } from 'src/app/state/selectors/remote.selectors';
 import { v4 as uuid } from 'uuid';
+import { environment } from '../../../environments/environment';
 
-const STATE_INTERVAL = 5000;
-const DEBUG = true;
+const STATE_INTERVAL = environment.viewerStateInterval;
+const DEBUG = environment.debug.viewerComponent;
 
 @Component({
   selector: 'app-viewer',
@@ -50,6 +51,9 @@ export class ViewerComponent implements OnInit {
   // Fires when a video has finished.
   onVideoEnded(e: YT.OnStateChangeEvent) {
     console.debug('Video Ended', e);
+    this.sendCommand({
+      directive: 'videoEnded'
+    });
   }
 
   // Fires when the player API finishes loading.

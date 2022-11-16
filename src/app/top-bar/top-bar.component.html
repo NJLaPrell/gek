@@ -4,6 +4,7 @@
         <span id="app-subtitle">Playlists</span>
         <span *ngIf="!environment.production" class="ms-2 text-danger">(DEV)</span>
     </div>
+
     <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="togglePlaylists()">
         <fa-icon [icon]="faList"></fa-icon> Playlists
     </button>
@@ -24,6 +25,10 @@
     <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="openPreferences()">
       <fa-icon [icon]="faUserGear"></fa-icon> Preferences 
     </button>
+
+    <div *ngIf="waitingPeerReconnect" class="d-inline-block text-warning pe-2">
+      ( Waiting for peer to reconnect... <span class="spinner-border" role="status" style="font-size: 0.6em; width: 14px; height: 14px"></span> )
+    </div>
 
     <div *ngIf="authenticated" id="modeControl" [class.viewer]="mode === 'viewer'">
         <div *ngIf="mode !== 'remote'" class="form-check form-check-inline form-switch">

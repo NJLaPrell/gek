@@ -35,12 +35,19 @@ export class AppComponent implements OnInit {
     this.store.select(selectPageTitle).pipe(skipWhile(t => !t || t === 'undefined')).subscribe(t => this.pageTitle = t);
     this.store.select(selectRemoteMode).subscribe(m => this.mode = m);
     this.store.select(selectConnected).subscribe(c => {
+      console.log('selectConnected', c);
+      const disconnect = this.connected && this.peerConnected && !c;
       this.connected = c;
-      this.connectionChanged();
+      this.connectionChanged(disconnect);
+      
     });
     this.store.select(selectPeerConnected).subscribe(c => {
+      console.log('selectPeerConnected', c);
+      const disconnect = this.connected && this.peerConnected && !c;
       this.peerConnected = c;
-      this.connectionChanged();
+      this.connectionChanged(disconnect);
+      
+      
     }); 
     this.store.select(selectLastRun).subscribe(t => this.lastUpdated = t);
     this.store.select(selectAuthenticated).subscribe(auth => this.authenticated = auth);
@@ -50,14 +57,14 @@ export class AppComponent implements OnInit {
     this.showSidebar = !this.showSidebar;
   }
 
-  connectionChanged() {
+  connectionChanged(disconnect: boolean) {
     if (this.connected && this.peerConnected) {
       if (this.mode === 'viewer') {
         this.router.navigate(['/', 'viewer']);
       } else {
         this.router.navigate(['']);
       }
-    } else if (this.connected || this.peerConnected) {
+    } else if ((this.connected || this.peerConnected) && !disconnect) {
       this.router.navigate(['/', 'connecting']);
     }
   }

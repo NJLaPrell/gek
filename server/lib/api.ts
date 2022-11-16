@@ -5,6 +5,7 @@ import { Subscription, Playlist } from '../models/shared/list.model';
 import { httpsRequest } from './utils';
 import { XMLParser } from 'fast-xml-parser';
 import { Video } from 'server/models/shared/video.model';
+import { Logger } from './logger';
 
 // Options for parsing XML.
 const xmlOptions = {
@@ -16,9 +17,11 @@ const xmlOptions = {
 export class API {
   private userId: string;
   private google = google;
+  private log: Logger;
 
-  constructor(userId: string) {
+  constructor(userId: string, log: Logger) {
     this.userId = userId;
+    this.log = log;
   }
 
   /**
@@ -31,15 +34,15 @@ export class API {
     if (this.google._options.auth)
       return true;
 
-    console.log('Authorizing API requests.');
+    this.log.debug('Authorizing API requests.');
     const auth = new UserAuthentication(this.userId);
     const authClient = await auth.getAuthClient();
     if (authClient) {
-      console.log('  Established oauth2 client.');
+      this.log.debug('  Established oauth2 client.');
       this.google.options({ auth: authClient });
       return true;
     } else {
-      console.log('  Failed to get oath2 client.');
+      this.log.warn('  Failed to get oath2 client.');
       return false;
     }
   };
@@ -105,7 +108,7 @@ export class API {
 
   public getPlaylistFeed = async(id: string, fromTime = 0): Promise<Video[]> => {
     const videos = await this.listPlaylistItems(id, fromTime)
-      .catch(e => console.log('  Unable to get playlist items from google.', e))
+      .catch(e => this.log.warn('  Unable to get playlist items from google.', e))
       .then((items) => items.map((i: any) => ({
         videoId: i.id,
         playlistItemId: i.playlistId,
@@ -159,13 +162,13 @@ export class API {
    * @returns void
    */
   public rateVideo = async (videoId: string, rating: string) => {
-    console.log('  Calling rate video API.');
+    this.log.debug('  Calling rate video API.');
     await this.checkUserAuth();
     return await this.google.youtube('v3').videos.rate({
       id: videoId,
       rating: rating
     }).catch(e => {
-      console.log('Error calling rate video API', e);
+      this.log.warn('Error calling rate video API', e);
       throw { code: 500, message: 'Error calling videos.rate API.' };
     });
   };
@@ -177,12 +180,12 @@ export class API {
    * @returns void
    */
   public removeVideo = async (playlistItemId: string) => {
-    console.log('  Calling remove playlist item API.');
+    this.log.debug('  Calling remove playlist item API.');
     await this.checkUserAuth();
     return await this.google.youtube('v3').playlistItems.delete({
       id: playlistItemId
     }).catch(e => {
-      console.log('Error calling remove video API', e);
+      this.log.warn('Error calling remove video API', e);
       throw { code: 500, message: 'Error calling playlistItems.delete API.' };
     });
   };
@@ -225,7 +228,7 @@ export class API {
     const vmap = <any>{};
     if (type === 'playlist' && useGApi) {
       await this.listPlaylistItems(id)
-        .catch(e => console.log('  Unable to get playlist items from google.', e))
+        .catch(e => this.log.warn('  Unable to get playlist items from google.', e))
         .then((items) => items.forEach((pl: any) => vmap[pl.id] = pl));
       const videoIds = Object.keys(vmap);
       const videoDetails = await this.getVideoDetailsPage(videoIds);
@@ -240,7 +243,7 @@ export class API {
     return httpsRequest({ host: 'www.youtube.com', path: '/feeds/videos.xml?' + type + '_id=' + id }).then((res: any) => {
       const parser = new XMLParser(xmlOptions);
       const output = parser.parse(res);
-      console.log(`  Loading ${type} feed: ${output.feed.title} ${fromTime ? ' (From timestamp: ' + String(fromTime) : ''}.`);
+      this.log.debug(`  Loading ${type} feed: ${output.feed.title} ${fromTime ? ' (From timestamp: ' + String(fromTime) : ''}.`);
       const entries = output?.feed?.entry || Array([]);
             
       return !entries.filter ? [] : entries.filter((e: any) => fromTime < Date.parse(e.published)).map((e: any) => {
@@ -277,7 +280,7 @@ export class API {
    * @returns Video list promise
    */
   private listPlaylistItems = async (id: string, fromTime = 0): Promise<any> => {
-    const items = await this.getPlaylistItemsPage(id).catch(e => console.log(e)) || [];
+    const items = await this.getPlaylistItemsPage(id).catch(e => this.log.warn(e)) || [];
     const videoIds: string[] = [];
     return <any>items.filter((e: any) => {
       const videoId = e.contentDetails.videoId;
@@ -308,7 +311,7 @@ export class API {
     if(videoIds.length === 0)
       return videoList;
 
-    console.log('  Calling videos API.');
+    this.log.debug('  Calling videos API.');
     await this.checkUserAuth();
     // Strange API behavior: If you send more than 50 IDs, it sends a 500 "invalid filter parameter."
     // Instead, we batch the IDs and ignore the nextPageToken.
@@ -360,7 +363,7 @@ export class API {
   private getPlaylistItemsPage = async (id: string, videos = [], pageToken = '') => {
     await this.checkUserAuth();
   
-    console.log('  Calling playlist API.');
+    this.log.debug('  Calling playlist API.');
     const response = await google.youtube('v3').playlistItems.list({
       'part': [
         'snippet,contentDetails,id'
@@ -368,7 +371,7 @@ export class API {
       'playlistId': id,
       'maxResults': 50,
       pageToken: pageToken
-    }).catch(e => console.log('Error calling playlistItems API', e));
+    }).catch(e => this.log.warn('Error calling playlistItems API', e));
     if (response?.data?.items?.length || 0 > 0) {
       videos = videos.concat(response ? <any>response.data.items : []);
       const nextPageToken = response ? response.data.nextPageToken : '';
@@ -386,7 +389,7 @@ export class API {
    * @returns Array of Google API response items.
    */
   private getSubscriptionPage = async (subscriptionList:any = [], pageToken = ''): Promise<any[]> => {
-    console.log('  Calling subscriptions API.');
+    this.log.debug('  Calling subscriptions API.');
     await this.checkUserAuth();
 
     const response = await this.google.youtube('v3').subscriptions.list({
@@ -410,7 +413,7 @@ export class API {
    * @returns Array of Google API response items.
    */
   private getPlaylistPage = async (playlistList:any = [], pageToken = ''): Promise<any[]> => {
-    console.log('  Calling playlist API.');
+    this.log.debug('  Calling playlist API.');
     await this.checkUserAuth();
 
     const response = await this.google.youtube('v3').playlists.list({

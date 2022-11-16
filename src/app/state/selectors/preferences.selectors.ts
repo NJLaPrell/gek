@@ -16,3 +16,13 @@ export const selectPreferencesDate = createSelector(
   preferencesState,
   (state) => state.lastUpdated
 );
+
+export const selectAutoNextPreference = createSelector(
+  preferencesState,
+  (state) => state.items.find(i => i.name === 'autoNext')?.value || false
+);
+
+export const selectAlmostDonePreference = createSelector(
+  preferencesState,
+  (state) => state.items.find(i => i.name === 'almostDonePrompt')?.value || false
+);

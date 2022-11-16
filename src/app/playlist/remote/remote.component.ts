@@ -7,8 +7,10 @@ import { v4 as uuid } from 'uuid';
 import { sendCommand } from 'src/app/state/actions/remote.actions';
 import { selectLastCommand } from 'src/app/state/selectors/remote.selectors';
 import { skipWhile } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { selectAutoNextPreference, selectAlmostDonePreference } from 'src/app/state/selectors/preferences.selectors';
 
-const DEBUG = true;
+const DEBUG = environment.debug.remoteComponent;
 
 @Component({
   selector: 'app-remote',
@@ -29,6 +31,9 @@ export class RemoteComponent implements OnInit {
   progress = 0;
   videoState = {};
 
+  autoNextPref = false;
+  almostDonePref = false;
+
   @ViewChild(PlayerControlsComponent) private playerControls!: PlayerControlsComponent;    // Player controls
   
   constructor(
@@ -39,6 +44,8 @@ export class RemoteComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.select(selectLastCommand).pipe(skipWhile(c => c === null)).subscribe(c => this.executeCommand(c));
+    this.store.select(selectAutoNextPreference).subscribe(p => this.autoNextPref = p);
+    this.store.select(selectAlmostDonePreference).subscribe(p => this.almostDonePref = p);
   }
 
   // videoId Changes.
@@ -54,7 +61,18 @@ export class RemoteComponent implements OnInit {
   // Fires 30 seconds before the end of a video.
   onAlmostOver() {
     this.debug('onAlmostOver()');
-    this.playerControls.onAlmostOver();
+    if (this.almostDonePref) {
+      this.playerControls.onAlmostOver();
+    }
+  }
+
+  onVideoEnded() {
+    this.debug('onVideoEnded()');
+    console.log(this.autoNextPref, this.navState);
+    const nextVideoId = this.navState.nextVideo?.videoId;
+    if (this.autoNextPref && nextVideoId) {
+      this.router.navigate(['/', 'playlist', this.playlistId, 'video', nextVideoId]);
+    }
   }
 
   onProgressChange(loc: number){
@@ -76,8 +94,13 @@ export class RemoteComponent implements OnInit {
       break;
 
     case 'almostOver':
-      console.log('almostOver', c);
+      this.debug('almostOver', c);
       this.onAlmostOver();
+      break;
+
+    case 'videoEnded':
+      this.debug('videoEnded', c);
+      this.onVideoEnded();
       break;
     }
   }

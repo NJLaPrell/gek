@@ -1,6 +1,9 @@
 import { IncomingMessage } from 'http';
 import { Server, WebSocket, ServerOptions, RawData } from 'ws';
 import { v4 as uuid } from 'uuid';
+import { Logger } from './logger';
+
+const log = new Logger('socket');
 
 const HEARTBEAT_INTERVAL = Number.parseInt(process.env['SOC_HEARTBEAT_INTERVAL'] || '30000', 10);
 const PORT = Number.parseInt(process.env['SOC_PORT'] || '8080', 10);
@@ -18,8 +21,7 @@ interface ExtendedWebSocket extends WebSocket {
 }
 
 export interface SocketMessage {
-  type: 'ping' | 'handshake' | 'message';
-  audience?: 'peer' | 'server';
+  type: 'ping' | 'handshake' | 'peerDisconnect' | 'message';
   origin: 'peer' | 'server';
   payload: any;
 }
@@ -33,16 +35,15 @@ export class SocketServer {
 
   private clients: ExtendedWebSocket[] = [];
 
-  public setLogLevel = (logLevel: LogLevel) => this.logging = logLevel;
   public setPort = (port: number) => this.port = port;
   public setHeartbeatInterval = (interval: number) => this.heartbeatInterval = interval;
 
   public serve = (): void => {
-    this.logInfo(' ');
-    this.logInfo(`Socket Server listening on port ${this.port}.`);
+    log.info(' ');
+    log.info(`Socket Server listening on port ${this.port}.`);
     this.server = new WebSocket.Server(<ServerOptions>{ port: this.port });
 
-    this.logInfo(`Establishing heartbeat at interval: ${this.heartbeatInterval/1000} seconds.`);
+    log.info(`Establishing heartbeat at interval: ${this.heartbeatInterval/1000} seconds.`);
     this.pingClients();
     
     this.server.on('connection', (socket: ExtendedWebSocket, message: IncomingMessage) => this.onConnection(socket, message));
@@ -61,9 +62,9 @@ export class SocketServer {
   private processMessage = (msg: SocketMessage, clientId: string): void => {
     switch(msg.type) {
     case 'handshake':
-      this.logDebug('Processing handshake message');
+      log.debug('Processing handshake message');
       if (!msg.payload.userId || !msg.payload.clientType) {
-        this.logWarning(`Client ${clientId} sent invalid handshake payload.`, msg);
+        log.warn(`Client ${clientId} sent invalid handshake payload.`, msg);
       } else {
         const client = this.clientById(clientId);
         if (client) {
@@ -73,7 +74,7 @@ export class SocketServer {
         
         const peer = this.clients.find(c => c.userId === msg.payload.userId && c.clientType !== msg.payload.clientType);
         if (peer) {
-          this.logInfo(`Peer connection established: ${clientId} / ${peer.clientId}.`);
+          log.info(`Peer connection established: ${clientId} / ${peer.clientId}.`);
           if (client) {
             client.peer = peer;
             client.peerId = peer.clientId?.slice() || '';
@@ -83,19 +84,18 @@ export class SocketServer {
           this.sendMsg(peer.clientId || '', { type: 'handshake', origin: 'peer', payload: { clientId: clientId, clientType: msg.payload.clientType } });
           this.sendMsg(clientId, { type: 'handshake', origin: 'peer', payload: { clientId: peer.clientId, clientType: peer.clientType } });
         } else {
-          this.logDebug('No suitable peer found. Waiting for handshake...');
+          log.debug('No suitable peer found. Waiting for handshake...');
         }
       }
       break;
 
     case 'message':
-      if (msg.audience === 'peer') {
-        msg.origin = 'peer';
-        const client = this.clientById(clientId);
-        if (client && client.peer) {
-          this.logDebug(`Forwarding message to peer: ${client.peer.clientId}.`);
-          this.sendMsg(client.peer.clientId || '', msg);
-        }
+      msg.origin = 'peer';
+      // eslint-disable-next-line no-case-declarations
+      const client = this.clientById(clientId);
+      if (client && client.peer) {
+        log.debug(`Forwarding message to peer: ${client.peer.clientId}.`);
+        this.sendMsg(client.peer.clientId || '', msg);
       }
       break;
     }
@@ -111,10 +111,12 @@ export class SocketServer {
     socket.isAlive = true;
     this.clients.push(socket);
 
-    this.logInfo('Client Connected.');
+    log.info(`Client Connected (${clientId}).`);
     socket.on('message', (data: RawData, isBinary: boolean) => this.onMessage(data, isBinary, clientId));
     socket.on('close', (code: number, reason: Buffer) => this.onClientClose(clientId, code, reason));
-    socket.on('error', (error: Error) => this.onClientError(error));
+    socket.on('error', (error: Error) => this.onClientError(error, clientId));
+
+    this.sendMsg(clientId, { type: 'ping', payload: 'ping' });
   };
 
   private onMessage = (data: RawData, isBinary: boolean, clientId: string): void => {
@@ -123,7 +125,7 @@ export class SocketServer {
       client.isAlive = true;
     }
     
-    this.logDebug('Received: %s', data);
+    log.debug('Received (' + clientId + '): %s', data);
     let msg: SocketMessage;
     try {
       msg = <SocketMessage>JSON.parse(String(data));
@@ -132,33 +134,30 @@ export class SocketServer {
       }
       this.processMessage(msg, clientId);
     } catch(e) {
-      this.logWarning(`Received malformed message: ${data}`, e);
+      log.warn(`Received malformed message (${clientId}): ${data}`, e);
     }
   };
 
   private onClose = () => {
-    this.logDebug('onClose()');
-    return false;
+    log.info('Socket Server closing connection.');
   };
 
   private onError = (error: Error) => {
-    this.logDebug('onError()', error);
-    return false;
+    log.error('Socket Server Error caught:', error);
   };
 
   private onClientClose = (clientId: string, code: number, reason: Buffer) => {
-    this.logDebug('onClientClose()', clientId, code, reason.toString());
+    log.debug(`Client ${clientId} disconnected. ${code}: ${reason.toString()}.`);
     // Signal the disconnect to any peers.
     const peer = this.clients.find(c => c.peerId === clientId);
     if (peer) {
-      this.sendMsg(peer?.clientId || '', { type: 'message', origin: 'server', payload: 'Peer disconnected' });
+      log.debug('Notifying Peer.');
+      this.sendMsg(peer?.clientId || '', { type: 'peerDisconnect', payload: 'Peer disconnected.' });
     }
-    return false;
   };
 
-  private onClientError = (error: Error) => {
-    this.logDebug('onClientError()', error);
-    return false;
+  private onClientError = (error: Error, clientId: string) => {
+    log.warn(`Error caught for client ${clientId}`, error);
   };
 
   /***************************************
@@ -167,7 +166,7 @@ export class SocketServer {
 
   private logDebug = (...args: any) => {
     if (['debug'].indexOf(this.logging) !== -1)
-      console.debug(...args);
+      log.debug(...args);
   };
 
   private logInfo = (...args: any) => {
@@ -191,7 +190,7 @@ export class SocketServer {
 
   // Kill zombies, ping the remaining clients, then reset the interval.
   private pingClients = () => {
-    this.logDebug('pingClients()');
+    log.debug('pingClients()');
     clearTimeout(this.heartbeatTimer);
     this.killZombies();
     this.clients.forEach(c => {
@@ -210,8 +209,8 @@ export class SocketServer {
     this.clients.filter(c => c.isAlive === false).forEach(c => {
       const peer = this.clientById(c.peer?.clientId || '');
       if (peer) {
-        this.sendMsg(c.peer?.clientId || '', { type: 'message', origin: 'server', payload: 'Peer disconnected' });
-        this.logDebug(`Peer disconnected due to timeout: ${peer.clientId}.`);
+        this.sendMsg(c.peer?.clientId || '', { type: 'peerDisconnect', payload: 'Peer disconnected: Timeout.' });
+        log.debug(`Peer disconnected due to timeout: ${peer.clientId}.`);
       }
       const clientIx = this.clients.findIndex(client => client.clientId === c.clientId);  
       c.terminate();

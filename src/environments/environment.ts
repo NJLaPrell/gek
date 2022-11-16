@@ -4,7 +4,21 @@
 
 export const environment = {
   production: false,
-  socket_url: ''
+  socket_url: '',
+  handshakeInterval: 5000,
+  heartbeatInterval: 30000,
+  reconnectInterval: 30000,
+  reconnectMaxAttempts: 10,
+  viewerStateInterval: 5000,
+
+
+
+  debug: {
+    remoteService: false,
+    socketService: false,
+    remoteComponent: false,
+    viewerComponent: false
+  }
 };
 
 /*

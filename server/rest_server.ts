@@ -10,12 +10,15 @@ import { UserAuthToken } from './models/auth.models';
 import { ServiceAccount } from 'firebase-admin';
 import { cert } from 'firebase-admin/app';
 import { Routes } from './routes';
+import { Logger } from './lib/logger';
 const passport = require('passport');
 const session = require('express-session');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const admin = require('firebase-admin');
 const express = require('express');
 const bodyParser = require('body-parser');
+
+const log = new Logger('rest');
 
 /**
  * Google Auth Token
@@ -111,9 +114,9 @@ passport.use(
 );
 
 passport.serializeUser((userObj:any, done: any) => {
-  console.log(userObj.user);
+  log.debug(userObj.user);
   process.nextTick(() => {
-    console.log('  Caching user token.');
+    log.debug('  Caching user token.');
     const token = <UserAuthToken>{
       type: 'authorized_user',
       client_id: process.env['CLIENT_ID'],
@@ -123,11 +126,11 @@ passport.serializeUser((userObj:any, done: any) => {
 
     const auth = new UserAuthentication(userObj.user.id);
     auth.cacheCredentials(token).then((success) => {
-      console.log(`  Success: ${success}`);
+      log.debug(`  Success: ${success}`);
       done(null, userObj.user);
     }).catch((e) => {
-      console.log('  Success: false');
-      console.log(e);
+      log.debug('  Success: false');
+      log.warn('Error caching credentials', e);
       done(null, userObj.user);
     });
   });
@@ -144,5 +147,6 @@ const routes = new Routes(app, passport, ensureAuth, ensureGuest);
 routes.apply();
 
 app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
+  console.info(`Server listening on port ${port}`);
+  console.info(' ');
 });

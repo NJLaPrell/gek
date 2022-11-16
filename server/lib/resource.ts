@@ -1,6 +1,7 @@
 import { DataStore } from './data-store';
 import { EmptyResource, HistoryResource, PreferencesResource, UserResource } from 'server/models/resource.models';
 import { API } from './api';
+import { Logger } from './logger';
 
 // Returns an empty resource item.
 const returnEmptyResource = async (): Promise<EmptyResource> => ({ lastUpdated: Date.now(), items: [] });
@@ -25,7 +26,7 @@ const RESOURCES:any = {
   },
   playlists: {
     defaultExpire: 3600000,
-    load: async (userId: string) => new API(userId).getPlaylists().then(pl => ({ lastUpdated: Date.now(), items: pl }))
+    load: async (userId: string, opts: ResourceLoaderOptions, log: Logger) => new API(userId, log).getPlaylists().then(pl => ({ lastUpdated: Date.now(), items: pl }))
   },
   history: {
     load: returnEmptyHistory
@@ -41,7 +42,7 @@ const RESOURCES:any = {
   },
   playlist: {
     defaultExpire: 3600000,
-    load: async (userId: string, opts: ResourceLoaderOptions) => new API(userId).getPlaylistFeed(opts.resourceId || '', 0).then(items => ({ lastUpdated: Date.now(), items }))
+    load: async (userId: string, opts: ResourceLoaderOptions, log:Logger) => new API(userId, log).getPlaylistFeed(opts.resourceId || '', 0).then(items => ({ lastUpdated: Date.now(), items }))
   },
   preferences: {
     load: returnEmptyPreferences
@@ -62,10 +63,12 @@ const defaultOptions = {
 export class ResourceLoader {
   private userId: string;
   private store: DataStore;
+  private log: Logger;
 
-  constructor(id: string) {
+  constructor(id: string, log: Logger) {
     this.userId = id;
     this.store = new DataStore(id);
+    this.log = log;
   }
 
   public getResource = (options: ResourceLoaderOptions): Promise<UserResource> => {
@@ -82,11 +85,11 @@ export class ResourceLoader {
         || (expireDuration && data?.lastUpdated && (Date.now() - expireDuration) > data?.lastUpdated) // Cached version expired.
         || !data // No data was returned.
       ) {
-        console.log('Getting current version');
+        this.log.debug('Getting current version');
         // Load a current version of the resource.
         return this.loadResource(opts);
       } else {
-        console.log('Returning cached version');
+        this.log.debug('Returning cached version');
         // Return the cached version.
         return data;
       }
@@ -95,11 +98,11 @@ export class ResourceLoader {
 
   public loadResource = (opts: ResourceLoaderOptions): Promise<UserResource> => {
     const resourceName = opts.name + (opts.resourceId ? `:${opts.resourceId}` : '');
-    return RESOURCES[opts.name].load(this.userId, opts).then(((res: UserResource) => this.cacheResource(resourceName, res)));
+    return RESOURCES[opts.name].load(this.userId, opts, this.log).then(((res: UserResource) => this.cacheResource(resourceName, res)));
   };
 
   public cacheResource = (resourceName: string, data: UserResource): Promise<UserResource> => {
-    console.log(`Caching resource ${resourceName}`);
+    this.log.debug(`Caching resource ${resourceName}`);
     return this.store.saveResource(resourceName, data).then(() => data);
   };
 

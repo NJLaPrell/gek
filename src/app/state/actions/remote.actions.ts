@@ -1,18 +1,13 @@
 import { createAction, props } from '@ngrx/store';
-import { RemoteCommand, RemoteCommandAck, RemoteConnectAck, RemoteHandshake, ClientType } from '../models/remote.model';
+import { RemoteCommand, RemoteCommandAck, RemoteConnectAck, RemoteHandshake, ClientType, RemoteInit } from '../models/remote.model';
 
 export const initializeSocketConnection = createAction(
   '[Remote] Initialize Socket Connection',
-  props<RemoteHandshake>()
+  props<RemoteInit>()
 );
 
 export const connectionEstablished = createAction(
   '[Remote] Connection Established',
-  props<RemoteHandshake>()
-);
-
-export const sendHandshake = createAction(
-  '[Remote] Sent Handshake',
   props<RemoteHandshake>()
 );
 
@@ -31,34 +26,8 @@ export const receivedCommand = createAction(
   props<RemoteCommand>()
 );
 
-export const sendCommandAck = createAction(
-  '[Remote] Send Command Ack',
-  props<RemoteCommandAck>()
-);
-
-export const receivedCommandAck = createAction(
-  '[Remote] Command Ack Received',
-  props<RemoteCommandAck>()
-);
-
-export const sendConnectAck = createAction(
-  '[Remote] Send Connect Ack',
-  props<RemoteConnectAck>()
-);
-
-export const receiveConnectAck = createAction(
-  '[Remote] Received Connect Ack',
-  props<RemoteConnectAck>()
-);
-
-export const remoteClientTimeout = createAction(
-  '[Remote] Remote Client Timeout',
-  props<ClientType>()
-);
-
-export const connectionLost = createAction(
-  '[Remote] Connection Lost',
-  props<ClientType>()
+export const serverTimeout = createAction(
+  '[Remote] Server Timeout'
 );
 
 export const reconnected = createAction(
@@ -70,7 +39,10 @@ export const disconnect = createAction(
   '[Remote] Disconnect'
 );
 
+export const clientDisconnected = createAction(
+  '[Remote] Client Disconnected'
+);
+
 export const peerDisconnected = createAction(
-  '[Remote] Peer Disconnected',
-  props<ClientType>()
+  '[Remote] Peer Disconnected'
 );
