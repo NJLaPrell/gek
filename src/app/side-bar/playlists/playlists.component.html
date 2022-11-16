@@ -3,7 +3,7 @@
       <div class="spinner-border" role="status"></div>
       <div>Loading...</div>
     </div>
-    <ul id="playlist-list">
+    <ul *ngIf="playlists.length > 0" id="playlist-list">
         <li *ngFor="let item of playlists" class="playlist-item" [class.selected]="selectedPlaylist === item.playlistId" (click)="onPlaylistClicked($any(item.playlistId))">
             {{ item.title }}
             <span class="badge bg-secondary float-end total-badge">{{ item.itemCount }}</span>

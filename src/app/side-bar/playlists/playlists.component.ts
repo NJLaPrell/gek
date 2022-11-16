@@ -12,18 +12,18 @@ import { selectLists } from 'src/app/state/selectors/list.selectors';
   templateUrl: './playlists.component.html',
   styleUrls: ['./playlists.component.scss']
 })
-export class PlaylistsComponent implements OnInit {
+export class PlaylistsComponent {
   faList = faList;
 
-  playlists: Playlist[] = [];
-  selectedPlaylist = '';
+  playlists: Playlist[];
+  selectedPlaylist: string;
 
   constructor(
     private store: Store,
     private router: Router
-  ) { }
-
-  ngOnInit(): void {
+  ) {
+    this.playlists = [];
+    this.selectedPlaylist = '';
     this.store.select(selectLists).pipe().subscribe(l => this.playlists = [...l]);
     this.store.select(selectNavState).subscribe(n => this.selectedPlaylist = n.playlistId);
   }
