@@ -18,13 +18,14 @@ import { ToastService } from '../services/toast.service';
 import { Router } from '@angular/router';
 import { PreferencesComponent } from '../modals/preferences/preferences.component';
 import { environment } from '../../environments/environment';
+import { selectUserId } from '../state/selectors/auth.selectors';
 
 @Component({
   selector: 'app-top-bar',
   templateUrl: './top-bar.component.html',
   styleUrls: ['./top-bar.component.scss']
 })
-export class TopBarComponent implements OnInit {
+export class TopBarComponent {
   faList = faList;
   faClapperboard = faClapperboard;
   faRotate = faRotate;
@@ -42,6 +43,7 @@ export class TopBarComponent implements OnInit {
   waitingPeerReconnect = false;
   private peerConnected = false;
   private selfConnected = false;
+  private userId!: string | false;
 
   environment = environment;
 
@@ -52,11 +54,9 @@ export class TopBarComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private store: Store,
-    private toast: ToastService,
     private router: Router
-  ) { }
-
-  ngOnInit(): void {
+  ) {
+    this.store.select(selectUserId).subscribe(uid => this.userId = uid);
     this.store.select(selectHistoryState).subscribe(h => {
       this.errorCount = h.errorQueue.length;
       this.unsortedCount = h.unsorted.length;
@@ -101,11 +101,15 @@ export class TopBarComponent implements OnInit {
   }
 
   handleModeToggle(e:any){
+    if (!this.userId) {
+      console.error('No userId is set. Unable to initialize socket connection without a userId.');
+      return;
+    }
     if(e.target.id === 'viewerToggle' && e.target.checked) {
-      this.store.dispatch(initializeSocketConnection({ clientType: 'viewer', userId: '123456' }));
+      this.store.dispatch(initializeSocketConnection({ clientType: 'viewer', userId: this.userId }));
       this.remoteMode = false;
     } else if(e.target.checked) {
-      this.store.dispatch(initializeSocketConnection({ clientType: 'remote', userId: '123456' }));
+      this.store.dispatch(initializeSocketConnection({ clientType: 'remote', userId: this.userId }));
       this.viewerMode = false;
     } else if (e.target.id === 'viewerToggle') {
       this.store.dispatch(disconnect());

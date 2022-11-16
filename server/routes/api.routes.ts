@@ -235,7 +235,7 @@ export class APIRoutes {
     });
     
     app.get('/api/getAuthState', (req: ExpressRequest, res: ExpressResponse) => {
-      res.json({ authenticated: req.isAuthenticated() });
+      res.json({ authenticated: req.isAuthenticated(), userId: req.user?.id || false });
     });
 
   };

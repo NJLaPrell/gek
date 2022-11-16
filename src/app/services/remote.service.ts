@@ -45,7 +45,7 @@ export class RemoteService {
 
   // DEPRECATED
   public sendHandshake() {
-    this.socket.sendHandshake('123456', this.clientType);
+    this.socket.sendHandshake(this.userId, this.clientType);
   }
 
   public sendCommand(command: RemoteCommand) {

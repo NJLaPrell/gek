@@ -5,7 +5,8 @@ import { AuthState } from '../models/auth.model';
 export const authFeatureKey = 'auth';
 
 export const initialState: AuthState = {
-  authenticated: false
+  authenticated: false,
+  userId: false
 };
 
 export const authReducer = createReducer(

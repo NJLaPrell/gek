@@ -35,14 +35,12 @@ export class AppComponent implements OnInit {
     this.store.select(selectPageTitle).pipe(skipWhile(t => !t || t === 'undefined')).subscribe(t => this.pageTitle = t);
     this.store.select(selectRemoteMode).subscribe(m => this.mode = m);
     this.store.select(selectConnected).subscribe(c => {
-      console.log('selectConnected', c);
       const disconnect = this.connected && this.peerConnected && !c;
       this.connected = c;
       this.connectionChanged(disconnect);
       
     });
     this.store.select(selectPeerConnected).subscribe(c => {
-      console.log('selectPeerConnected', c);
       const disconnect = this.connected && this.peerConnected && !c;
       this.peerConnected = c;
       this.connectionChanged(disconnect);
