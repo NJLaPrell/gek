@@ -57,7 +57,7 @@
               ],
               "outputHashing": "all",
               
-              "outputPath": "docker/ui/dist"
+              "outputPath": "ytlist-docker/ui/dist"
               
             },
             "development": {

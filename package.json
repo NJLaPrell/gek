@@ -2,25 +2,36 @@
   "name": "ytlist",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "tsc": "tsc -p tsconfig.server.prod.json",
+    "start": "ntl -o -s 10",
+    "start:dev": "pm2 start && watch-logs",
+    "stop-all": "pm2 stop all",
+    "watch-logs": "pm2 log",
+    "build:package": "npm-run-all build:prod make-deploy-package",
+    "deploy-package": "scp dist/ytlist.tar.gz doubleplusgood:/home/nlaprell",
     "clean": "rimraf dist/* && rimraf ytlist-docker/server/dist/* && rimraf ytlist-docker/ui/dist/*",
     "copy-shared-resources": "ts-node utils/copySharedResources",
+    "ng": "ng",
+    "tsc": "tsc -p tsconfig.server.prod.json",
     "copy-assets": "ts-node utils/copyAssets",
     "build:prod": "npm-run-all clean build tsc copy-shared-resources copy-assets",
     "make-deploy-package": "tar -cvzf dist/ytlist.tar.gz ytlist-docker",
-    "build:package": "npm-run-all build:prod make-deploy-package",
-    "start:dev": "pm2 start && watch-logs",
     "start:dev:ui": "ng serve --configuration development --host dev-ytlist.laprell.org --port 4200 --proxy-config proxy.config.json",
     "start:dev:rest-server": "ts-node-dev --project tsconfig.server.json --respawn --transpile-only -- ./server/rest_server.ts",
     "start:dev:sort-service": "ts-node-dev --project tsconfig.server.json --respawn --transpile-only -- ./server/sort.ts",
-    "start:dev:socket-server": "ts-node-dev --project tsconfig.server.json --respawn --transpile-only -- ./server/socket_server.ts",
-    "watch-logs": "pm2 log",
-    "stop-all": "pm2 kill",
-    "start": "ng serve",
+    "start:dev:socket-server": "ts-node-dev --project tsconfig.server.json --respawn --transpile-only -- ./server/socket_server.ts",    
     "build": "ng build --configuration production",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "watch": "ng build --watch --configuration development"
+  },
+  "ntl": {
+    "descriptions": {
+      "start:dev": "Start & watch UI and servers for development.",
+      "stop-all": "Stop all dev services.",
+      "watch-logs": "Tail the logs.",
+      "build:package": "Clean and build a production tar.gz package.",
+      "deploy-package": "SCP the package to the server.",
+      "clean": "Cleans the dist folders.",
+      "copy-shared-resources": "Copy shared resource from the UI project to the server project."
+    }
   },
   "private": true,
   "dependencies": {
@@ -80,6 +91,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
     "npm-run-all": "^4.1.5",
+    "ntl": "^5.1.0",
     "rimraf": "^3.0.2",
     "shelljs": "^0.8.5",
     "typescript": "~4.7.2"

@@ -11,7 +11,7 @@ RUN npm install pm2 -g
 
 COPY dist server
 COPY ecosystem.config.js .
-#COPY .env .
+COPY .env .
 
 EXPOSE 3000 8080
 

@@ -13,7 +13,7 @@
     },
     "files": [
       "server/rest_server.ts",
-      "server/socket_server.js",
+      "server/socket_server.ts",
       "server/sort.ts"
     ],
     "include": [
