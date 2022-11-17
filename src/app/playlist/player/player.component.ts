@@ -16,6 +16,7 @@ export class PlayerComponent {
   @Input() playlistId!: string;
   @Input() video!: Video;
   @Input() navState: any;
+  
   api: any;
   like = false;
   dislike = false;
@@ -37,7 +38,13 @@ export class PlayerComponent {
     this.debug('onVideoEnded', e);
     if (this.navState.nextVideo) {
       this.goToVideo(this.navState.nextVideo.videoId);
-      setTimeout(() => e.target.playVideo(), 1000);
+      setTimeout(() => {
+        try {
+          e.target.playVideo();
+        } catch (error) {
+          this.onError({ message: 'Error playing video', error });
+        }
+      }, 1000);
     }
   }
 
@@ -45,7 +52,11 @@ export class PlayerComponent {
   onReady(e: YT.PlayerEvent) {
     this.debug('onReady', e);
     this.api = e.target;
-    e.target.playVideo();
+    try {
+      e.target.playVideo();
+    } catch (error) {
+      this.onError({ message: 'Error playing video', error });
+    }
   }
 
   // Fires with the api loads a new module.
@@ -65,6 +76,10 @@ export class PlayerComponent {
     if(DEBUG) {
       console.debug(...args);
     }
+  }
+
+  onError(error: { message: string; error: any }) {
+    console.error(error);
   }
 
 }

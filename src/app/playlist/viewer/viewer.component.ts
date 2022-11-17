@@ -3,6 +3,7 @@ import { Store } from '@ngrx/store';
 import { skipWhile } from 'rxjs';
 import { sendCommand } from 'src/app/state/actions/remote.actions';
 import { Video } from 'src/app/state/models/video.model';
+import { selectAutoPlayPreference } from 'src/app/state/selectors/preferences.selectors';
 import { selectLastCommand } from 'src/app/state/selectors/remote.selectors';
 import { v4 as uuid } from 'uuid';
 import { environment } from '../../../environments/environment';
@@ -22,6 +23,7 @@ export class ViewerComponent implements OnInit {
   videoId = '';
   api: any;
   playerStateTimer: any;
+  autoPlay = true;
   
   constructor(
     private store: Store
@@ -29,6 +31,7 @@ export class ViewerComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.select(selectLastCommand).pipe(skipWhile(c => c === null)).subscribe(c => this.executeCommand(c));
+    this.store.select(selectAutoPlayPreference).subscribe(c => this.autoPlay = Boolean(c));
   }
 
   // #####################
@@ -59,8 +62,13 @@ export class ViewerComponent implements OnInit {
   // Fires when the player API finishes loading.
   onReady(e: YT.PlayerEvent) {
     this.debug('onReady()', e);
-    this.api = e.target;
-    this.api.playVideo();
+    try {
+      this.api = e.target;
+      this.api.playVideo();      
+    } catch (error) {
+      this.onError({ message: 'Error playing video.', error });
+    }
+    
     this.playerStateInterval();
   }
 
@@ -72,32 +80,56 @@ export class ViewerComponent implements OnInit {
 
   pause(): void {
     this.debug('pause()');
-    this.api?.pauseVideo();
+    try {
+      this.api?.pauseVideo();
+    } catch (error) {
+      this.onError({ message: 'Error pausing video.', error });
+    }
   }
 
   play(): void {
     this.debug('play()');
-    this.api?.playVideo();
+    try {
+      this.api?.playVideo();
+    } catch (error) {
+      this.onError({ message: 'Error playing video.', error });
+    }
   }
 
   setVolume(vol: number) {
     this.debug(`setVolume(${vol})`);
-    this.api?.setVolume(vol);
+    try {
+      this.api?.setVolume(vol);
+    } catch (error) {
+      this.onError({ message: 'Error setting video volume.', error });
+    }
   }
 
   seek(loc: number) {
     this.debug(`seek(${loc})`);
-    this.api?.seekTo(loc);
+    try {
+      this.api?.seekTo(loc);
+    } catch (error) {
+      this.onError({ message: 'Error seeking.', error });
+    }
   }
 
   mute() {
     this.debug('mute()');
-    this.api?.mute();
+    try {
+      this.api?.mute();
+    } catch (error) {
+      this.onError({ message: 'Error muting video.', error });
+    }
   }
 
   unmute() {
     this.debug('unmute()');
-    this.api?.unMute();
+    try {
+      this.api?.unMute();
+    } catch (error) {
+      this.onError({ message: 'Error unmuting video.', error });
+    }
   }
 
   // #####################
@@ -109,7 +141,13 @@ export class ViewerComponent implements OnInit {
     this.videoId = videoId;
     this.playlistId = playlistId;
     if (this.api) {
-      setTimeout(() => this.api.playVideo(videoId), 200);
+      setTimeout(() => {
+        try {
+          this.api.playVideo(videoId);
+        } catch (error) {
+          this.onError({ message: 'Error playing video.', error });
+        }
+      }, 200);
       setTimeout(() => this.sendPlayerState(), 400);
     }
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
@@ -176,6 +214,11 @@ export class ViewerComponent implements OnInit {
     this.sendPlayerState();
     clearTimeout(this.playerStateTimer);
     this.playerStateTimer = setTimeout(() => this.playerStateInterval(), STATE_INTERVAL);
+  }
+
+  onError(error: { message: string; error: any }) {
+    console.log(error);
+    this.sendCommand({ directive: 'error', error: { message: error.message, error: error.error.message } });
   }
 
   private debug(...args: any) {

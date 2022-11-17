@@ -9,6 +9,7 @@ import { selectLastCommand } from 'src/app/state/selectors/remote.selectors';
 import { skipWhile } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { selectAutoNextPreference, selectAlmostDonePreference } from 'src/app/state/selectors/preferences.selectors';
+import { ToastService } from '../../services/toast.service';
 
 const DEBUG = environment.debug.remoteComponent;
 
@@ -39,7 +40,8 @@ export class RemoteComponent implements OnInit {
   constructor(
     private router: Router,
     private store: Store,
-    private _changeDetectorRef: ChangeDetectorRef
+    private _changeDetectorRef: ChangeDetectorRef,
+    private toast: ToastService,
   ) { }
 
   ngOnInit(): void {
@@ -50,7 +52,7 @@ export class RemoteComponent implements OnInit {
 
   // videoId Changes.
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['video'].currentValue && changes['video'].currentValue.videoId !== changes['videoId']?.previousValue?.videoId) {
+    if (changes['video']?.currentValue && changes['video']?.currentValue.videoId !== changes['videoId']?.previousValue?.videoId) {
       this.sendCommand({ directive: 'navigate', params: { playlistId: this.playlistId, videoId: changes['video'].currentValue.videoId }});
       this.playing = true;
       this.like = false;
@@ -102,6 +104,10 @@ export class RemoteComponent implements OnInit {
       this.debug('videoEnded', c);
       this.onVideoEnded();
       break;
+
+    case 'error':
+      console.error(c.command.error);
+      this.toast.fail(JSON.stringify(c.command.error.error), { delay: 30000, header: c.command.message });
     }
   }
 

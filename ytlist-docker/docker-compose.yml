@@ -7,7 +7,7 @@ services:
     ports:
       - "4200:80"
     hostname: "ytlist.ui"
-    container_name: 'ui'
+    container_name: 'ytlist-ui'
     networks:
     - "ytlist"
     restart: unless-stopped
@@ -21,7 +21,7 @@ services:
       - "3000:3000"
       - "8080:8080"
     hostname: 'ytlist.server'
-    container_name: 'server'
+    container_name: 'ytlist-server'
     networks:
     - "ytlist"
     restart: unless-stopped

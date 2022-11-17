@@ -4,4 +4,6 @@
     (videoEnded)="onVideoEnded($event)"
     (ready)="onReady($event)"
     (apiChange)="onApiChange($event)"
+    (error)="onError($event)"
+    [autoPlay]="autoPlay"
 ></app-video-embed>

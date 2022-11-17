@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { Injectable } from '@angular/core';
 import { webSocket } from 'rxjs/webSocket';
 import { environment } from '../../environments/environment';
@@ -25,6 +26,7 @@ export class SocketService {
   private errorListeners: Function[] = [];
   private closedListeners: Function[] = [];
   private connectListeners: Function[] = [];
+  private reconnectListeners: Function[] = [];
   private disconnectListeners: Function[] = [];
   private handshakeListeners: Function[] = [];
   private peerDisconnectListeners: Function[] = [];
@@ -36,9 +38,6 @@ export class SocketService {
   private connected = false;
   private handshakeTimout: any;
   private handshakeInterval = HANDSHAKE_INTERVAL;
-
-  constructor() { }
-
 
   /**************************************************
    * PUBLIC METHODS
@@ -131,6 +130,17 @@ export class SocketService {
     this.connectListeners.forEach(func => func());
   }
 
+  // Fired when a disconnected client is reconnected.
+  public onReconnect(reconnectListener: Function) {
+    this.reconnectListeners.push(reconnectListener);
+  }
+  
+  private fireOnReconnect() {
+    this.debug('[Socket Service] - Reconnected');
+    clearTimeout(this.pingTimeout);
+    this.reconnectListeners.forEach(func => func());
+  }
+
   // Fired when a message of type:'handshake' is received.
   public onHandshake(handshakeListener: Function) {
     this.handshakeListeners.push(handshakeListener);
@@ -157,7 +167,7 @@ export class SocketService {
   }
 
   private fireServerTimeout() {
-    this.debug(`[Socket Service] - Server Timed Out.`);
+    this.debug('[Socket Service] - Server Timed Out.');
     this.serverTimeoutListeners.forEach(func => func());
   }
 
@@ -167,7 +177,7 @@ export class SocketService {
   }
 
   private fireDisconnect() {
-    this.debug(`[Socket Service] - Client disconnected.`);
+    this.debug('[Socket Service] - Client disconnected.');
     this.disconnectListeners.forEach(func => func());
   }
 
@@ -247,7 +257,7 @@ export class SocketService {
    * received, assume the server is unreachable, close the
    * connection, and start retry attempts.
    */
-   private heartbeat() {
+  private heartbeat() {
     this.debug('[Socket Service] - Heartbeat.');
     clearTimeout(this.pingTimeout);
     clearTimeout(this.reconnectInterval);

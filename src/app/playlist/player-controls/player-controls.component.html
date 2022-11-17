@@ -10,7 +10,7 @@
         <div #description class="video-description text-truncate text-start p-3 pe-auto" [innerHtml]="video.description || '' | safeHtml" (click)="description.classList.toggle('text-truncate')"></div>
 
         <div *ngIf="showRemote">
-            <input name="progress" [disabled]="muted" [(ngModel)]="progress" type="range" class="form-range" min="0" [max]="duration" step="1" id="progress" (change)="onProgressChanged()">
+            <input name="progress" [(ngModel)]="progress" type="range" class="form-range" min="0" [max]="duration" step="1" id="progress" (change)="onProgressChanged()">
         </div>
 
         <div *ngIf="showRemote" class="text-center">
@@ -49,8 +49,8 @@
                     </button>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-danger">
-                        <fa-icon [icon]="faTrashAlt" (click)="onRemove()"></fa-icon>
+                    <button type="button" class="btn btn-danger" (click)="onRemove()">
+                        <fa-icon [icon]="faTrashAlt"></fa-icon>
                     </button>
                     <button type="button" class="btn btn-dark" (click)="onOpenInNewWindow()">
                         <fa-icon [icon]="faArrowUpRightFromSquare"></fa-icon>

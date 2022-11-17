@@ -25,7 +25,7 @@ export class PlaylistsComponent {
     this.playlists = [];
     this.selectedPlaylist = '';
     this.store.select(selectLists).pipe().subscribe(l => this.playlists = [...l]);
-    this.store.select(selectNavState).subscribe(n => this.selectedPlaylist = n.playlistId);
+    this.store.select(selectNavState).subscribe(n => setTimeout(() => this.selectedPlaylist = n.playlistId));
   }
 
   onPlaylistClicked(playlistId: string): void {

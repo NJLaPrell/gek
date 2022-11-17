@@ -20,6 +20,7 @@ export class VideoEmbedComponent implements OnInit {
   @Output() apiChange: EventEmitter<YT.PlayerEvent> = new EventEmitter<YT.PlayerEvent>();
   @Output() videoEnded: EventEmitter<YT.OnStateChangeEvent> = new EventEmitter<YT.OnStateChangeEvent>();
   @Output() almostOver: EventEmitter<YT.OnStateChangeEvent> = new EventEmitter<YT.OnStateChangeEvent>();
+  @Output() error: EventEmitter<{ message: string; error: any }> = new EventEmitter<{ message: string; error: any }>();
 
   @ViewChild('player') player!: ElementRef<HTMLDivElement>;
 
@@ -44,8 +45,14 @@ export class VideoEmbedComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.autoPlay && changes['videoId'].currentValue && changes['videoId'].currentValue !== changes['videoId'].previousValue) {
-      setTimeout(() => this.api.playVideo(), 1000);
+    if (this.api && this.autoPlay && changes['videoId'].currentValue && changes['videoId'].currentValue !== changes['videoId'].previousValue) {
+      setTimeout(() => {
+        try {
+          this.api.playVideo();
+        } catch (e) {
+          this.error.emit({ message: 'Error playing video.', error: e });
+        }
+      }, 1000);
     }
   }
 

@@ -30,7 +30,8 @@ export class PreferencesComponent implements OnInit {
         autoSort: this.getPref('autoSort'),
         autoSortInterval: Number.parseInt(String(this.getPref('autoSortInterval')) || '60000', 10)/60000,
         autoNext: this.getPref('autoNext'),
-        almostDonePrompt: this.getPref('almostDonePrompt') 
+        almostDonePrompt: this.getPref('almostDonePrompt'),
+        autoPlay: this.getPref('autoPlay') 
       };
     });
   }
@@ -42,7 +43,8 @@ export class PreferencesComponent implements OnInit {
       { name: 'autoSort', value: this.prefs.autoSort },
       { name: 'autoSortInterval', value: this.prefs.autoSortInterval * 60000 },
       { name: 'autoNext', value: this.prefs.autoNext },
-      { name: 'almostDonePrompt', value: this.prefs.almostDonePrompt }
+      { name: 'almostDonePrompt', value: this.prefs.almostDonePrompt },
+      { name: 'autoPlay', value: this.prefs.autoPlay }
     ];
     this.store.dispatch(setPreferences({ lastUpdated: false, items: prefs }));
     this.activeModal.close();

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   faList, faClapperboard, faRotate, faHandSparkles, faTrashCan,
   faBomb, faArrowUpShortWide, faUserGear
@@ -12,9 +12,6 @@ import { selectHistoryState } from '../state/selectors/history.selectors';
 import { SortProgressComponent } from '../modals/sort-progress/sort-progress.component';
 import { selectRemoteMode, selectPeerConnected, selectConnected } from '../state/selectors/remote.selectors';
 import { disconnect, initializeSocketConnection } from '../state/actions/remote.actions';
-import { getRules } from '../state/actions/rules.actions';
-import { getHistory } from '../state/actions/history.actions';
-import { ToastService } from '../services/toast.service';
 import { Router } from '@angular/router';
 import { PreferencesComponent } from '../modals/preferences/preferences.component';
 import { environment } from '../../environments/environment';

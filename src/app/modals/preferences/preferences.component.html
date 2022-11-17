@@ -40,6 +40,20 @@
         <div class="form-text">30 seconds before the end of a video, prompt to like, dislike, or remove the video from the playlist.</div>
       </div>
     </div>
+
+    <div class="row mt-2">
+      <div class="col-md-6">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="autoPlayToggle" name="autoPlayToggle" [(ngModel)]="prefs.autoPlay" />
+          <label class="form-check-label" for="autoPlayToggle">Auto Play Video</label>
+        </div>
+        <div class="form-text">Automatically play the video when navigating to it.</div>
+      </div>
+      <div class="col-md-6">
+       
+      </div>
+    </div>
+
   </div>
 
 </div>

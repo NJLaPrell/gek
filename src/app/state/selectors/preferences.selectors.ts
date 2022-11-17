@@ -26,3 +26,8 @@ export const selectAlmostDonePreference = createSelector(
   preferencesState,
   (state) => state.items.find(i => i.name === 'almostDonePrompt')?.value || false
 );
+
+export const selectAutoPlayPreference = createSelector(
+  preferencesState,
+  (state) => state.items.find(i => i.name === 'autoPlay')?.value || false
+);
