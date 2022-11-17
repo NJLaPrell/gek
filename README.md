@@ -41,3 +41,50 @@ Deployment is done by creating a deploy zip consisting of the required source al
 1. Build the containers and start them:
    * `docker-compose build`
    * `docker-compose up -d`
+
+
+
+### Project Setup
+
+(DNS to domain)
+
+1. https://console.cloud.google.com/
+  * New Project
+1. Menu > APIs & Services > OAuth consent screen.
+  * External User Type
+  * Skip scopes
+  * Add test users (including self)
+
+  * Create Credentials > OAuth Client ID
+  * Web Application
+  * Add origin URI (http://mydomain.com:4200)
+  * Add authorized redirect URI (http://mydomain.com:4200/auth)
+  * create
+  * Download JSON
+1. Menu > APIs & Services > Credentials. (NEEDED?)
+  * Create Credentials > Service Account
+  * App Engine Service Admin
+  * Add Email
+1. Menu > APIs & Services > Credentials. (NEEDED?)
+  * Create Credentials > Service Account
+  * Firebase Admin SDK Administrator Service
+  * Add Email
+1. Menu > APIs & Services > Enabled APIs and Services
+  * Enable APIs and Services
+    * Youtube Data API v3
+    * Google Cloud Firestore API
+1. Menu > Firestore
+  * Select Native Mode
+1. https://console.firebase.google.com/
+  * Add Project
+  * https://firebase.google.com/docs/firestore/quickstart
+1. Menu > IAM and Admin > Service Accounts
+  * App Engine Default Service Account
+  * Keys > Add Key > Create New > JSON
+1. NPM install
+  * `firebase login`
+  * `firebase init`
+  * realtime database
+  * Select project
+1. https://console.firebase.google.com/ (<--- THIS ONE)
+  * Gear -> project settings -> Service Accounts > Generate new private key
