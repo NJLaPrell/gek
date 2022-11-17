@@ -17,6 +17,9 @@ const session = require('express-session');
 const admin = require('firebase-admin');
 const express = require('express');
 const bodyParser = require('body-parser');
+const rateLimit = require('express-rate-limit');
+const csrf = require('csurf');
+const cookieParser = require('cookie-parser');
 
 const log = new Logger('rest');
 
@@ -64,9 +67,10 @@ const port = 3000;
 
 app.use(bodyParser.json({ extended: true }));
 app.use(express.urlencoded({ extended:true }));
+app.use(cookieParser());
 app.use(
   session({
-    secret: 'keyboard cat',
+    secret: process.env['SESSION_SECRET'],
     resave: false,
     saveUninitialized: false,
     store: new FirestoreStore({
@@ -74,6 +78,14 @@ app.use(
     }),
   })
 );
+
+// Rate Limiter Middleware
+const limiter = rateLimit({
+  windowMs: 1*60*1000, // 1 minute
+  max: 200
+});
+app.use(limiter);
+
 // Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
@@ -94,7 +106,6 @@ const ensureGuest = (req: ExpressRequest, res: ExpressResponse, next: any) => {
     res.redirect('/');
   }
 };
-
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
@@ -141,6 +152,8 @@ passport.deserializeUser((id: string, done: any) => {
     done(null, id);
   });
 });
+
+//app.use(csrf({ cookie: true }));
 
 // Apply routes
 const routes = new Routes(app, passport, ensureAuth, ensureGuest);
