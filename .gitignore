@@ -46,6 +46,14 @@ Thumbs.db
 src/environments/environment.dev.ts
 src/environments/environment.prod.ts
 
+# Certs
+/certs/*.key
+/certs/*.pem
+/certs/*.crt
+/certs/*.conf
+/certs/*.srl
+/certs/*.csr
+
 
 /server/models/shared/*
 *.log

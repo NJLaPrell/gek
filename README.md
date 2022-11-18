@@ -13,6 +13,7 @@
       - [Docker](#docker)
     - [Environment](#environment)
     - [The Stack](#the-stack)
+    - [SSL Certificates](#ssl-certificates)
     - [Google Cloud Project Setup.](#google-cloud-project-setup)
   - [Deploy](#deploy)
     - [Steps:](#steps)
@@ -85,6 +86,17 @@ Use `npm start` for an interactive menu to select dev and build tasks.
 - WebSockets for managing Viewer/Remote communication.
   
 ---
+
+### SSL Certificates
+
+SSL Certificates are stored in the **certs** directory, but not checked into version control. Update **angular.json** to point to the correct SSL certificate in order to use https with the angular UI during development. If you need to create a self signed certificate, run the following from the **certs** directory:
+
+  `./ssl.sh my.domain.com`
+
+Be sure to add the certificate to your browser/OS and set trust settings.
+(Thanks to: https://devopscube.com/create-self-signed-certificates-openssl)
+
+In order to use the **.env** file for your certs, first, base64 encode them and save the base64 result as a string for the SSL_CERT, SSL_KEY, and SSL_CA values.
 
 ### Google Cloud Project Setup.
 

@@ -11,6 +11,7 @@ import { ServiceAccount } from 'firebase-admin';
 import { cert } from 'firebase-admin/app';
 import { Routes } from './routes';
 import { Logger } from './lib/logger';
+import * as https from 'https';
 const passport = require('passport');
 const session = require('express-session');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -114,7 +115,7 @@ passport.use(
   new GoogleStrategy(
     CLIENT_CREDENTIALS,
     async (accessToken: string, refreshToken: string, profile: GoogleAuthProfile, done: any) => {
-      console.log('  User authenticated.');
+      log.debug(`  User authenticated - ${profile.displayName}`);
       const user: AuthUser = {
         id: profile.id,
         displayName: profile.displayName,
@@ -159,7 +160,21 @@ passport.deserializeUser((id: string, done: any) => {
 const routes = new Routes(app, passport, ensureAuth, ensureGuest);
 routes.apply();
 
-app.listen(port, () => {
-  console.info(`Server listening on port ${port}`);
-  console.info(' ');
-});
+// Use SSL if available
+if (process.env['SSL_CERT'] && process.env['SSL_KEY'] && process.env['SSL_CA']) {
+  const options = { 
+    key: Buffer.from(process.env['SSL_KEY'], 'base64').toString('ascii'),
+    cert: Buffer.from(process.env['SSL_CERT'], 'base64').toString('ascii'),
+    ca: Buffer.from(process.env['SSL_CA'], 'base64').toString('ascii') 
+  };
+  
+  https.createServer(options, app).listen(port, function(){
+    log.info(`Express server listening on port ${port}`);
+    log.info(' ');
+  });
+} else {
+  app.listen(port, () => {
+    log.info(`Server listening on port ${port}`);
+    log.info(' ');
+  });
+}

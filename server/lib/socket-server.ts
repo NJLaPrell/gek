@@ -2,6 +2,13 @@ import { IncomingMessage } from 'http';
 import { Server, WebSocket, ServerOptions, RawData } from 'ws';
 import { v4 as uuid } from 'uuid';
 import { Logger } from './logger';
+import * as https from 'https';
+
+const credentials = process.env['SSL_KEY'] && process.env['SSL_CERT'] &&  process.env['SSL_CA'] ? { 
+  key: Buffer.from(process.env['SSL_KEY'], 'base64').toString('ascii'),
+  cert: Buffer.from(process.env['SSL_CERT'], 'base64').toString('ascii'),
+  ca: Buffer.from(process.env['SSL_CA'], 'base64').toString('ascii') 
+} : false;
 
 const log = new Logger('socket');
 
@@ -41,7 +48,16 @@ export class SocketServer {
   public serve = (): void => {
     log.info(' ');
     log.info(`Socket Server listening on port ${this.port}.`);
-    this.server = new WebSocket.Server(<ServerOptions>{ port: this.port });
+    let options;
+    if (credentials) {
+      const httpsServer = https.createServer(credentials);
+      httpsServer.listen(this.port);
+      options = <ServerOptions>{ server: httpsServer };
+    } else {
+      options = <ServerOptions>{ port: this.port };
+    }
+
+    this.server = new WebSocket.Server(options);
 
     log.info(`Establishing heartbeat at interval: ${this.heartbeatInterval/1000} seconds.`);
     this.pingClients();

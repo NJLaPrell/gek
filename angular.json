@@ -99,7 +99,13 @@
               "browserTarget": "ytlist:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "sslKey": "certs/dev-ytlist.laprell.org.key",
+            "sslCert": "certs/dev-ytlist.laprell.org.crt",
+            "host": "dev-ytlist.laprell.org",
+            "port": 4200
+          }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
