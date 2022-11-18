@@ -110,8 +110,8 @@ The project uses Google OAuth and the Firebase Firestore. Use the Cloud Console 
      * Add test users (including yourself).
      * Create Credentials > OAuth Client ID
      * Web Application
-     * Add origin URI (http://mydomain.com:4200)
-     * Add authorized redirect URI (http://mydomain.com:4200/auth)
+     * Add origin URI (https://mydomain.com:4200)
+     * Add authorized redirect URI (https://mydomain.com:4200/auth)
      * Create
      * Download JSON.
         * Copy the values of the JSON to the .env file, using .env-example as a guide. Be sure the .env file is not checked in. 
