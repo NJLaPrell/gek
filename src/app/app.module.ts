@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { environment } from 'src/environments/environment';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
@@ -19,7 +18,7 @@ import { ListEffects } from './state/effects/list.effects';
 import { PreferencesEffects } from './state/effects/preferences.effects';
 import { metaReducers, reducers } from './state';
 import { InitializerService } from './initializer.service';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpClientXsrfModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { SideBarComponent } from './side-bar/side-bar.component';
@@ -45,6 +44,7 @@ import { PlaylistComponent } from './playlist/playlist.component';
 import { VideoEmbedComponent } from './playlist/video-embed/video-embed.component';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { PreferencesComponent } from './modals/preferences/preferences.component';
+import { CustomInterceptor } from './http-interceptor';
 
 export const initApp = (provider: InitializerService) => () => provider.init();
 
@@ -108,7 +108,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     NgbModule,
     FontAwesomeModule,
     YouTubePlayerModule,
-    FormsModule
+    FormsModule,
+    HttpClientXsrfModule
   ],
   providers: [
     InitializerService, {
@@ -116,7 +117,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
       useFactory: initApp,
       deps: [InitializerService],
       multi: true
-    }
+    },
+    { provide: HTTP_INTERCEPTORS, useClass: CustomInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

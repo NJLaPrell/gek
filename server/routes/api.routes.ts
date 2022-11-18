@@ -234,7 +234,8 @@ export class APIRoutes {
       sl.loadAndSort().then(() =>  res.end());    
     });
     
-    app.get('/api/getAuthState', (req: ExpressRequest, res: ExpressResponse) => {
+    app.get('/api/getAuthState', (req: any, res: ExpressResponse) => {
+      res.cookie('XSRF-TOKEN', req.csrfToken, { httpOnly: false });
       res.json({ authenticated: req.isAuthenticated(), userId: req.user?.id || false });
     });
 

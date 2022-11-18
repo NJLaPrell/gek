@@ -18,7 +18,7 @@ const admin = require('firebase-admin');
 const express = require('express');
 const bodyParser = require('body-parser');
 const rateLimit = require('express-rate-limit');
-const csrf = require('csurf');
+const csrf = require('simple-csrf');
 const cookieParser = require('cookie-parser');
 
 const log = new Logger('rest');
@@ -66,8 +66,8 @@ const app = express();
 const port = 3000;
 
 app.use(bodyParser.json({ extended: true }));
-app.use(express.urlencoded({ extended:true }));
-app.use(cookieParser());
+app.use(express.urlencoded({ extended:false }));
+app.use(cookieParser(process.env['COOKIE_SECRET']));
 app.use(
   session({
     secret: process.env['SESSION_SECRET'],
@@ -78,6 +78,9 @@ app.use(
     }),
   })
 );
+
+
+app.use(csrf());
 
 // Rate Limiter Middleware
 const limiter = rateLimit({
