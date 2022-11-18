@@ -30,7 +30,10 @@ export class RemoteService {
     this.userId = userId;
     this.socket.onConnect(() => this.store.dispatch(Actions.connectionEstablished({ clientType })));
     this.socket.onHandshake((payload: { clientType: 'remote' | 'viewer' | 'player'; clientId: string }) => payload.clientType !== this.clientType && !this.peer ? this.store.dispatch(Actions.receivedHandshake({ clientType: payload.clientType })) : null);
-    this.socket.onPeerDisconnect(() => this.store.dispatch(Actions.peerDisconnected()));
+    this.socket.onPeerDisconnect(() => {
+      this.store.dispatch(Actions.peerDisconnected());
+      this.socket.sendHandshake(this.userId, this.clientType);
+    });
     this.socket.onDisconnect(() => this.store.dispatch(Actions.clientDisconnected()));
     this.socket.onReconnect(() => this.socket.sendHandshake(this.userId, this.clientType));
     this.socket.onMessageReceived((msg: any) => {
