@@ -22,11 +22,7 @@ yarn-error.log
 *.sublime-workspace
 
 # Visual Studio Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+.vscode
 .history/*
 
 # Miscellaneous
@@ -45,6 +41,14 @@ Thumbs.db
 # Environments
 src/environments/environment.dev.ts
 src/environments/environment.prod.ts
+
+# Certs
+/certs/*.key
+/certs/*.pem
+/certs/*.crt
+/certs/*.conf
+/certs/*.srl
+/certs/*.csr
 
 
 /server/models/shared/*
