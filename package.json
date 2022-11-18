@@ -55,7 +55,7 @@
     "@popperjs/core": "^2.11.6",
     "bootstrap": "^5.2.2",
     "moment": "^2.29.4",
-    "ng-bootstrap": "^1.6.3",
+    "ng-bootstrap": "^0.46.0",
     "querystring": "^0.2.1",
     "rxjs": "~7.5.0",
     "sanitize-html": "^2.7.2",
