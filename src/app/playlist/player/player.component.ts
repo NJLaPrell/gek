@@ -1,7 +1,9 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { PlayerControlsComponent } from 'src/app/playlist/player-controls/player-controls.component';
 import { Video } from 'src/app/state/models/video.model';
+import { selectAlmostDonePreference, selectAutoNextPreference, selectAutoPlayPreference } from 'src/app/state/selectors/preferences.selectors';
 
 const DEBUG = true;
 
@@ -12,6 +14,10 @@ const DEBUG = true;
 })
 export class PlayerComponent {
   @ViewChild(PlayerControlsComponent) private playerControls!: PlayerControlsComponent;    // Player controls
+
+  almostDonePref!: boolean;
+  autoNextPref!: boolean;
+  autoPlayPref!: boolean;
 
   @Input() playlistId!: string;
   @Input() video!: Video;
@@ -24,27 +30,27 @@ export class PlayerComponent {
   playing = false;
   
   constructor(
-    private router: Router
-  ) { }
+    private router: Router,
+    private store: Store
+  ) {
+    this.store.select(selectAutoNextPreference).subscribe(p => this.autoNextPref = p);
+    this.store.select(selectAlmostDonePreference).subscribe(p => this.almostDonePref = p);
+    this.store.select(selectAutoPlayPreference).subscribe(c => this.autoPlayPref = Boolean(c));
+  }
 
   // Fires 30 seconds before the end of a video.
   onAlmostOver(e: YT.OnStateChangeEvent) {
     this.debug('onAlmostOver()', e);
-    this.playerControls.onAlmostOver();
+    if (this.almostDonePref) {
+      this.playerControls.onAlmostOver();
+    }
   }
 
   // Fires when a video has finished.
   onVideoEnded(e: YT.OnStateChangeEvent) {
     this.debug('onVideoEnded', e);
-    if (this.navState.nextVideo) {
+    if (this.navState.nextVideo && this.autoNextPref) {
       this.goToVideo(this.navState.nextVideo.videoId);
-      setTimeout(() => {
-        try {
-          e.target.playVideo();
-        } catch (error) {
-          this.onError({ message: 'Error playing video', error });
-        }
-      }, 1000);
     }
   }
 
@@ -52,11 +58,6 @@ export class PlayerComponent {
   onReady(e: YT.PlayerEvent) {
     this.debug('onReady', e);
     this.api = e.target;
-    try {
-      e.target.playVideo();
-    } catch (error) {
-      this.onError({ message: 'Error playing video', error });
-    }
   }
 
   // Fires with the api loads a new module.

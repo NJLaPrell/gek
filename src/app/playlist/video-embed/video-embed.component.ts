@@ -85,6 +85,9 @@ export class VideoEmbedComponent implements OnInit {
   onReady(e: YT.PlayerEvent) {
     this.ready.emit(e);
     this.api = e.target;
+    if (this.autoPlay) {
+      this.api.playVideo();
+    }
   }
 
   onApiChange(e: YT.PlayerEvent) {

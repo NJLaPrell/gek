@@ -62,13 +62,7 @@ export class ViewerComponent implements OnInit {
   // Fires when the player API finishes loading.
   onReady(e: YT.PlayerEvent) {
     this.debug('onReady()', e);
-    try {
-      this.api = e.target;
-      this.api.playVideo();      
-    } catch (error) {
-      this.onError({ message: 'Error playing video.', error });
-    }
-    
+    this.api = e.target;
     this.playerStateInterval();
   }
 

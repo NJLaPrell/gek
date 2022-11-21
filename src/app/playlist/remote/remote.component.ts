@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, SimpleChanges, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Video } from 'src/app/state/models/video.model';
@@ -18,7 +18,7 @@ const DEBUG = environment.debug.remoteComponent;
   templateUrl: './remote.component.html',
   styleUrls: ['./remote.component.scss']
 })
-export class RemoteComponent implements OnInit {
+export class RemoteComponent {
   @Input() playlistId!: string;
   @Input() video!: Video;
   @Input() navState: any;
@@ -42,9 +42,7 @@ export class RemoteComponent implements OnInit {
     private store: Store,
     private _changeDetectorRef: ChangeDetectorRef,
     private toast: ToastService,
-  ) { }
-
-  ngOnInit(): void {
+  ) {
     this.store.select(selectLastCommand).pipe(skipWhile(c => c === null)).subscribe(c => this.executeCommand(c));
     this.store.select(selectAutoNextPreference).subscribe(p => this.autoNextPref = p);
     this.store.select(selectAlmostDonePreference).subscribe(p => this.almostDonePref = p);

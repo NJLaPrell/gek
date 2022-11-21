@@ -5,6 +5,7 @@
     (ready)="onReady($event)"
     (apiChange)="onApiChange($event)"
     (error)="onError($event)"
+    [autoPlay]="autoPlayPref"
 ></app-video-embed>
 
 <app-player-controls #playerControls
