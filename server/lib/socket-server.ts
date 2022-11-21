@@ -163,13 +163,19 @@ export class SocketServer {
   };
 
   private onClientClose = (clientId: string, code: number, reason: Buffer) => {
-    log.debug(`Client ${clientId} disconnected. ${code}: ${reason.toString()}.`);
+    log.info(`Client ${clientId} disconnected. ${code}: ${reason.toString()}.`);
     // Signal the disconnect to any peers.
     const peer = this.clients.find(c => c.peerId === clientId);
     if (peer) {
-      log.debug('Notifying Peer.');
+      log.info('Notifying Peer.');
       this.sendMsg(peer?.clientId || '', { type: 'peerDisconnect', payload: 'Peer disconnected.' });
     }
+    const clientIx = this.clients.findIndex(c => c.clientId === clientId);
+    if (clientIx > -1) {
+      this.clients.splice(clientIx);
+    }
+    this.clientById(clientId)?.terminate();
+    
   };
 
   private onClientError = (error: Error, clientId: string) => {

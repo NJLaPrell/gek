@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { Injectable } from '@angular/core';
-import { webSocket } from 'rxjs/webSocket';
+import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { environment } from '../../environments/environment';
 
 const SOCKET_URL = environment.socket_url;
@@ -19,7 +19,7 @@ export interface SocketMessage {
   providedIn: 'root'
 })
 export class SocketService {
-  private connection: any = false;
+  private connection!: WebSocketSubject<SocketMessage>;
 
   // Service Listeners
   private messageListeners: Function[] = [];
@@ -45,7 +45,7 @@ export class SocketService {
 
   // Connect to the socket server if not already connected.
   public connect() {
-    if(!this.connection || this.connection.closed) {
+    if(!this.connected || this.connection.closed) {
       this.connectClient();
     }
   }
@@ -65,7 +65,7 @@ export class SocketService {
   }
 
   // Disconnect from the server.
-  public disconnect(clientType: string) {
+  public disconnect() {
     this.debug('[Socket Service] - Disconnect');
     // Send peer disconnect message
     //this.sendRawMessage({ type: 'peerDisconnect', payload: clientType });
@@ -86,7 +86,6 @@ export class SocketService {
 
     // Disconnect the socket connection.
     this.connection.complete();
-    delete this.connection;
     this.connected = false;  
   }
 

@@ -28,7 +28,10 @@ export class RemoteService {
     this.debug(`[Remote Service] - Init socket connect (${clientType}).`);
     this.clientType = clientType;
     this.userId = userId;
-    this.socket.onConnect(() => this.store.dispatch(Actions.connectionEstablished({ clientType })));
+    this.socket.onConnect(() => {
+      this.store.dispatch(Actions.connectionEstablished({ clientType }));
+      this.socket.sendHandshake(this.userId, this.clientType);
+    });
     this.socket.onHandshake((payload: { clientType: 'remote' | 'viewer' | 'player'; clientId: string }) => payload.clientType !== this.clientType && !this.peer ? this.store.dispatch(Actions.receivedHandshake({ clientType: payload.clientType })) : null);
     this.socket.onPeerDisconnect(() => {
       this.store.dispatch(Actions.peerDisconnected());
@@ -44,7 +47,7 @@ export class RemoteService {
       }
     });
     this.socket.connect();
-    this.socket.sendHandshake(this.userId, this.clientType);
+    
   }
 
   public sendCommand(command: RemoteCommand) {
@@ -53,7 +56,7 @@ export class RemoteService {
   }
 
   public disconnect() {
-    this.socket.disconnect(this.clientType);
+    this.socket.disconnect();
     this.peer = false;
   }
     
