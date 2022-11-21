@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, ActivationEnd, Router } from '@angular/router';
+import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { combineLatest, filter, map, skipUntil, skipWhile } from 'rxjs';
+import { combineLatest, filter, map } from 'rxjs';
 import { setNavState } from '../state/actions/navState.actions';
 import { Playlist } from '../state/models/list.model';
 import { Video } from '../state/models/video.model';
@@ -10,22 +10,24 @@ import { selectNavState } from '../state/selectors/navState.selectors';
 import { selectRemoteMode } from '../state/selectors/remote.selectors';
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { getPlaylistVideos } from '../state/actions/video.actions';
+import { initialNavState, NavState } from 'server/models/shared/navState.model';
 
 @Component({
   selector: 'app-playlist',
   templateUrl: './playlist.component.html',
   styleUrls: ['./playlist.component.scss']
 })
-export class PlaylistComponent implements OnInit {
+export class PlaylistComponent {
   faRefresh = faRefresh;
 
   mode!: string;
-  playlistId = '';                  // From the route params.
-  videoId = '';                     // From the route params.
-  videoList: Video[] = [];          // List of videos in the playlist.
-  video!: Video;         // Current video, if routed.
+  playlistId = '';
+  videoId = '';
+  videoList: Video[] = [];
+  video!: Video;
   loading: boolean;
-  navState: any = {};               // Video navigation state.
+  navState: NavState = initialNavState;
+  globalNavState!: NavState;
   pageTitle = 'YouTube Playlists';
   lastUpdated!: number;
   playlistLoading: boolean;
@@ -33,20 +35,16 @@ export class PlaylistComponent implements OnInit {
 
   constructor(
     private store: Store,
-    private activatedRoute: ActivatedRoute,
-    private router: Router
+    private activatedRoute: ActivatedRoute
   ) {
     this.playlistLoading = false;
     this.loading = false;
-  }
-  
 
-  ngOnInit(): void {
     // Set the mode
     this.store.select(selectRemoteMode).subscribe(m => this.mode = m);
 
     // Set the nav state
-    this.store.select(selectNavState).subscribe(n => this.navState = n);
+    this.store.select(selectNavState).subscribe(n => this.globalNavState = n);
 
     // Get the route params and dispatch getPlaylistVideos to build the list.
     this.activatedRoute.paramMap.subscribe(m => {
@@ -57,13 +55,10 @@ export class PlaylistComponent implements OnInit {
       }
     });
 
-   
-
     // Wait until we have the video list for the playlist, the playlist title lookup, and the route params to get them.
     combineLatest([
       this.store.select(selectLists),
       this.store.select(selectPlaylistTitles),
-      //this.activatedRoute.params
       this.activatedRoute.paramMap
     ])
       .pipe(
@@ -77,49 +72,45 @@ export class PlaylistComponent implements OnInit {
       )
       .subscribe(r => {
         this.playlistLoading = false;
-        this.videoList = [...r.videoList];
+        this.videoList = <Video[]>[...r.videoList];
         this.pageTitle = r.titleLookup[this.playlistId] || 'YouTube Playlists';
         this.lastUpdated = r.lastUpdated;
         if (r.routeParams.videoId) {
           const v = this.videoList.find(v => v.videoId == r.routeParams.videoId);
+          this.video = v ?? this.video;
           if (v) {
             this.video = v;
+            const vIx = this.videoList.findIndex(v => v.videoId === this.video.videoId);
+            this.navState.currentVideo = v;
+            this.navState.pageTitle = `${this.pageTitle} > ${this.video.title}`;
+            this.navState.videoId = this.video.videoId ?? '';
+            this.navState.videoTitle = this.video.title;
+            this.navState.nextVideo = this.videoList.length > vIx + 1 ? this.videoList[vIx + 1] : false;
+            this.navState.previousVideo = vIx > 0 ? this.videoList[vIx - 1] : false;
           }
           this.pageTitle += ' > ' + this.video?.title;
-        } else {
-          /*
-          console.log('update state');
-          this.store.dispatch(setNavState({ 
-            props: { 
-              playlistId: this.playlistId,
-              videoId: '',
-              videoList: this.videoList,
-              titleLookup: r.titleLookup
-            }
-          }));
-          */
         }
+
         if(this.videoList.length) {
           this.loading = false;
         } else {
           setTimeout(() => this.loading = false, 3000);
         }
 
-        // Set the navigation state in the store. (But not when triggered by a video being removed)
-        if (this.videoId && this.videoList.find(v => v.videoId === this.videoId)) {
-          this.store.dispatch(setNavState({ 
-            props: { 
-              playlistId: this.playlistId,
-              videoId: this.videoId,
-              videoList: this.videoList,
-              titleLookup: r.titleLookup
-            }
-          }));
-        }
+        // Set the navigation state in the store. 
+        this.store.dispatch(setNavState({ 
+          props: { 
+            playlistId: this.playlistId,
+            videoId: this.videoId,
+            videoList: this.videoList,
+            titleLookup: r.titleLookup
+          }
+        }));
+        
         
       });
   }
-
+  
   refresh(): void {
     this.playlistLoading = true;
     this.store.dispatch(getPlaylistVideos({ playlistId: this.playlistId, bypassCache: true }));

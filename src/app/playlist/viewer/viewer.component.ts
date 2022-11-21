@@ -53,7 +53,7 @@ export class ViewerComponent implements OnInit {
 
   // Fires when a video has finished.
   onVideoEnded(e: YT.OnStateChangeEvent) {
-    console.debug('Video Ended', e);
+    this.debug('Video Ended', e);
     this.sendCommand({
       directive: 'videoEnded'
     });
@@ -217,7 +217,7 @@ export class ViewerComponent implements OnInit {
   }
 
   onError(error: { message: string; error: any }) {
-    console.log(error);
+    console.error(error);
     this.sendCommand({ directive: 'error', error: { message: error.message, error: error.error.message } });
   }
 

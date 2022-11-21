@@ -70,7 +70,6 @@ export class RemoteComponent implements OnInit {
 
   onVideoEnded() {
     this.debug('onVideoEnded()');
-    console.log(this.autoNextPref, this.navState);
     const nextVideoId = this.navState.nextVideo?.videoId;
     if (this.autoNextPref && nextVideoId) {
       this.router.navigate(['/', 'playlist', this.playlistId, 'video', nextVideoId]);

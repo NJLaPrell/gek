@@ -13,7 +13,6 @@ export class CustomInterceptor implements HttpInterceptor {
     const cookieheaderName = 'X-XSRF-TOKEN';
     
     const csrfToken = <string>this.tokenExtractor.getToken();
-    console.log(req.method);
     if (csrfToken !== null && ['POST','PUT','DELETE'].indexOf(req.method) !== -1) {
       req = req.clone({ 
         headers: req.headers.set(cookieheaderName, csrfToken).set('Content-Type', 'application/json'),

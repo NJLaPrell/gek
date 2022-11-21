@@ -79,12 +79,10 @@ export class PlayerControlsComponent {
   }
 
   onAlmostOver() {
-    console.log('almost over');
     this.toast.info(this.endOfVideoToast);
   }
 
   onVideoNav(video: Video) {
-    console.log('onVideoNav', video);
     if (video?.videoId) {
       this.videoNavClicked.emit(video);
       this.goToVideo(video.videoId);
