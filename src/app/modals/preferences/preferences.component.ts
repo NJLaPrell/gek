@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { setPreferences } from 'src/app/state/actions/preferences.actions';
@@ -11,7 +11,8 @@ import { PreferenceItem } from 'src/app/state/models/preferences.model';
   templateUrl: './preferences.component.html',
   styleUrls: ['./preferences.component.scss']
 })
-export class PreferencesComponent implements OnInit {
+export class PreferencesComponent {
+  // Font Awesome
   faSave = faSave;
 
   private preferences: PreferenceItem[] = [];
@@ -21,9 +22,7 @@ export class PreferencesComponent implements OnInit {
   constructor(
     private store: Store,
     public activeModal: NgbActiveModal
-  ) { }
-
-  ngOnInit(): void {
+  ) {
     this.store.select(selectPreferences).subscribe((prefs: PreferenceItem[]) => {
       this.preferences = [...prefs];
       this.prefs = {

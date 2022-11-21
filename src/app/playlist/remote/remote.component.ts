@@ -31,6 +31,7 @@ export class RemoteComponent {
   duration = 0;
   progress = 0;
   videoState = {};
+  externalOnly = false;
 
   autoNextPref = false;
   almostDonePref = false;
@@ -51,7 +52,7 @@ export class RemoteComponent {
   // videoId Changes.
   ngOnChanges(changes: SimpleChanges) {
     if (changes['video']?.currentValue && changes['video']?.currentValue.videoId !== changes['videoId']?.previousValue?.videoId) {
-      this.sendCommand({ directive: 'navigate', params: { playlistId: this.playlistId, videoId: changes['video'].currentValue.videoId }});
+      this.sendCommand({ directive: 'navigate', params: { playlistId: this.playlistId, videoId: changes['video'].currentValue.videoId } });
       this.playing = true;
       this.like = false;
       this.dislike = false;
@@ -80,6 +81,10 @@ export class RemoteComponent {
     }
   }
 
+  onCloseExternal() {
+    this.sendCommand({ directive: 'closeExternal', params: {} });
+  }
+
 
   executeCommand(c: any) {
     
@@ -90,6 +95,7 @@ export class RemoteComponent {
       this.volume = c.command.params.volume;
       this.duration = c.command.params.duration;
       this.progress = c.command.params.currentTime;
+      this.externalOnly = c.command.params.externalOnly;
       break;
 
     case 'almostOver':

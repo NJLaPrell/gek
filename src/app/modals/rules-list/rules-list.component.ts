@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { Rule } from 'src/app/state/models/rules.model';
@@ -14,26 +14,25 @@ import { ConfirmPromptComponent } from '../confirm-prompt/confirm-prompt.compone
   templateUrl: './rules-list.component.html',
   styleUrls: ['./rules-list.component.scss']
 })
-export class RulesListComponent implements OnInit {
-  rules: Rule[] = [];
-  subscriptionsList: any = {};
-  subscriptions: string[] = [];
-  playlistsList: any = {};
-  playlists: string[] = [];
-  
+export class RulesListComponent {
+  // Font Awesome
   faTrash = faTrash;
   faEdit = faEdit;
   faCircleCheck = faCircleCheck;
   faXmarkCircle = faXmarkCircle;
   faSquarePlus = faSquarePlus;
 
+  rules: Rule[] = [];
+  subscriptionsList: any = {};
+  subscriptions: string[] = [];
+  playlistsList: any = {};
+  playlists: string[] = [];
+
   constructor(
     public activeModal: NgbActiveModal,
     private store: Store,
     private modalService: NgbModal
-  ) { }
-
-  ngOnInit(): void {
+  ) {
     this.store.select(selectRules).subscribe(r => this.rules = JSON.parse(JSON.stringify(r)));
     this.store.select(selectSubscriptions).subscribe(s => {
       s.forEach(sub => {

@@ -24,6 +24,8 @@ export class ViewerComponent implements OnInit {
   api: any;
   playerStateTimer: any;
   autoPlay = true;
+  youtubeWindow: any = false;
+  externalOnly = false;
   
   constructor(
     private store: Store
@@ -37,11 +39,6 @@ export class ViewerComponent implements OnInit {
   // #####################
   // PLAYER EVENTS
   // #####################
-
-  // Fires on player state changes
-  //stateChanged(e: YT.OnStateChangeEvent) {
-  //  this.sendPlayerState();
-  //}
 
   // Fires 30 seconds before the end of a video.
   onAlmostOver(e: YT.OnStateChangeEvent) {
@@ -63,6 +60,7 @@ export class ViewerComponent implements OnInit {
   onReady(e: YT.PlayerEvent) {
     this.debug('onReady()', e);
     this.api = e.target;
+    this.externalOnly = this.api.getVideoData().errorCode === 'auth';
     this.playerStateInterval();
   }
 
@@ -84,7 +82,11 @@ export class ViewerComponent implements OnInit {
   play(): void {
     this.debug('play()');
     try {
-      this.api?.playVideo();
+      if (this.externalOnly) {
+        this.handleExternal();
+      } else {
+        this.api?.playVideo();
+      }
     } catch (error) {
       this.onError({ message: 'Error playing video.', error });
     }
@@ -134,16 +136,22 @@ export class ViewerComponent implements OnInit {
   goToVideo(playlistId: string, videoId: string) {
     this.videoId = videoId;
     this.playlistId = playlistId;
-    if (this.api) {
+    /*
+    if (this.autoPlay) {
       setTimeout(() => {
         try {
-          this.api.playVideo(videoId);
+          if (this.externalOnly) {
+            this.handleExternal();
+          } else {
+            this.api.playVideo(videoId);
+          }
         } catch (error) {
           this.onError({ message: 'Error playing video.', error });
         }
       }, 200);
       setTimeout(() => this.sendPlayerState(), 400);
     }
+    */
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   }
 
@@ -177,7 +185,12 @@ export class ViewerComponent implements OnInit {
     case 'seek':
       this.seek(c.command.params.value);
       break;
+
+    case 'closeExternal':
+      this.youtubeWindow?.close();
+      break;
     }
+
     setTimeout(() => this.sendPlayerState(), 200);
   }
 
@@ -189,7 +202,8 @@ export class ViewerComponent implements OnInit {
           currentTime: this.api.playerInfo.currentTime,
           duration: this.api.playerInfo.duration,
           muted: this.api.playerInfo.muted, 
-          volume: this.api.playerInfo.volume
+          volume: this.api.playerInfo.volume,
+          externalOnly: this.externalOnly
         }
       });
     }
@@ -214,6 +228,24 @@ export class ViewerComponent implements OnInit {
     console.error(error);
     this.sendCommand({ directive: 'error', error: { message: error.message, error: error.error.message } });
   }
+
+  onExternalHandlerChange(handler: any) {
+    if (handler) {
+      this.externalOnly = true;
+      this.youtubeWindow = handler;
+    } else {
+      this.externalOnly = false;
+      this.youtubeWindow = false;
+    }
+  }
+
+  private handleExternal = () => {
+    const externalOnly = this.api.getVideoData().errorCode === 'auth';
+    if (externalOnly) {
+      this.debug(`Opening external player (${this.api.getVideoUrl()})...`);
+      this.youtubeWindow = window.open(this.api.getVideoUrl(), '_blank');
+    }
+  };
 
   private debug(...args: any) {
     if(DEBUG) {

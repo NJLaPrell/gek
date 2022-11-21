@@ -9,11 +9,13 @@ export class VideoEmbedComponent implements OnInit {
   @Input() videoId!: string;
   @Input() quality: YT.SuggestedVideoQuality = 'highres';
   @Input() autoPlay = true;
+  @Input() duration!:string;
   width = 0;
   height = 0;
   start = 0;
   videoTimer: any;
   api: any;
+  externalOnly = false;
 
   @Output() stateChange: EventEmitter<YT.OnStateChangeEvent> = new EventEmitter<YT.OnStateChangeEvent>();
   @Output() ready: EventEmitter<YT.PlayerEvent> = new EventEmitter<YT.PlayerEvent>();
@@ -21,6 +23,7 @@ export class VideoEmbedComponent implements OnInit {
   @Output() videoEnded: EventEmitter<YT.OnStateChangeEvent> = new EventEmitter<YT.OnStateChangeEvent>();
   @Output() almostOver: EventEmitter<YT.OnStateChangeEvent> = new EventEmitter<YT.OnStateChangeEvent>();
   @Output() error: EventEmitter<{ message: string; error: any }> = new EventEmitter<{ message: string; error: any }>();
+  @Output() externalHandler: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild('player') player!: ElementRef<HTMLDivElement>;
 
@@ -48,7 +51,7 @@ export class VideoEmbedComponent implements OnInit {
     if (this.api && this.autoPlay && changes['videoId'].currentValue && changes['videoId'].currentValue !== changes['videoId'].previousValue) {
       setTimeout(() => {
         try {
-          this.api.playVideo();
+          this.play();
         } catch (e) {
           this.error.emit({ message: 'Error playing video.', error: e });
         }
@@ -85,13 +88,27 @@ export class VideoEmbedComponent implements OnInit {
   onReady(e: YT.PlayerEvent) {
     this.ready.emit(e);
     this.api = e.target;
+    this.externalOnly = this.api.getVideoData().errorCode === 'auth';
     if (this.autoPlay) {
-      this.api.playVideo();
+      this.play();
     }
   }
 
   onApiChange(e: YT.PlayerEvent) {
     this.apiChange.emit(e);
   }
+
+  private play = () => {
+    if (this.externalOnly) {
+      const youtubeWindow = window.open(this.api.getVideoUrl(), '_blank');
+      this.externalHandler.emit(youtubeWindow);
+      const duration: number = parseInt(this.duration, 10);
+      if (!Number.isNaN(duration) && duration > 0) {
+        setTimeout(() => youtubeWindow?.close(), (duration * 1000) + 5000);
+      }
+    } else {
+      this.api.playVideo();
+    }
+  };
 
 }

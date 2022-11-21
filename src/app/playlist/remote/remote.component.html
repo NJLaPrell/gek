@@ -1,3 +1,10 @@
+<div *ngIf="externalOnly" class="alert alert-primary">
+  <p>This video cannot be played in an embedded viewer, so it is currently playing on YouTube in a new window.</p>
+  <div class="text-end">
+    <button type="button" class="btn btn-dark" (click)="onCloseExternal()">Close External Window</button>
+  </div>
+</div>
+
 <app-player-controls #playerControls
     [showRemote]="true"
     [video]="video"

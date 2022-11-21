@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { ConfirmPromptComponent } from '../confirm-prompt/confirm-prompt.component';
@@ -13,19 +13,19 @@ import { purgeErrorBuffer } from 'src/app/state/actions/history.actions';
   templateUrl: './error-buffer.component.html',
   styleUrls: ['./error-buffer.component.scss']
 })
-export class ErrorBufferComponent implements OnInit {
-  errors: FailedVideo[] = [];
-  moment = moment;
+export class ErrorBufferComponent {
+  // Font Awesome
   faTrash = faTrash;
   faRepeat = faRepeat;
 
+  errors: FailedVideo[] = [];
+  moment = moment;
+  
   constructor(
     public activeModal: NgbActiveModal,
     private store: Store,
     private modalService: NgbModal
-  ) { }
-
-  ngOnInit(): void {
+  ) {
     this.store.select(selectErrorQueue).subscribe(e => this.errors = [...e].sort((a, b) => a.failDate > b.failDate ? 1 : -1));
   }
 

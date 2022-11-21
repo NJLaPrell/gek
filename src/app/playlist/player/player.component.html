@@ -6,6 +6,7 @@
     (apiChange)="onApiChange($event)"
     (error)="onError($event)"
     [autoPlay]="autoPlayPref"
+    [duration]="video.duration || '0'"
 ></app-video-embed>
 
 <app-player-controls #playerControls
