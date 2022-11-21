@@ -23,6 +23,7 @@ const returnEmptyPreferences = async (): Promise<PreferencesResource> => ({
 const RESOURCES:any = {
   subscriptions: {
     defaultExpire: 3600000,
+    load: async (userId: string, opts: ResourceLoaderOptions, log: Logger) => new API(userId, log).getSubscriptions().then(subs => ({ lastUpdated: Date.now(), items: subs }))
   },
   playlists: {
     defaultExpire: 3600000,
