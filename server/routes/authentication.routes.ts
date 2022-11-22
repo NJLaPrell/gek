@@ -14,6 +14,7 @@ export class AuthenticationRoutes {
   public apply = (app: any, passport: any, ensureGuest: any) => {
 
     app.get('/auth', passport.authenticate('google', { failureRedirect: '/' }),  (req: ExpressRequest, res: ExpressResponse) => {
+      log.debug('/GET /auth');
       res.redirect('/');
     });
     

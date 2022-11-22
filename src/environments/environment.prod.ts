@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  socket_url: 'ws://ytlist.laprell.org/socket',
+  socket_url: 'wss://ytlist.laprell.org/socket',
   handshakeInterval: 5000,
   heartbeatInterval: 10000,
   reconnectInterval: 5000,
