@@ -1,14 +1,20 @@
+@media screen and (max-width: 1100px) {
+  .buttonTitle {
+    display: none;
+  }
+}
+
 #app-title {
     display: inline-block;
     margin-right: 6px;
     cursor: pointer;
+    font-family: Verdana, Geneva, sans-serif;
     
     .logo {
         color: #FFFFFF;
         height: 40px;
     }
-    font-family: Verdana, Geneva, sans-serif;
-
+    
     #app-subtitle {    
         display: inline-block;
         font-size: 20px;
@@ -22,8 +28,6 @@
     #app-subtitle {
         display: none !important;
     }
-
-
 
     .logo {
         display: none !important;
@@ -42,26 +46,4 @@
 
 #top-bar-contents.viewer {
     padding: 0px !important;
-}
-
-#modeControl {
-    font-size: 0.7em;
-    display: inline-block;
-    position: absolute;
-    top: 8px;
-    right: 4px;
-    
-    .form-check {   
-        height: 14px !important;
-        min-height: 14px;
-        overflow: hidden;
-        input, label {
-            cursor: pointer;
-        }
-    }
-}
-
-#modeControl.viewer {
-    position: relative !important;
-    top: 0px !important;
 }

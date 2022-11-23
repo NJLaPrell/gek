@@ -21,3 +21,8 @@ export const selectUserId = createSelector(
   authState,
   (state) => state.userId
 );
+
+export const selectDisplayName = createSelector(
+  authState,
+  (state) => state.displayName
+);

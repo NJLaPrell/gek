@@ -6,7 +6,8 @@ export const authFeatureKey = 'auth';
 
 export const initialState: AuthState = {
   authenticated: false,
-  userId: false
+  userId: false,
+  displayName: ''
 };
 
 export const authReducer = createReducer(

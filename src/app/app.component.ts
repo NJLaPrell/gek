@@ -67,7 +67,4 @@ export class AppComponent implements OnInit {
     }
   }
 
-  signIn(): void {
-    window.location.href='/login';
-  }
 }

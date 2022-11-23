@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   faList, faClapperboard, faRotate, faHandSparkles, faTrashCan,
-  faBomb, faArrowUpShortWide, faUserGear
+  faBomb, faArrowUpShortWide, faUserGear, faSquareXmark, faTv, faTabletScreenButton,
+  faRightFromBracket, faUser
 } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ErrorBufferComponent } from '../modals/error-buffer/error-buffer.component';
@@ -15,7 +16,7 @@ import { disconnect, initializeSocketConnection } from '../state/actions/remote.
 import { Router } from '@angular/router';
 import { PreferencesComponent } from '../modals/preferences/preferences.component';
 import { environment } from '../../environments/environment';
-import { selectUserId } from '../state/selectors/auth.selectors';
+import { selectDisplayName, selectUserId } from '../state/selectors/auth.selectors';
 
 @Component({
   selector: 'app-top-bar',
@@ -31,18 +32,22 @@ export class TopBarComponent {
   faBomb = faBomb;
   faArrowUpShortWide = faArrowUpShortWide;
   faUserGear = faUserGear;
+  faSquareXmark = faSquareXmark;
+  faTv = faTv;
+  faTabletScreenButton = faTabletScreenButton;
+  faRightFromBracket = faRightFromBracket;
+  faUser = faUser;
 
   errorCount = 0;
   unsortedCount = 0;
-  remoteMode = false;
-  viewerMode = false;
   mode = '';
   waitingPeerReconnect = false;
   private peerConnected = false;
   private selfConnected = false;
-  private userId!: string | false;
+  userId: string | false = false;
 
   environment = environment;
+  displayName = '';
 
   @Input() authenticated = false;
 
@@ -67,6 +72,7 @@ export class TopBarComponent {
       this.waitingPeerReconnect = this.peerConnected && this.selfConnected && !c;
       this.selfConnected = c;
     });
+    this.store.select(selectDisplayName).subscribe(n => this.displayName = n);
   }
 
   togglePlaylists() {
@@ -97,23 +103,25 @@ export class TopBarComponent {
     this.router.navigate(['/']);
   }
 
-  handleModeToggle(e:any){
+  logout() {
+    window.location.href = '/logout';
+  }
+
+  signin() {
+    window.location.href = '/login';
+  }
+
+  handleModeToggle(mode: 'player'|'remote'|'viewer'){
     if (!this.userId) {
       console.error('No userId is set. Unable to initialize socket connection without a userId.');
       return;
     }
-    if(e.target.id === 'viewerToggle' && e.target.checked) {
-      this.store.dispatch(initializeSocketConnection({ clientType: 'viewer', userId: this.userId }));
-      this.remoteMode = false;
-    } else if(e.target.checked) {
-      this.store.dispatch(initializeSocketConnection({ clientType: 'remote', userId: this.userId }));
-      this.viewerMode = false;
-    } else if (e.target.id === 'viewerToggle') {
+
+    if (mode === 'player') {
       this.store.dispatch(disconnect());
       this.home();
     } else {
-      this.store.dispatch(disconnect());
-      this.home();
+      this.store.dispatch(initializeSocketConnection({ clientType: mode, userId: this.userId }));
     }
   }
 

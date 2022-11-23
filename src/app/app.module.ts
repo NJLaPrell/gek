@@ -42,9 +42,9 @@ import { VideoListComponent } from './playlist/video-list/video-list.component';
 import { PlayerControlsComponent } from './playlist/player-controls/player-controls.component';
 import { PlaylistComponent } from './playlist/playlist.component';
 import { VideoEmbedComponent } from './playlist/video-embed/video-embed.component';
-import { SignInComponent } from './sign-in/sign-in.component';
 import { PreferencesComponent } from './modals/preferences/preferences.component';
 import { CustomInterceptor } from './http-interceptor';
+import { CoolSocialLoginButtonsModule } from '@angular-cool/social-login-buttons';
 
 export const initApp = (provider: InitializerService) => () => provider.init();
 
@@ -75,7 +75,6 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     PlayerControlsComponent,
     PlaylistComponent,
     VideoEmbedComponent,
-    SignInComponent,
     PreferencesComponent
   ],
   imports: [
@@ -109,7 +108,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     FontAwesomeModule,
     YouTubePlayerModule,
     FormsModule,
-    HttpClientXsrfModule
+    HttpClientXsrfModule,
+    CoolSocialLoginButtonsModule
   ],
   providers: [
     InitializerService, {

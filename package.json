@@ -36,6 +36,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular-cool/social-login-buttons": "^13.1.0",
     "@angular/animations": "^14.1.0",
     "@angular/common": "^14.1.0",
     "@angular/compiler": "^14.1.0",
