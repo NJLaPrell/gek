@@ -66,6 +66,8 @@ const FirestoreStore = require('firestore-store')(session);
 const app = express();
 const port = 3000;
 
+app.set('trust proxy', 1);
+
 app.use(bodyParser.json({ extended: true }));
 app.use(express.urlencoded({ extended:false }));
 app.use(cookieParser(process.env['COOKIE_SECRET']));

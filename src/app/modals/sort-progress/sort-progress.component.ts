@@ -31,9 +31,9 @@ export class SortProgressComponent {
   }
 
   private readChunk = (reader: any) => {
-    reader.read().then(({ done, value}: any) => {
+    reader.read().then(({ done, value }: any) => {
       if (done) {
-        //this.reloadData();
+        this.reloadData();
         return;
       }
       this.output += new TextDecoder('utf-8').decode(value) + '\n';

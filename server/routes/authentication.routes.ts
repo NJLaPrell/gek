@@ -24,9 +24,7 @@ export class AuthenticationRoutes {
     
     app.get('/logout', (req: ExpressRequest, res: ExpressResponse) => {
       log.debug('GET: /logout');
-      req.session.destroy();
-      req.session = null;
-      res.redirect('/');
+      req.session.destroy(() => res.redirect('/'));
     });
 
   };
