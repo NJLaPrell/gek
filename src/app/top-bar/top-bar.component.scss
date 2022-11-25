@@ -1,3 +1,4 @@
+
 @media screen and (max-width: 1100px) {
   .buttonTitle {
     display: none;
@@ -10,16 +11,20 @@
     cursor: pointer;
     font-family: Verdana, Geneva, sans-serif;
     
-    .logo {
-        color: #FFFFFF;
-        height: 40px;
+    #app-logo {
+      height: 40px;
+      
     }
     
     #app-subtitle {    
         display: inline-block;
-        font-size: 20px;
         position: relative;
-        top: 4px;
+        margin-left: 4px;
+        font-family: 'Patrick Hand', cursive;
+        color: #309E10;
+        font-size: 2.5em;
+        line-height: 40px;
+        vertical-align: middle;
     }
 }
 
