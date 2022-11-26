@@ -6,10 +6,10 @@ services:
       - "4200"
     ports:
       - "4200:80"
-    hostname: "ytlist.ui"
-    container_name: 'ytlist-ui'
+    hostname: "gek.ui"
+    container_name: 'gek-ui'
     networks:
-    - "ytlist"
+    - "gek"
     restart: unless-stopped
 
   server:
@@ -20,14 +20,14 @@ services:
     ports:
       - "3000:3000"
       - "8080:8080"
-    hostname: 'ytlist.server'
-    container_name: 'ytlist-server'
+    hostname: 'gek.server'
+    container_name: 'gek-server'
     networks:
-    - "ytlist"
+    - "gek"
     restart: unless-stopped
 #    env_file: ../.env
 
 networks:
-  ytlist:
+  gek:
     name: nginx-proxy-manager_default
     external: true

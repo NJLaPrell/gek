@@ -1,8 +1,8 @@
-# Ytlist
+# Gek
 
-**IMPORTANT -- ytlist is in development:** No, not like "Beta" or even early "Alpha" testing. More like a proof of concept that has not been vetted for security, user experience, or even sanity. Any experimenting should be done in the relative safety of a private network.
+**IMPORTANT -- Gek is in development:** No, not like "Beta" or even early "Alpha" testing. More like a proof of concept that has not been vetted for security, user experience, or even sanity. Any experimenting should be done in the relative safety of a private network.
 
-- [Ytlist](#ytlist)
+- [Gek](#gek)
   - [So what is it?](#so-what-is-it)
   - [What do I do with it?](#what-do-i-do-with-it)
     - [Setup Rules](#setup-rules)
@@ -26,11 +26,11 @@
 
 ## So what is it?
 
-ytlist is how watching YouTube should be. YouTube is great about discovering new content, but ytlist puts the spotlight on the content you know and love.
+Gek is how watching YouTube should be. YouTube is great about discovering new content, but Gek puts the spotlight on the content you know and love.
 
-![ytlist](/Screen%20Shots/1.png)
+![gek](/Screen%20Shots/1.png)
 
-Your **playlists** are front and center and ytlist helps you to categorize new videos from your **subscribed channels** into them. New videos are sorted based on rules you set up based on the channel that created the video, the description, and the title. Any video that does not match a rule is put into an unsorted list where you can remove anything you aren't interested in watching, or manually sort it to a playlist.
+Your **playlists** are front and center and gek helps you to categorize new videos from your **subscribed channels** into them. New videos are sorted based on rules you set up based on the channel that created the video, the description, and the title. Any video that does not match a rule is put into an unsorted list where you can remove anything you aren't interested in watching, or manually sort it to a playlist.
 
 ## What do I do with it?
 
@@ -40,7 +40,7 @@ Log in with your Google YouTube account to grant access to your subscriptions, p
 
 When one of your subscribed channels creates a new video, your rules will determine which playlist the video is added to.
 
-![ytlist](/Screen%20Shots/2.png)
+![gek](/Screen%20Shots/2.png)
 
 * **Type** - Set type to *and* if you want to match on everything (such as the channel and the title). Set to *or* if you want to match on anything.
 * **Channel Match** - Select a channel from your list. Often, this may be the only match you want to set if you want to sort all videos from a particular channel to a specific playlist.
@@ -51,13 +51,13 @@ When one of your subscribed channels creates a new video, your rules will determ
 Lather, rinse, repeat! Create as many rules as you like. They are currently run in the order they appear, which means that once a rule matches a video to a playlist, no other rules are applied to that video. Additional abilities will be added to the rules at a later time.
 
 ### Sort Videos
-Once you have rules setup, you don't have to do anything else. Once an hour, **ytlist** will check your subscriptions for new videos and sort them to your playlist. Can't wait that long? You can set how frequently videos are sorted in the **Preferences** or even click on the **Sort Videos** button if you want to sort NOW!.
+Once you have rules setup, you don't have to do anything else. Once an hour, **Gek** will check your subscriptions for new videos and sort them to your playlist. Can't wait that long? You can set how frequently videos are sorted in the **Preferences** or even click on the **Sort Videos** button if you want to sort NOW!.
 
 ### Unsorted Videos
 
 Any video that is not automatically sorted is added to the **Unsorted** videos queue. This makes it easy to manually sort things yourself without missing any new videos. 
 
-![ytlist](/Screen%20Shots/3.png)
+![gek](/Screen%20Shots/3.png)
 
 For each unsorted video, you can select a playlist to sort it or just click delete to remove it from the list. Click **Purge Unsorted Videos** to remove everything from the unsorted list.
 
@@ -65,17 +65,17 @@ For each unsorted video, you can select a playlist to sort it or just click dele
 
 Select a playlist from the left to list the videos. Click the refresh button at the top if new videos have been added recently. Select a video to watch and rate it or remove it from your list at any time.
 
-![ytlist](/Screen%20Shots/4.png)
+![gek](/Screen%20Shots/4.png)
 
 ### Tablet Remote?
 
 Once you try it out on a tablet, you'll be thinking, *"Gee, it sure would be nice if I could use the tablet to control the video on my computer/tv."*
 
-Then you will be excited to find out that you can do just that. Load **ytlist** up in a browser on the TV and log in, then toggle the **Viewer** control in the upper right to turn it into a video viewer.
+Then you will be excited to find out that you can do just that. Load **Gek** up in a browser on the TV and log in, then toggle the **Viewer** control in the upper right to turn it into a video viewer.
 
 On your tablet (or any other browser, really), log in and toggle the **Remote** control. The two devices will pair and any videos you select on the remote will play on the viewer. The tablet will also navigate next/previous videos in your play list, like, dislike, and remove videos from a playlist, and control volume, mute, and seek functions.
 
-![ytlist](/Screen%20Shots/5.png)
+![gek](/Screen%20Shots/5.png)
 
 
 # Project Setup
@@ -103,13 +103,13 @@ For a more production like environment, [Nginx Proxy Manager](https://nginxproxy
 
 ESLint is used for code styling. 
 
-Dotenv is used to read in a **.env** file for sensative and envronment based settings. Keep a development version in the project root and one to deploy with docker in the **ytlist-docker/server** folders.
+Dotenv is used to read in a **.env** file for sensative and envronment based settings. Keep a development version in the project root and one to deploy with docker in the **gek-docker/server** folders.
 
 The UI is build with angular and uses the environments files for environment configuration. UI source is in the **/src** folder.
 
 The backend is written with TypeScript and consists of an express server, a websockets server, and a service to keep the video lists up to date. 
 
-Package scripts serve the UI with a watcher and use ts-node-dev to transpile the typescript for the server components. Building generates source and places it into the **ytlist-docker** folder and zips everything up as a portable package, requiring only `docker-compose up-d` to run.
+Package scripts serve the UI with a watcher and use ts-node-dev to transpile the typescript for the server components. Building generates source and places it into the **gek-docker** folder and zips everything up as a portable package, requiring only `docker-compose up-d` to run.
 
 Use `npm start` for an interactive menu to select dev and build tasks.
 
@@ -192,9 +192,9 @@ Deployment is done by creating a deploy zip consisting of the required source al
 
 ## Steps:
 
-1. Ensure there is a .env file in the **ytlist-docker/server** directory.
-1. Run `npm run build:package`. This cleans and builds the project with production configurations and environment, copies everything required to the **ytlist-docker** directory, then creates **/dist/ytlist.tar.gz**.
-1. Copy **ytlist.tar.gz** to the production server and unzip it (`tar -xf ytlist.tar.gz`).
+1. Ensure there is a .env file in the **gek-docker/server** directory.
+1. Run `npm run build:package`. This cleans and builds the project with production configurations and environment, copies everything required to the **gek-docker** directory, then creates **/dist/gek.tar.gz**.
+1. Copy **gek.tar.gz** to the production server and unzip it (`tar -xf gek.tar.gz`).
 1. Build the containers and start them:
    * `docker-compose build`
    * `docker-compose up -d`

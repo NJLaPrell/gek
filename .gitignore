@@ -54,5 +54,7 @@ src/environments/environment.prod.ts
 /server/models/shared/*
 *.log
 .env
-/ytlist-docker/ui/dist
-/ytlist-docker/server/dist
+.env.prod
+.env.dev
+/gek-docker/ui/dist
+/gek-docker/server/dist

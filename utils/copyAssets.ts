@@ -1,8 +1,9 @@
 const shell = require('shelljs');
 
-shell.cp( '-R', 'server/lib', 'ytlist-docker/server/dist' );
-shell.cp( '-R', 'server/models', 'ytlist-docker/server/dist' );
-shell.cp( '-R', 'server/routes', 'ytlist-docker/server/dist' );
-shell.cp( '-R', 'server/package.json', 'ytlist-docker/server' );
-shell.cp( '-R', 'server/package-lock.json', 'ytlist-docker/server' );
-//shell.cp( '-R', 'dist/ytlist/', 'ytlist-docker/ui/dist' );
+shell.cp( '-R', 'server/lib', 'gek-docker/server/dist' );
+shell.cp( '-R', 'server/models', 'gek-docker/server/dist' );
+shell.cp( '-R', 'server/routes', 'gek-docker/server/dist' );
+shell.cp( '-R', 'server/package.json', 'gek-docker/server' );
+shell.cp( '-R', 'server/package-lock.json', 'gek-docker/server' );
+shell.cp( '.env.prod', 'gek-docker/server/.env' );
+shell.cp( '.env.dev', '.env' );

@@ -1,5 +1,5 @@
 {
-  "name": "ytlist",
+  "name": "gek",
   "version": "0.0.0",
   "scripts": {
     "start": "ntl -o -s 10",
@@ -8,14 +8,15 @@
     "watch-logs": "pm2 logs",
     "start-all": "pm2 start",
     "build:package": "npm-run-all build:prod make-deploy-package",
-    "deploy-package": "scp dist/ytlist.tar.gz doubleplusgood:/home/nlaprell",
-    "clean": "rimraf dist/* && rimraf ytlist-docker/server/dist/* && rimraf ytlist-docker/ui/dist/*",
+    "deploy-package": "scp dist/gek.tar.gz doubleplusgood:/home/nlaprell",
+    "clean": "rimraf dist/* && rimraf gek-docker/server/dist/* && rimraf gek-docker/ui/dist/*",
     "copy-shared-resources": "ts-node utils/copySharedResources",
+    "gen-env": "ts-node-dev --project tsconfig.server.json utils/generateEnvironmentSettings.ts",
     "ng": "ng",
     "tsc": "tsc -p tsconfig.server.prod.json",
     "copy-assets": "ts-node utils/copyAssets",
-    "build:prod": "npm-run-all clean build tsc copy-shared-resources copy-assets",
-    "make-deploy-package": "tar -cvzf dist/ytlist.tar.gz ytlist-docker",
+    "build:prod": "npm-run-all clean gen-env build tsc copy-shared-resources copy-assets",
+    "make-deploy-package": "tar -cvzf dist/gek.tar.gz gek-docker",
     "start:dev:ui": "ng serve --configuration development --ssl --proxy-config proxy.config.json",
     "start:dev:rest-server": "ts-node-dev --project tsconfig.server.json --respawn --transpile-only -- ./server/rest_server.ts",
     "start:dev:sort-service": "ts-node-dev --project tsconfig.server.json --respawn --transpile-only -- ./server/sort.ts",
@@ -31,7 +32,8 @@
       "build:package": "Clean and build a production tar.gz package.",
       "deploy-package": "SCP the package to the server.",
       "clean": "Cleans the dist folders.",
-      "copy-shared-resources": "Copy shared resource from the UI project to the server project."
+      "copy-shared-resources": "Copy shared resource from the UI project to the server project.",
+      "gen-env": "Propogate .env settings to the rest of the project."
     }
   },
   "private": true,
@@ -81,6 +83,7 @@
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.41.0",
     "buffer": "^6.0.3",
+    "dotenv": "^16.0.3",
     "eslint": "^8.26.0",
     "eslint-plugin-angular": "^4.1.0",
     "eslint-plugin-import": "^2.26.0",
@@ -97,6 +100,7 @@
     "ntl": "^5.1.0",
     "rimraf": "^3.0.2",
     "shelljs": "^0.8.5",
+    "ts-node": "^10.9.1",
     "typescript": "~4.7.2"
   },
   "optionalDependencies": {

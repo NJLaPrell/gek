@@ -53,8 +53,10 @@ export class SocketServer {
       const httpsServer = https.createServer(credentials);
       httpsServer.listen(this.port);
       options = <ServerOptions>{ server: httpsServer };
+      log.info('Using WSS');
     } else {
       options = <ServerOptions>{ port: this.port };
+      log.info('Using WS');
     }
 
     this.server = new WebSocket.Server(options);

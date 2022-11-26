@@ -2,7 +2,7 @@
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
-      "outDir": "./ytlist-docker/server/dist",
+      "outDir": "./gek-docker/server/dist",
       "types": [],
       "noImplicitAny": true,
       "target": "ES2016",

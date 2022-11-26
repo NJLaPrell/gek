@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "ytlist": {
+    "gek": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -20,7 +20,7 @@
             "customWebpackConfig": {
               "path": "./extra-webpack.config.js"
             },
-            "outputPath": "dist/ytlist",
+            "outputPath": "dist/gek",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -56,9 +56,7 @@
                 }
               ],
               "outputHashing": "all",
-              
-              "outputPath": "ytlist-docker/ui/dist"
-              
+              "outputPath": "gek-docker/ui/dist"
             },
             "development": {
               "buildOptimizer": false,
@@ -93,24 +91,24 @@
           "builder": "@angular-builders/custom-webpack:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "ytlist:build:production"
+              "browserTarget": "gek:build:production"
             },
             "development": {
-              "browserTarget": "ytlist:build:development"
+              "browserTarget": "gek:build:development"
             }
           },
           "defaultConfiguration": "development",
           "options": {
-            "sslKey": "certs/dev-ytlist.laprell.org.key",
-            "sslCert": "certs/dev-ytlist.laprell.org.crt",
-            "host": "dev-ytlist.laprell.org",
-            "port": 4200
+            "port": 4200,
+            "sslKey": "certs/dev-gek.laprell.org.key",
+            "sslCert": "certs/dev-gek.laprell.org.crt",
+            "host": "dev-gek.laprell.org"
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ytlist:build"
+            "browserTarget": "gek:build"
           }
         },
         "test": {

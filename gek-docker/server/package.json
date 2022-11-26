@@ -1,5 +1,5 @@
 {
-  "name": "ytlist-server",
+  "name": "gek-server",
   "version": "0.0.0",
   "scripts": {
     "start:prod:rest-server": "node ./server/rest_server.js",
