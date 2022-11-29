@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
-  faList, faClapperboard, faRotate, faHandSparkles, faTrashCan,
-  faBomb, faArrowUpShortWide, faUserGear, faSquareXmark, faTv, faTabletScreenButton,
+  faList, faRocket, faRotate, faClipboardList, faTrashCan,
+  faTriangleExclamation, faTableList, faUserGear, faSquareXmark, faTv, faTabletScreenButton,
   faRightFromBracket, faUser
 } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -17,6 +17,7 @@ import { Router } from '@angular/router';
 import { PreferencesComponent } from '../modals/preferences/preferences.component';
 import { environment } from '../../environments/environment';
 import { selectDisplayName, selectUserId } from '../state/selectors/auth.selectors';
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-top-bar',
@@ -25,12 +26,12 @@ import { selectDisplayName, selectUserId } from '../state/selectors/auth.selecto
 })
 export class TopBarComponent {
   faList = faList;
-  faClapperboard = faClapperboard;
+  faRocket = faRocket;
   faRotate = faRotate;
-  faHandSparkles = faHandSparkles;
+  faClipboardList = faClipboardList;
   faTrashCan = faTrashCan;
-  faBomb = faBomb;
-  faArrowUpShortWide = faArrowUpShortWide;
+  faTriangleExclamation = faTriangleExclamation;
+  faTableList = faTableList;
   faUserGear = faUserGear;
   faSquareXmark = faSquareXmark;
   faTv = faTv;
@@ -48,15 +49,17 @@ export class TopBarComponent {
 
   environment = environment;
   displayName = '';
+  terms = false;
 
   @Input() authenticated = false;
-
+  
   @Output() onPlaylistsClicked: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(
     private modalService: NgbModal,
     private store: Store,
-    private router: Router
+    private router: Router,
+    private toast: ToastService
   ) {
     this.store.select(selectUserId).subscribe(uid => this.userId = uid);
     this.store.select(selectHistoryState).subscribe(h => {
@@ -108,7 +111,11 @@ export class TopBarComponent {
   }
 
   signin() {
-    window.location.href = '/login';
+    if (!this.terms) {
+      this.toast.fail('You must accept the Terms of Service in order to continue.');
+    } else {
+      window.location.href = '/login';
+    }
   }
 
   handleModeToggle(mode: 'player'|'remote'|'viewer'){

@@ -45,6 +45,9 @@ import { VideoEmbedComponent } from './playlist/video-embed/video-embed.componen
 import { PreferencesComponent } from './modals/preferences/preferences.component';
 import { CustomInterceptor } from './http-interceptor';
 import { CoolSocialLoginButtonsModule } from '@angular-cool/social-login-buttons';
+import { HomeComponent } from './home/home.component';
+import { PrivacyPolicyComponent } from './legal/privacy-policy/privacy-policy.component';
+import { FooterComponent } from './footer/footer.component';
 
 export const initApp = (provider: InitializerService) => () => provider.init();
 
@@ -75,7 +78,10 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     PlayerControlsComponent,
     PlaylistComponent,
     VideoEmbedComponent,
-    PreferencesComponent
+    PreferencesComponent,
+    HomeComponent,
+    PrivacyPolicyComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,47 @@
+<div class="d-flex justify-content-evenly">
+
+  <div class="card bg-dark actionCard">
+    <fa-icon [icon]="faClipboardList" class="largeIcon"></fa-icon>
+    <div class="card-body pt-0">
+      <h5 class="card-title">Rules</h5>
+      <p class="card-text text-start">Create a list of rules to define how you want to decide which videos are sorted to which playlists.</p>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-primary" (click)="openRules()"><fa-icon [icon]="faClipboardList"></fa-icon> Create Rules</button>
+    </div>
+  </div>
+
+  <div class="card bg-dark actionCard">
+    <fa-icon [icon]="faRocket" class="largeIcon"></fa-icon>
+    <div class="card-body pt-0">
+      <h5 class="card-title">Sort</h5>
+      <p class="card-text text-start">New videos are sorted automatically every hour (configurable in your <a href="#" (click)="openPreferences()" class="text-decoration-underline color-primary">preferences</a>). You can sort new videos any time by running the sort process.</p>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-primary" (click)="sortVideos()"><fa-icon [icon]="faRocket"></fa-icon> Run Sort</button>
+    </div>
+  </div>
+
+  <div class="card bg-dark actionCard">
+    <fa-icon [icon]="faTableList" class="largeIcon"></fa-icon>
+    <div class="card-body pt-0">
+      <h5 class="card-title">Review</h5>
+      <p class="card-text text-start">Any video that does not match any of your rules is placed in the unsorted list, where you can review the videos and manually sort them into a playlist or remove them from your unsorted list.</p>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-primary" (click)="openUnsorted()"><fa-icon [icon]="faTableList"></fa-icon> Review Unsorted</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="card bg-dark actionCard" style="width: 50%; margin-top: 1%; margin-left: 25%;">
+  <fa-icon [icon]="faTv" class="largeIcon"></fa-icon>
+  <div class="card-body pt-0">
+    <h5 class="card-title">Watch</h5>
+    <p class="card-text text-start">Your playlists have been curated! Use your playlist panel on the left to start watching!</p>
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-primary" (click)="watchNow()"><fa-icon [icon]="faPlay"></fa-icon> Watch Now!</button>
+  </div>
+</div>

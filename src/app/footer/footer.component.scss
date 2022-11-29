@@ -1,0 +1,13 @@
+.footer {
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+
+  a {
+    text-decoration: underline;
+    color: #666;
+    &:hover {
+      color: #FFF;
+    }
+  }
+}

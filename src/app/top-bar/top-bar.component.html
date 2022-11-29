@@ -8,24 +8,25 @@
     <span *ngIf="!environment.production" class="ms-2 text-danger">(DEV)</span>
   </div>
 
-  <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="togglePlaylists()">
+  <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="togglePlaylists()" title="Toggle Playlists">
     <fa-icon [icon]="faList"></fa-icon>
     <span class="buttonTitle"> Playlists</span>
   </button>
-  <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="sortVideos()">
-    <fa-icon [icon]="faClapperboard"></fa-icon>
+  <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="sortVideos()" title="Sort Videos Now">
+    <fa-icon [icon]="faRocket"></fa-icon>
     <span class="buttonTitle"> Sort Videos</span>
   </button>
-  <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="openRules()">
-    <fa-icon [icon]="faHandSparkles"></fa-icon>
+  <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="openRules()" title="Edit Rules">
+    <fa-icon [icon]="faClipboardList"></fa-icon>
     <span class="buttonTitle"> Edit Rules</span>
   </button>
-  <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="openErrorBuffer()">
+  <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="openErrorBuffer()" title="View Errors">
+    <fa-icon [icon]="faTriangleExclamation"></fa-icon>
     <span class="buttonTitle"> Error Buffer</span>
     <span *ngIf="errorCount" class="badge text-bg-danger">{{ errorCount }}</span>
   </button>
-  <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="openUnsorted()">
-    <fa-icon [icon]="faArrowUpShortWide"></fa-icon>
+  <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="openUnsorted()" title="View Unsorted">
+    <fa-icon [icon]="faTableList"></fa-icon>
     <span class="buttonTitle"> Unsorted </span>
     <span *ngIf="unsortedCount" class="badge text-bg-primary">{{ unsortedCount }}</span>
   </button>
@@ -57,9 +58,14 @@
     </div>
   </div>
   
-  <cool-google-button *ngIf="!authenticated" color="dark" class="float-end" (click)="signin()">
-    Sign in with Google
-  </cool-google-button>
-
+  <div *ngIf="!authenticated" class="float-end">
+    <cool-google-button color="dark" (click)="signin()">
+      Sign in with Google
+    </cool-google-button>
+    <div class="form-check" style="font-size: 0.8em; margin-top: 2px;">
+      <input type="checkbox" class="form-check-input" id="terms" name="terms" [(ngModel)]="terms" />
+      <label for="terms">I Agree to the <a href="/terms-of-service">Terms of Service</a>.</label>
+    </div>
+  </div>
     
 </div>
