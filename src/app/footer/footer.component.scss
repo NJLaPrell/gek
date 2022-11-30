@@ -1,7 +1,8 @@
 .footer {
-  position: fixed;
-  bottom: 0px;
+  position: static;
+  bottom: 0;
   width: 100%;
+  margin-top: 40px;
 
   a {
     text-decoration: underline;
