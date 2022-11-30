@@ -1,6 +1,6 @@
 import { DataStore } from './data-store';
 import { UserAuthToken } from 'server/models/auth.models';
-import { google, GoogleApis } from 'googleapis';
+import { google } from 'googleapis';
 import { JSONClient } from 'google-auth-library/build/src/auth/googleauth';
 
 

@@ -11,17 +11,6 @@ const log = new Logger('rest');
 export class APIRoutes {
 
   public apply = (app: any, ensureAuth: any) => {
-    
-    app.get('/api/test', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
-      new ResourceLoader(req.user.id, log).getResource({ name: 'playlist', resourceId: 'PLLFJ6m60CtDwK9wca0UW4shViNd6-ti-7', bypassCache: true })
-        .then((contents: any) => res.json(contents))
-        .catch((e: any) => {
-          console.log(e);
-          res.status(404).json({ error: e });
-        });   
-        
-      //res.json({ ...test });
-    });
 
     /********************************************************
      * 
@@ -29,7 +18,7 @@ export class APIRoutes {
      * 
      ********************************************************/
     
-    app.get('/api/getResource/:resource', (req: ExpressRequest, res: ExpressResponse) => {
+    app.get('/api/getResource/:resource', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       const resource = req.params['resource'];
       log.debug(`GET: /api/getResource/${resource}`);
       const rl = new ResourceLoader(req.user.id, log);
@@ -45,7 +34,7 @@ export class APIRoutes {
         .catch((e: any) => res.status(404).json({ error: e }));
     });
     
-    app.get('/api/history/getHistory', async (req: ExpressRequest, res: ExpressResponse) => {
+    app.get('/api/history/getHistory', ensureAuth, async (req: ExpressRequest, res: ExpressResponse) => {
       log.debug('GET: /api/history/getHistory');
       const rl = new ResourceLoader(req.user.id, log);
       const history: HistoryResource = <HistoryResource>await rl.getResource({ name: 'history' });
@@ -58,7 +47,7 @@ export class APIRoutes {
       });
     });
 
-    app.put('/api/resources/updateRule', (req: ExpressRequest, res: ExpressResponse) => {
+    app.put('/api/resources/updateRule', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       log.debug('PUT: /api/resources/updateRule');
       new ResourceLoader(req.user.id, log).updateResourceItem('rules', 'id', req.body.id, req.body)
         .then(() => {
@@ -67,7 +56,7 @@ export class APIRoutes {
         .catch((e: any) => res.status(e?.code || 500).json({ error: e?.message || e }));
     });
 
-    app.delete('/api/resources/deleteRule/:id', (req: ExpressRequest, res: ExpressResponse) => {
+    app.delete('/api/resources/deleteRule/:id', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       const id = req.params['id'];
       log.debug(`DELETE: /api/resources/deleteRule/${id}`);
       new ResourceLoader(req.user.id, log).deleteResourceItem('rules', 'id', id)
@@ -77,7 +66,7 @@ export class APIRoutes {
         .catch((e: any) => res.status(e?.code || 500).json({ error: e?.message || e }));
     });
     
-    app.post('/api/resources/addRule', (req: ExpressRequest, res: ExpressResponse) => {
+    app.post('/api/resources/addRule', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       log.debug('POST: /api/resources/addRule');
       new ResourceLoader(req.user.id, log).addResourceItem('rules', req.body)
         .then(() => {
@@ -86,21 +75,21 @@ export class APIRoutes {
         .catch((e: any) => res.status(e?.code || 500).json({ error: e?.message || e }));
     });
     
-    app.post('/api/history/purgeUnsorted', (req: ExpressRequest, res: ExpressResponse) => {
+    app.post('/api/history/purgeUnsorted', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       log.debug('POST: /api/history/purgeUnsorted');
       new ResourceLoader(req.user.id, log).purgeResourceItem('unsortedVideos')
         .then(() => res.status(204).send())
         .catch((e: any) => res.status(e.code || 500).json({ error: e.message || e }));
     });
     
-    app.post('/api/history/purgeErrors', (req: ExpressRequest, res: ExpressResponse) => {
+    app.post('/api/history/purgeErrors', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       log.debug('POST: /api/history/purgeErrors');
       new ResourceLoader(req.user.id, log).purgeResourceItem('errorQueue')
         .then(() => res.status(204).send())
         .catch((e: any) => res.status(e.code || 500).json({ error: e.message || e }));
     });
 
-    app.delete('/api/history/deleteUnsortedItem/:id', (req: ExpressRequest, res: ExpressResponse) => {
+    app.delete('/api/history/deleteUnsortedItem/:id', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       const id = req.params['id'];
       log.debug(`DELETE: /api/history/deleteUnsortedItem/${id}`);
       new ResourceLoader(req.user.id, log).deleteResourceItem('unsortedVideos', 'videoId', req.body.id)
@@ -108,7 +97,7 @@ export class APIRoutes {
         .catch((e: any) => res.status(e?.code || 500).json({ error: e?.message || e }));
     });
     
-    app.delete('/api/history/deleteErrorItem/:id', (req: ExpressRequest, res: ExpressResponse) => {
+    app.delete('/api/history/deleteErrorItem/:id', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       const id = req.params['id'];
       log.debug(`DELETE: /api/history/deleteErrorItem/${id}`);
       new ResourceLoader(req.user.id, log).deleteResourceItem('errorQueue', 'videoId', req.body.id)
@@ -116,7 +105,7 @@ export class APIRoutes {
         .catch((e: any) => res.status(e?.code || 500).json({ error: e?.message || e }));
     });
 
-    app.get('/api/preferences/getPreferences', (req: ExpressRequest, res: ExpressResponse) => {
+    app.get('/api/preferences/getPreferences', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       log.debug('GET: /api/preferences/getPreferences');
       new ResourceLoader(req.user.id, log).getResource({ name: 'preferences' })
         .then((contents: any) => res.json(contents))
@@ -126,7 +115,7 @@ export class APIRoutes {
         }); 
     });
 
-    app.post('/api/preferences/setPreferences', (req: ExpressRequest, res: ExpressResponse) => {
+    app.post('/api/preferences/setPreferences', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       log.debug('POST: /api/preferences/setPreferences', req.body.items);
       new ResourceLoader(req.user.id, log).cacheResource('preferences', { lastUpdated: Date.now(), items: req.body.items })
         .then((contents: any) => res.json(contents))
@@ -142,7 +131,7 @@ export class APIRoutes {
      * 
      ********************************************************/
     
-    app.get('/api/getChannelFeed/:id', (req: ExpressRequest, res: ExpressResponse) => {
+    app.get('/api/getChannelFeed/:id', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       log.debug('GET: /api/getChannelFeed/:id');
       const id = req.params['id'];
       const api = new API(req.user.id, log);
@@ -163,7 +152,7 @@ export class APIRoutes {
      * 
      ********************************************************/
     
-    app.get('/api/getPlaylistFeed/:id', (req: ExpressRequest, res: ExpressResponse) => {
+    app.get('/api/getPlaylistFeed/:id', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       const id = req.params['id'];
       const bypassCache = req.query['bypassCache'] === 'true';
       log.debug(`GET: /api/getPlaylistFeed/${id}?bypassCache=${bypassCache}`);
@@ -175,7 +164,7 @@ export class APIRoutes {
         });       
     });
     
-    app.get('/api/getLists', (req: ExpressRequest, res: ExpressResponse) => {
+    app.get('/api/getLists', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       const bypassCache = req.query['nocache'] === 'true';
       log.debug(`GET /api/getLists?nocache=${bypassCache}`);
       new ResourceLoader(req.user.id, log).getResource({ name: 'playlists', bypassCache })
@@ -192,7 +181,7 @@ export class APIRoutes {
      * 
      ********************************************************/
     
-    app.put('/api/video/:videoId/addToPlaylist/:playlistId', (req: ExpressRequest, res: ExpressResponse) => {
+    app.put('/api/video/:videoId/addToPlaylist/:playlistId', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       const videoId = req.params['videoId'];
       const playlistId = req.params['playlistId'];
       log.debug(`PUT: /api/video/${videoId}/addToPlaylist/${playlistId}`);
@@ -201,7 +190,7 @@ export class APIRoutes {
         .catch((e: any) => res.status(e?.code || 500).json({ error: e?.message || e }));
     });
     
-    app.put('/api/video/:videoId/rate/:rating?', (req: ExpressRequest, res: ExpressResponse) => {
+    app.put('/api/video/:videoId/rate/:rating?', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       const videoId = req.params['videoId'];
       const rating = req.params['rating'] || '';
       log.debug(`PUT: /api/video/${videoId}/rate/${rating}`);
@@ -210,7 +199,7 @@ export class APIRoutes {
         .catch((e: any) => res.status(e?.code || 500).json({ error: e?.message || e }));
     });
     
-    app.put('/api/playlistItem/remove/:playlistItemId', (req: ExpressRequest, res: ExpressResponse) => {
+    app.put('/api/playlistItem/remove/:playlistItemId', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       const playlistItemId = req.params['playlistItemId'];
       log.debug(`/api/playlistItem/remove/${playlistItemId}`);
       new API(req.user.id, log).removeVideo(playlistItemId)
@@ -226,7 +215,7 @@ export class APIRoutes {
      * 
      ********************************************************/
 
-    app.post('/api/runSort', (req: ExpressRequest, res: ExpressResponse) => {
+    app.post('/api/runSort', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       log.debug('POST: /api/runSort');
       res.setHeader('Content-Type', 'text/plain; charset=utf-8');
       res.setHeader('Transfer-Encoding', 'chunked');
@@ -241,7 +230,7 @@ export class APIRoutes {
       res.json({ authenticated: req.isAuthenticated(), userId: req.user?.id || false, displayName: req.user?.displayName });
     });
 
-    app.delete('/api/delete', (req: ExpressRequest, res: ExpressResponse) => {
+    app.delete('/api/delete', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       log.debug('DELETE: /api/delete');
       const ds = new DataStore(req.user.id);
       ds.purgeUserData().then(() => res.status(204).send());
