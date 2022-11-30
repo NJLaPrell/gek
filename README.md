@@ -1,9 +1,7 @@
 # Gek
 
-**IMPORTANT -- Gek is in development:** No, not like "Beta" or even early "Alpha" testing. More like a proof of concept that has not been vetted for security, user experience, or even sanity. Any experimenting should be done in the relative safety of a private network.
-
 - [Gek](#gek)
-  - [So what is it?](#so-what-is-it)
+  - [What is Gek?](#what-is-gek)
   - [What do I do with it?](#what-do-i-do-with-it)
     - [Setup Rules](#setup-rules)
     - [Sort Videos](#sort-videos)
@@ -23,14 +21,13 @@
   - [Steps:](#steps)
 
 
+## What is Gek?
 
-## So what is it?
-
-Gek is how watching YouTube should be. YouTube is great about discovering new content, but Gek puts the spotlight on the content you know and love.
+Gek watches your subscriptions for new videos, then sorts them to your playlists based on your rules.
 
 ![gek](/Screen%20Shots/1.png)
 
-Your **playlists** are front and center and gek helps you to categorize new videos from your **subscribed channels** into them. New videos are sorted based on rules you set up based on the channel that created the video, the description, and the title. Any video that does not match a rule is put into an unsorted list where you can remove anything you aren't interested in watching, or manually sort it to a playlist.
+Set up playlist rules based on the channel that created the video, the description, and the title. When a video matches the rule, it is added to the playlist. Any video that does not match a rule is put into an unsorted list where you can remove anything you aren't interested in watching, or manually sort it to a playlist.
 
 ## What do I do with it?
 
@@ -85,6 +82,7 @@ On your tablet (or any other browser, really), log in and toggle the **Remote** 
 ## Pre-requisites
 
 ### Domain
+
 For accessibility outside of the localhost, you can add an entry to **/etc/hosts** to point to the IP and give it a domain name to use. This domain name will then be used when setting up the OAuth config with Google.
 
 For a more production like environment, [Nginx Proxy Manager](https://nginxproxymanager.com/) can be used as a reverse proxy from the host to the UI and Server services. It can be added to the docker compose, or you can add it's network to the docker compose to join it.
@@ -103,7 +101,7 @@ For a more production like environment, [Nginx Proxy Manager](https://nginxproxy
 
 ESLint is used for code styling. 
 
-Dotenv is used to read in a **.env** file for sensative and envronment based settings. Keep a development version in the project root and one to deploy with docker in the **gek-docker/server** folders.
+Dotenv is used to read in a **.env** file for sensative and envronment based settings. Create a **.env.dev** and **.env.prod** file based on the **.env-example** file and make sure they do not get checked in.
 
 The UI is build with angular and uses the environments files for environment configuration. UI source is in the **/src** folder.
 
@@ -133,7 +131,7 @@ SSL Certificates are stored in the **certs** directory, but not checked into ver
 
   `./ssl.sh my.domain.com`
 
-Be sure to add the certificate to your browser/OS and set trust settings.
+Be sure to add the certificate and the CA to your browser/OS and set trust settings.
 (Thanks to: https://devopscube.com/create-self-signed-certificates-openssl)
 
 In order to use the **.env** file for your certs, first, base64 encode them and save the base64 result as a string for the SSL_CERT, SSL_KEY, and SSL_CA values.
