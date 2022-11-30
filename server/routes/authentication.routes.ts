@@ -26,8 +26,10 @@ export class AuthenticationRoutes {
     app.get('/logout', (req: ExpressRequest, res: ExpressResponse) => {
       const dataDeleted = req.query['dataDeleted'] === 'true';
       log.debug(`GET: /logout?dataDeleted=${dataDeleted}`);
-      const auth = new UserAuthentication(req.user.id);
-      auth.revokeToken();
+      if (dataDeleted) {
+        const auth = new UserAuthentication(req.user.id);
+        auth.revokeToken();
+      }
       req.session.destroy(() => res.redirect(dataDeleted ? '/data-deleted' : '/'));
     });
 
