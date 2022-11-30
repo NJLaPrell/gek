@@ -1,6 +1,6 @@
 import { DataStore } from './data-store';
 import { UserAuthToken } from 'server/models/auth.models';
-import { google } from 'googleapis';
+import { google, GoogleApis } from 'googleapis';
 import { JSONClient } from 'google-auth-library/build/src/auth/googleauth';
 
 
@@ -8,6 +8,7 @@ export class UserAuthentication {
   private userId: string;
   private store: DataStore;
   private authClient: JSONClient | false = false;
+  private google = google;
 
   constructor(userId: string) {
     this.userId = userId;
@@ -30,6 +31,7 @@ export class UserAuthentication {
       const authClient = google.auth.fromJSON(cachedToken);
       if (authClient) {
         this.authClient = authClient;
+        this.google.options({ auth: authClient });
         return this.authClient;
       } else {
         return false;
@@ -38,6 +40,14 @@ export class UserAuthentication {
   };
 
   public isAuthenticated = (): boolean => this.authClient !== false;
+
+  public revokeToken = () => {
+    const client: any = this.google._options.auth;
+    const token = client?.credentials?.refresh_token;
+    if (token) {
+      client.revokeToken(token);
+    }    
+  };
 
 
 }

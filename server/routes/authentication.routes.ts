@@ -1,5 +1,6 @@
 import { ExpressRequest, ExpressResponse } from 'server/models/rest.models';
 import { Logger } from '../lib/logger';
+import { UserAuthentication } from '../lib/auth';
 
 const log = new Logger('rest');
 
@@ -25,6 +26,8 @@ export class AuthenticationRoutes {
     app.get('/logout', (req: ExpressRequest, res: ExpressResponse) => {
       const dataDeleted = req.query['dataDeleted'] === 'true';
       log.debug(`GET: /logout?dataDeleted=${dataDeleted}`);
+      const auth = new UserAuthentication(req.user.id);
+      auth.revokeToken();
       req.session.destroy(() => res.redirect(dataDeleted ? '/data-deleted' : '/'));
     });
 
