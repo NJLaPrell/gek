@@ -8,6 +8,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ErrorBufferComponent } from '../modals/error-buffer/error-buffer.component';
 import { UnsortedComponent } from '../modals/unsorted/unsorted.component';
 import { RulesListComponent } from '../modals/rules-list/rules-list.component';
+import { LegalComponent } from '../modals/legal/legal.component';
 import { Store } from '@ngrx/store';
 import { selectHistoryState } from '../state/selectors/history.selectors';
 import { SortProgressComponent } from '../modals/sort-progress/sort-progress.component';
@@ -49,7 +50,6 @@ export class TopBarComponent {
 
   environment = environment;
   displayName = '';
-  terms = false;
 
   @Input() authenticated = false;
   
@@ -111,11 +111,7 @@ export class TopBarComponent {
   }
 
   signin() {
-    if (!this.terms) {
-      this.toast.fail('You must accept the Terms of Service in order to continue.');
-    } else {
-      window.location.href = '/login';
-    }
+    this.modalService.open(LegalComponent);
   }
 
   handleModeToggle(mode: 'player'|'remote'|'viewer'){

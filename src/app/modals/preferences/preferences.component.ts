@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { setPreferences } from 'src/app/state/actions/preferences.actions';
 import { selectPreferences } from 'src/app/state/selectors/preferences.selectors';
-import { faSave } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { PreferenceItem } from 'src/app/state/models/preferences.model';
+import { ConfirmPromptComponent } from '../confirm-prompt/confirm-prompt.component';
+import { ToastService } from 'src/app/services/toast.service';
+import { PreferencesService } from 'src/app/services/preferences.service';
 
 @Component({
   selector: 'app-preferences',
@@ -14,6 +17,7 @@ import { PreferenceItem } from 'src/app/state/models/preferences.model';
 export class PreferencesComponent {
   // Font Awesome
   faSave = faSave;
+  faTrash = faTrash;
 
   private preferences: PreferenceItem[] = [];
   
@@ -21,7 +25,10 @@ export class PreferencesComponent {
 
   constructor(
     private store: Store,
-    public activeModal: NgbActiveModal
+    public activeModal: NgbActiveModal,
+    private modalService: NgbModal,
+    private toast: ToastService,
+    private preferencesService: PreferencesService
   ) {
     this.store.select(selectPreferences).subscribe((prefs: PreferenceItem[]) => {
       this.preferences = [...prefs];
@@ -47,6 +54,17 @@ export class PreferencesComponent {
     ];
     this.store.dispatch(setPreferences({ lastUpdated: false, items: prefs }));
     this.activeModal.close();
+  }
+
+  confirmDelete() {
+    const modalRef = this.modalService.open(ConfirmPromptComponent);
+    modalRef.componentInstance.prompt = 'Deleting user data will permanently remove all of your data, including rules and unsorted videos. Are you sure you wish to continue?';
+    modalRef.closed.subscribe(c => c === 'Continue click' ? this.delete() : null);
+  }
+
+  delete() {
+    this.toast.info('Deleting User Data. Please wait...', { delay: 60000 });
+    this.preferencesService.delete().subscribe(() => window.location.href='/logout?dataDeleted=true');
   }
 
 }

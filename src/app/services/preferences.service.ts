@@ -18,5 +18,7 @@ export class PreferencesService {
   get = (): Observable<Preferences> => this.http.get<Preferences>('/api/preferences/getPreferences').pipe(shareReplay());
 
   set = (preferenceList: {[key: string]: any}[]): Observable<any> => this.http.post<any>('/api/preferences/setPreferences', { items: preferenceList }, { headers: this.headers });
+
+  delete = (): Observable<any> => this.http.delete('/api/delete');
   
 }

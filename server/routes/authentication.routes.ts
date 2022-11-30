@@ -23,8 +23,9 @@ export class AuthenticationRoutes {
     });
     
     app.get('/logout', (req: ExpressRequest, res: ExpressResponse) => {
-      log.debug('GET: /logout');
-      req.session.destroy(() => res.redirect('/'));
+      const dataDeleted = req.query['dataDeleted'] === 'true';
+      log.debug(`GET: /logout?dataDeleted=${dataDeleted}`);
+      req.session.destroy(() => res.redirect(dataDeleted ? '/data-deleted' : '/'));
     });
 
   };

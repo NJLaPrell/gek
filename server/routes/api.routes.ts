@@ -4,6 +4,7 @@ import { ErrorQueueResource, HistoryResource, UnsortedVideosResource } from 'ser
 import { API } from '../lib/api';
 import { SortLists } from '../lib/sort';
 import { Logger } from '../lib/logger';
+import { DataStore } from '../lib/data-store';
 
 const log = new Logger('rest');
 
@@ -238,6 +239,12 @@ export class APIRoutes {
       log.debug('GET: /api/getAuthState');
       res.cookie('XSRF-TOKEN', req.csrfToken, { httpOnly: false });
       res.json({ authenticated: req.isAuthenticated(), userId: req.user?.id || false, displayName: req.user?.displayName });
+    });
+
+    app.delete('/api/delete', (req: ExpressRequest, res: ExpressResponse) => {
+      log.debug('DELETE: /api/delete');
+      const ds = new DataStore(req.user.id);
+      ds.purgeUserData().then(() => res.status(204).send());
     });
 
   };

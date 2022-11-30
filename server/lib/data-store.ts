@@ -113,4 +113,34 @@ export class DataStore {
         (result) => result.docs.filter(d => usersList.indexOf(d.id) !== -1).map(doc => ({ userId: doc.id, lastRun: doc.data()['lastUpdated'], autoSortInterval: users.find(u => u.userId === doc.id)?.autoSortInterval }))
       );
   };
+
+  public purgeUserData = async() => {
+    const playlists = await (await this.db.collection('resource:playlists').doc(this.userId).get()).data();
+    const playlistIds = playlists?.['items']?.map((i: any) => i.playlistId);
+
+    // Playlists
+    while (playlistIds?.length) {
+      const doc = await this.db.collection(`resource:playlist:${playlistIds.pop()}`).doc(this.userId);
+      if (await (await doc.get()).exists) {
+        await doc.delete();
+      }
+    }
+
+    // All other resources
+    const collections = ['playlists', 'preferences', 'rules', 'subscriptions', 'unsortedVideos', 'errorQueue', 'history'];
+    while (collections?.length) {
+      const doc = await this.db.collection(`resource:${collections.pop()}`).doc(this.userId);
+      if (await (await doc.get()).exists) {
+        await doc.delete();
+      }
+    }
+
+    // Auth Token
+    const authToken = await this.db.collection('auth-tokens').doc(this.userId);
+    if (await (await authToken.get()).exists) {
+      await authToken.delete();
+    }
+   
+  };
+
 }

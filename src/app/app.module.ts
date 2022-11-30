@@ -48,6 +48,8 @@ import { CoolSocialLoginButtonsModule } from '@angular-cool/social-login-buttons
 import { HomeComponent } from './home/home.component';
 import { PrivacyPolicyComponent } from './legal/privacy-policy/privacy-policy.component';
 import { FooterComponent } from './footer/footer.component';
+import { LegalComponent } from './modals/legal/legal.component';
+import { DeleteDataComponent } from './legal/delete-data/delete-data.component';
 
 export const initApp = (provider: InitializerService) => () => provider.init();
 
@@ -81,7 +83,9 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     PreferencesComponent,
     HomeComponent,
     PrivacyPolicyComponent,
-    FooterComponent
+    FooterComponent,
+    LegalComponent,
+    DeleteDataComponent
   ],
   imports: [
     BrowserModule,
