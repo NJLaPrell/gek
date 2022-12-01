@@ -1,6 +1,6 @@
 {
   "name": "gek",
-  "version": "0.0.0",
+  "version": "0.9.0",
   "scripts": {
     "start": "ntl -o -s 10",
     "start:dev": "npm-run-all start-all watch-logs",
@@ -12,10 +12,11 @@
     "clean": "rimraf dist/* && rimraf gek-docker/server/dist/* && rimraf gek-docker/ui/dist/*",
     "copy-shared-resources": "ts-node utils/copySharedResources",
     "gen-env": "ts-node-dev --project tsconfig.server.json utils/generateEnvironmentSettings.ts",
+    "gen-version": "ts-appversion",
     "ng": "ng",
     "tsc": "tsc -p tsconfig.server.prod.json",
     "copy-assets": "ts-node utils/copyAssets",
-    "build:prod": "npm-run-all clean gen-env build tsc copy-shared-resources copy-assets",
+    "build:prod": "npm-run-all clean gen-env gen-version build tsc copy-shared-resources copy-assets",
     "make-deploy-package": "tar -cvzf dist/gek.tar.gz gek-docker",
     "start:dev:ui": "ng serve --configuration development --ssl --proxy-config proxy.config.json",
     "start:dev:rest-server": "ts-node-dev --project tsconfig.server.json --respawn --transpile-only -- ./server/rest_server.ts",
@@ -75,6 +76,7 @@
     "@angular/cli": "~14.1.1",
     "@angular/compiler-cli": "^14.1.0",
     "@angular/localize": "^14.2.2",
+    "@saithodev/ts-appversion": "^2.2.0",
     "@types/fs-extra": "^9.0.13",
     "@types/jasmine": "~4.0.0",
     "@types/sanitize-html": "^2.6.2",

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { versions } from '../../_versions';
 
 @Component({
   selector: 'app-footer',
@@ -6,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./footer.component.scss']
 })
 export class FooterComponent {
-
+  versions = versions;
 }
