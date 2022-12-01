@@ -26,7 +26,6 @@ import { PlayerComponent } from './playlist/player/player.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PlaylistsComponent } from './side-bar/playlists/playlists.component';
 import { YouTubePlayerModule } from '@angular/youtube-player';
-import { ErrorBufferComponent } from './modals/error-buffer/error-buffer.component';
 import {
   SafeHtmlPipe, DurationFromIsoPipe, FromNowPipe, ViewCountPipe, ThumbCountPipe,
   DurationFromSeconds, TimeAgoPipe } from './pipes';
@@ -60,7 +59,6 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     SideBarComponent,
     PlayerComponent,
     PlaylistsComponent,
-    ErrorBufferComponent,
     SafeHtmlPipe,
     DurationFromIsoPipe,
     FromNowPipe,

@@ -1,10 +1,5 @@
 <div class="modal-header bg-dark text-light">
-    <h4 class="modal-title">Unsorted Videos ({{ getUnsortedCount() }})
-        <div class="form-check form-check-inline form-switch show-errors-switch">
-            <input class="form-check-input" type="checkbox" id="showErrors" [(ngModel)]="showErrors">
-            <label class="form-check-label" for="viewerToggle">Show Errors</label>
-        </div>
-    </h4>
+    <h4 class="modal-title">Unsorted Videos ({{ unsorted.length }})</h4>
     <button type="button" class="btn-close btn-dark" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body bg-dark">
@@ -20,27 +15,27 @@
         <tbody>
             
             <tr *ngFor="let u of unsorted">
-                <ng-container *ngIf="showErrors || !u?.errorMessage">
-                    <td class="unsorted-status"><span *ngIf="u?.errorMessage" class="errorMessage" [ngbTooltip]="moment(u.errorMessage.failDate).fromNow() + ' - ' + u.errorMessage.errors[0].message"><fa-icon [icon]="faTriangleExclamation"></fa-icon></span></td>
-                    <td class="unsorted-chanel"><a [href]="'https://www.youtube.com/channel/' + u.channelId" target="_blank">{{ u?.channelName }}</a></td>
-                    <td class="unsorted-video">
-                        <img class="unsorted-thumbnail" [src]="u?.thumbnail"  />
-                        <div class="unsorted-title">{{ u?.title }}</div>
-                        <div class="unsorted-details"><fa-icon [icon]="faInfoCircle" [ngbTooltip]="u?.description"></fa-icon> Published {{ moment(u?.published).fromNow() }}</div>
-                    </td>
-                    <td class="text-end unsorted-button-panel">
-                        <div ngbDropdown class="d-inline-block" container="body">
-                            <button type="button" class="btn btn-dark btn-sm" [id]="'assign' + u?.id" ngbDropdownToggle>Move to Playlist...</button>
-                            <div ngbDropdownMenu style="max-height: 60vh; overflow:auto">
-                                <ng-container *ngFor="let pl of playlists">
-                                    <button (click)="moveToPlaylist(pl.id, u?.videoId || '')" ngbDropdownItem>{{ pl.title }}</button>
-                                </ng-container>
-                            </div>
-                        </div>
-                        &nbsp;
-                        <button type="button" class="btn btn-danger btn-sm" (click)="deleteItem(u)" ngbTooltip="Remove from the list."><fa-icon [icon]="faTrash"></fa-icon></button>
-                    </td>
-                </ng-container>
+                
+              <td class="unsorted-status"><span *ngIf="u?.errorMessage" class="errorMessage" [ngbTooltip]="moment(u.errorMessage.failDate).fromNow() + ' - ' + u.errorMessage.errors[0].message"><fa-icon [icon]="faTriangleExclamation"></fa-icon></span></td>
+              <td class="unsorted-chanel"><a [href]="'https://www.youtube.com/channel/' + u.channelId" target="_blank">{{ u?.channelName }}</a></td>
+              <td class="unsorted-video">
+                  <img class="unsorted-thumbnail" [src]="u?.thumbnail"  />
+                  <div class="unsorted-title">{{ u?.title }}</div>
+                  <div class="unsorted-details"><fa-icon [icon]="faInfoCircle" [ngbTooltip]="u?.description"></fa-icon> Published {{ moment(u?.published).fromNow() }}</div>
+              </td>
+              <td class="text-end unsorted-button-panel">
+                  <div ngbDropdown class="d-inline-block" container="body">
+                      <button type="button" class="btn btn-dark btn-sm" [id]="'assign' + u?.id" ngbDropdownToggle>Move to Playlist...</button>
+                      <div ngbDropdownMenu style="max-height: 60vh; overflow:auto">
+                          <ng-container *ngFor="let pl of playlists">
+                              <button (click)="moveToPlaylist(pl.id, u?.videoId || '')" ngbDropdownItem>{{ pl.title }}</button>
+                          </ng-container>
+                      </div>
+                  </div>
+                  &nbsp;
+                  <button type="button" class="btn btn-danger btn-sm" (click)="deleteItem(u)" ngbTooltip="Remove from the list."><fa-icon [icon]="faTrash"></fa-icon></button>
+              </td>
+                
             </tr>
         </tbody>
     </table>

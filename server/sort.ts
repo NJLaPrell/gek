@@ -57,7 +57,7 @@ class SortQueue {
     }
     
     if (this.nextBatch.length) {
-      console.log(`${this.nextBatch.length} Users using will run in the next batch.`);
+      console.log(`${this.nextBatch.length} Users will run in the next batch.`);
       this.running = true;
     }
     

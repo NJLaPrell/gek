@@ -5,7 +5,6 @@ import {
   faRightFromBracket, faUser
 } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ErrorBufferComponent } from '../modals/error-buffer/error-buffer.component';
 import { UnsortedComponent } from '../modals/unsorted/unsorted.component';
 import { RulesListComponent } from '../modals/rules-list/rules-list.component';
 import { LegalComponent } from '../modals/legal/legal.component';
@@ -80,10 +79,6 @@ export class TopBarComponent {
 
   togglePlaylists() {
     this.onPlaylistsClicked.emit();
-  }
-
-  openErrorBuffer() {
-    this.modalService.open(ErrorBufferComponent, { size: 'xl', scrollable: true });
   }
 
   openUnsorted() {

@@ -20,11 +20,6 @@
     <fa-icon [icon]="faClipboardList"></fa-icon>
     <span class="buttonTitle"> Edit Rules</span>
   </button>
-  <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="openErrorBuffer()" title="View Errors">
-    <fa-icon [icon]="faTriangleExclamation"></fa-icon>
-    <span class="buttonTitle"> Error Buffer</span>
-    <span *ngIf="errorCount" class="badge text-bg-danger">{{ errorCount }}</span>
-  </button>
   <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="openUnsorted()" title="View Unsorted">
     <fa-icon [icon]="faTableList"></fa-icon>
     <span class="buttonTitle"> Unsorted </span>
