@@ -35,18 +35,21 @@ export class SortLists {
     this.api = new API(userId, log);
   }
 
-  private getSubscriptions = async (): Promise<SubscriptionResource> => {
+  private getSubscriptions = async (): Promise<SubscriptionResource | false> => {
     this.writeStatus('Getting subscriptions...');
-    const subItems = await this.api.getSubscriptions();
+    const subItems = await this.api.getSubscriptions().catch(e => this.handleException('getting subscriptions', e));
+    if (!subItems)
+      return false;
+
     this.subscriptions = { lastUpdated: Date.now(), items: subItems };
-    await this.resources.cacheResource('subscriptions', this.subscriptions);
+    await this.resources.cacheResource('subscriptions', this.subscriptions).catch(e => this.handleException('caching subscriptions', e));
     this.writeStatus('');
     return this.subscriptions;
   };
 
-  private getPlaylists = async () => {
+  private getPlaylists = async (): Promise<PlaylistResource | false> => {
     this.writeStatus('Gettings playlists...');
-    this.playlists = <PlaylistResource>await this.resources.getResource({ name: 'playlists', bypassCache: true });  
+    this.playlists = <PlaylistResource>await this.resources.getResource({ name: 'playlists', bypassCache: true }).catch(e => this.handleException('getting playlists', e));
     this.writeStatus('');
     return this.playlists;
   };
@@ -57,9 +60,9 @@ export class SortLists {
     
     // Get new videos for each item in the subscriptionList.
     await Promise.all(
-      this.subscriptions.items.map(i => this.api.getChannelFeed(i.channelId, this.history.lastUpdated))
+      this.subscriptions.items.map(i => this.api.getChannelFeed(i.channelId, this.history.lastUpdated).catch(e => this.handleException('getting channel feed', e, true)))
     ).then((feeds) => {
-      feeds.forEach(f => this.newVideos = this.newVideos.concat(f));
+      feeds.forEach(f => this.newVideos = this.newVideos.concat(f || []));
       this.writeStatus(`  ${this.newVideos.length} new videos since ${new Date(this.history.lastUpdated).toISOString()}.`);
       this.writeStatus('');
     });
@@ -99,23 +102,14 @@ export class SortLists {
         .then(() => this.counts.processed++)
         .catch((e:any) => {
           this.counts.errors.new++;
+          this.handleException('sorting video', e, true);
           try {
             const req = JSON.parse(e.response.config.body);
-            this.writeStatus(`  Failed adding videoId: ${req.snippet.resourceId.videoId} to playlistId: ${req.snippet.playlistId}`);
-            //this.writeStatus('~~~~~~~~~~~~~~~')
-            //this.writeStatus(e.response.data.error.errors);
-            //this.writeStatus('~~~~~~~~~~~~~~~')
-  
+            this.writeStatus(`  Failed adding videoId: ${req.snippet.resourceId.videoId} to playlistId: ${req.snippet.playlistId}`);  
             const video = <Video>this.newVideos.find((v: Video) => v.videoId === req.snippet.resourceId.videoId);
-                     
-            // Do not re-add errored videos.
-            //if (!history.errorQueue.filter(e => e.videoId === req.snippet.resourceId.videoId)) {
-            this.errorQueue.items.push({ videoId: req.snippet.resourceId.videoId, playlistId: req.snippet.playlistId, errors: e.response.data.error.errors, video: video, failDate: Date.now() });
-            //}
-                      
-                      
-          } catch(e) {
-            this.writeStatus(String(e));
+            this.errorQueue.items.push({ videoId: req.snippet.resourceId.videoId, playlistId: req.snippet.playlistId, errors: e.response.data.error.errors, video: video, failDate: Date.now() });       
+          } catch(e:any) {
+            this.handleException('adding video to the error queue', e, true);
           }
         })
       )
@@ -150,9 +144,16 @@ export class SortLists {
   };
 
   private writeStatus = (status: string) => {
-    console.log(status);
+    log.debug(status);
     this.statusCallbacks.forEach(cb => cb(status + '\n'));
   };
+
+  private handleException(task: string, exception: Error, warning = false): void {
+    const errorType = warning ? 'WARNING' : 'ERROR';
+    const logMsg = `Exception caught while ${task}.`;
+    (warning ? log.warn : log.error)(logMsg, exception);
+    this.writeStatus(`${errorType}: Error encountered while ${task},`);
+  }
 
   public onStatus = (func: (status: string) => any) => {
     this.statusCallbacks.push(func);
@@ -168,12 +169,20 @@ export class SortLists {
     if (!await this.api.authenticate())
       return false;
 
-    await this.getSubscriptions();
+    if (!await this.getSubscriptions())
+      return false;
+
     await this.getPlaylists();
-    this.rules = <RulesResource>await this.resources.getResource({ name: 'rules' });
-    this.errorQueue = <ErrorQueueResource>await this.resources.getResource({ name: 'errorQueue' });
-    this.unsortedVideos = <UnsortedVideosResource>await this.resources.getResource({ name: 'unsortedVideos' });
-    this.history = <HistoryResource>await this.resources.getResource({ name: 'history' });
+    if (!this.playlists.lastUpdated)
+      return false;
+
+    this.rules = <RulesResource>await this.resources.getResource({ name: 'rules' }).catch(e => this.handleException('getting rules', e, true));
+    if (!this.rules.lastUpdated)
+      log.warn('No rules to process.');
+    
+    this.errorQueue = <ErrorQueueResource>await this.resources.getResource({ name: 'errorQueue' }).catch(e => this.handleException('getting the error queue', e, true));
+    this.unsortedVideos = <UnsortedVideosResource>await this.resources.getResource({ name: 'unsortedVideos' }).catch(e => this.handleException('getting unsorted videos', e, true));
+    this.history = <HistoryResource>await this.resources.getResource({ name: 'history' }).catch(e => this.handleException('getting run history', e, true));
     await this.sortErrorVideos();
     await this.sortUnsortedVideos();
     await this.getNewVideos();
@@ -188,13 +197,13 @@ export class SortLists {
     this.history.unsortedCount = this.counts.unsorted;
     this.history.errorCount = this.errorQueue.items.length;
 
-    await this.resources.cacheResource('history', this.history);
+    await this.resources.cacheResource('history', this.history).catch(e => this.handleException('caching run history', e, true));
 
     this.errorQueue.lastUpdated = Date.now();
-    await this.resources.cacheResource('errorQueue', this.errorQueue);
+    await this.resources.cacheResource('errorQueue', this.errorQueue).catch(e => this.handleException('caching error queue', e, true));
 
     this.unsortedVideos.lastUpdated = Date.now();
-    await this.resources.cacheResource('unsortedVideos', this.unsortedVideos);
+    await this.resources.cacheResource('unsortedVideos', this.unsortedVideos).catch(e => this.handleException('caching unsorted list', e, true));
     
     this.writeStatus('');
     this.writeStatus('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
