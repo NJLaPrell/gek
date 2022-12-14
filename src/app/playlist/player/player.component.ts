@@ -68,6 +68,8 @@ export class PlayerComponent {
   // Navigate to the video with the given videoId.
   goToVideo(videoId: string | undefined) {
     this.debug(`User:goToVideo(${videoId})`);
+    this.like = false;
+    this.dislike = false;
     if (videoId) {
       this.router.navigate(['/', 'playlist', this.playlistId, 'video', videoId]);
     }

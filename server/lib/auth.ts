@@ -28,7 +28,7 @@ export class UserAuthentication {
       if (!cachedToken) 
         return false;
 
-      const authClient = google.auth.fromJSON(cachedToken);
+      const authClient = google.auth.fromJSON(cachedToken, { forceRefreshOnFailure: true });
       if (authClient) {
         this.authClient = authClient;
         this.google.options({ auth: authClient });

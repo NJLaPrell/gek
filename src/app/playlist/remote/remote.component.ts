@@ -71,6 +71,8 @@ export class RemoteComponent {
     this.debug('onVideoEnded()');
     const nextVideoId = this.navState.nextVideo?.videoId;
     if (this.autoNextPref && nextVideoId) {
+      this.like = false;
+      this.dislike = false;
       this.router.navigate(['/', 'playlist', this.playlistId, 'video', nextVideoId]);
     }
   }
