@@ -36,10 +36,11 @@
 
     .center-buttons {
         div {
-            height: 80px;
+            height: 60px;
             button {
                 margin: 10px;
                 line-height: 40px;
+                width: 40px;
             }
         }
     }
@@ -48,6 +49,10 @@
         font-size: 5em;
     }
     
+}
+
+#moveToPlaylist::after {
+    display: none !important;
 }
 
 

@@ -56,6 +56,19 @@
                         <fa-icon [icon]="faArrowUpRightFromSquare"></fa-icon>
                     </button>
                 </div>
+                <div>
+                  <button type="button" class="btn btn-dark" (click)="keepVideo(video)">
+                      <fa-icon [icon]="faVault"></fa-icon>
+                  </button>
+                  <div class="d-inline-block" ngbDropdown container="body">
+                    <button id="moveToPlaylist" type="button" class="btn btn-dark" ngbTooltip="Move to Playlist..." ngbDropdownToggle><fa-icon [icon]="faArrowTurnUp"></fa-icon></button>
+                    <div ngbDropdownMenu style="max-height: 60vh; overflow-y:auto" aria-labelledby="moveToPlaylist">
+                        <ng-container *ngFor="let pl of playlists">
+                            <button (click)="moveToPlaylist(pl.id, video)" ngbDropdownItem>{{ pl.title }}</button>
+                        </ng-container>
+                    </div>
+                  </div>
+              </div>
             </div>
             <div class="col-sm-1">
                 <button type="button"

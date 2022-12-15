@@ -21,6 +21,9 @@
       padding-right: 10px;
       li {
         text-align: right;
+        button {
+          width: 30px;
+        }
       }      
       position: absolute;
       right: 4px;
@@ -79,4 +82,8 @@
 
         }
     }
+}
+
+#moveToPlaylist::after {
+  display: none !important;
 }

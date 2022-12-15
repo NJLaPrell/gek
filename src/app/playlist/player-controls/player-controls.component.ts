@@ -1,18 +1,19 @@
 import { Component, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import {
-  faVolumeXmark, faVolumeHigh, faPlay, faPause,
-  faArrowUpRightFromSquare, faEye, faThumbsUp,
-  faBackward, faForward, faTrashAlt, faThumbsDown
+  faVolumeXmark, faVolumeHigh, faPlay, faPause, faArrowUpRightFromSquare, faEye, faThumbsUp,
+  faBackward, faForward, faTrashAlt, faThumbsDown, faVault, faArrowTurnUp
 } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { ConfirmPromptComponent } from '../../modals/confirm-prompt/confirm-prompt.component';
 import { ToastService } from '../../services/toast.service';
-import { rateVideo, removeFromPlaylist } from '../../state/actions/video.actions';
+import { addToPlaylist, rateVideo, removeFromPlaylist } from '../../state/actions/video.actions';
 import { Video } from '../../state/models/video.model';
 import { sendCommand } from '../../state/actions/remote.actions';
 import { v4 as uuid } from 'uuid';
+import { selectPlaylistTitles } from 'src/app/state/selectors/list.selectors';
+import { selectKeepPlaylistPreference } from 'src/app/state/selectors/preferences.selectors';
 
 @Component({
   selector: 'app-player-controls',
@@ -31,6 +32,8 @@ export class PlayerControlsComponent {
   faPause = faPause;
   faVolumeXmark = faVolumeXmark;
   faVolumeHigh = faVolumeHigh;
+  faVault = faVault;
+  faArrowTurnUp = faArrowTurnUp;
 
   @Input() video: Video | undefined;
   @Input() playlistId = '';
@@ -62,12 +65,18 @@ export class PlayerControlsComponent {
 
   @ViewChild('endOfVideoToast') endOfVideoToast!: TemplateRef<any>;  // Template for the end of video toast.
 
+  playlists: any = [];
+  keepPlaylist: string | false = false;
+
   constructor(
     private store: Store,
     private router: Router,
     private toast: ToastService,
     private modalService: NgbModal
-  ) { }
+  ) {
+    this.store.select(selectPlaylistTitles).subscribe(pl => this.playlists = Object.keys(pl).map(plid => ({ id: plid, title: pl[plid] })).map(pl => ({ title: pl.title, id: pl.id })));
+    this.store.select(selectKeepPlaylistPreference).subscribe(p => this.keepPlaylist = p);
+  }
 
   sendCommand(command: any): void {
     this.store.dispatch(sendCommand( {
@@ -175,6 +184,23 @@ export class PlayerControlsComponent {
 
   seek() {
     this.sendCommand({ directive: 'seek', params: { value: this.progress } });
+  }
+
+  moveToPlaylist(playlistId: string, video: Video): void {
+    if (video.videoId) {
+      this.store.dispatch(addToPlaylist({ videoId: video.videoId, playlistId }));
+    }
+    if (video.playlistItemId) {
+      this.store.dispatch(removeFromPlaylist({ playlistItemId: video.playlistItemId }));
+    }
+  }
+
+  keepVideo(video: Video): void {
+    if (!this.keepPlaylist) {
+      this.toast.fail('You must first set a playlist to use as your "Keep" list in your preferences.', { delay: 10000});
+    } else {
+      this.store.dispatch(addToPlaylist({ videoId: video.videoId || '', playlistId: this.keepPlaylist }));
+    }
   }
 
 }
