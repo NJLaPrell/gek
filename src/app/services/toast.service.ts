@@ -10,30 +10,30 @@ const INFO_OPTIONS = { classname: 'bg-info text-dark'/*, delay: INFO_DELAY*/}
 
 @Injectable({ providedIn: 'root' })
 export class ToastService {
-	toasts: any[] = [];
+  toasts: any[] = [];
 
-	show(textOrTpl: string | TemplateRef<any>, options: any = {}) {
-		this.toasts.push({ textOrTpl, ...options });
-	}
+  show(textOrTpl: string | TemplateRef<any>, options: any = {}) {
+    this.toasts.push({ textOrTpl, ...options });
+  }
 
-	remove(toast: any) {
-		this.toasts = this.toasts.filter((t) => t !== toast);
-	}
+  remove(toast: any) {
+    this.toasts = this.toasts.filter((t) => t !== toast);
+  }
 
-	clear() {
-		this.toasts.splice(0, this.toasts.length);
-	}
+  clear() {
+    this.toasts.splice(0, this.toasts.length);
+  }
 
-	fail(textOrTpl: string | TemplateRef<any>, options: any = {}) {
-		this.toasts.push({ textOrTpl, ...FAIL_OPTIONS, ...options  });
-	}
+  fail(textOrTpl: string | TemplateRef<any>, options: any = {}) {
+    this.toasts.push({ textOrTpl, ...FAIL_OPTIONS, ...options  });
+  }
 
-	success(textOrTpl: string | TemplateRef<any>, options: any = {}) {
-		this.toasts.push({ textOrTpl, ...SUCCESS_OPTIONS_OPTIONS, ...options  });
-	}
+  success(textOrTpl: string | TemplateRef<any>, options: any = {}) {
+    this.toasts.push({ textOrTpl, ...SUCCESS_OPTIONS_OPTIONS, ...options  });
+  }
 
-	info(textOrTpl: string | TemplateRef<any>, options: any = {}) {
-		this.toasts.push({ textOrTpl, ...INFO_OPTIONS, ...options  });
-	}
+  info(textOrTpl: string | TemplateRef<any>, options: any = {}) {
+    this.toasts.push({ textOrTpl, ...INFO_OPTIONS, ...options  });
+  }
 
 }

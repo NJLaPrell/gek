@@ -88,7 +88,7 @@ export class PlayerControlsComponent {
   }
 
   onAlmostOver() {
-    this.toast.info(this.endOfVideoToast);
+    this.toast.info(this.endOfVideoToast, { delay: 30000 });
   }
 
   onVideoNav(video: Video) {
