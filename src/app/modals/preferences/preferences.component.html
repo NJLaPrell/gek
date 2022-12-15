@@ -50,8 +50,27 @@
         <div class="form-text">Automatically play the video when navigating to it.</div>
       </div>
       <div class="col-md-6">
+        <label class="d-inline-block">"Keep" Playlist:</label>
+        <div class="d-inline-block" ngbDropdown container="body">
+          <button id="keepPlaylist" type="button" class="btn btn-sm btn-dark mt-1" ngbDropdownToggle>{{ getKeepPlaylistName() }}</button>
+          <div ngbDropdownMenu style="max-height: 60vh; overflow-y:auto" aria-labelledby="keepPlaylist">
+              <ng-container *ngFor="let pl of playlists">
+                  <button ngbDropdownItem (click)="setKeepPlaylist(pl.id)">{{ pl.title }}</button>
+              </ng-container>
+          </div>
+        </div>
+        <div class="form-text">Assign a playlist to use when keeping a video with the keep (<fa-icon [icon]="faArrowTurnUp"></fa-icon>) button. </div>
+      </div>
+      
+    </div>
+
+    <div class="row mt-2">
+      <div class="col-md-6">
         <button type="button" class="btn btn-danger btn-sm" (click)="confirmDelete()"><fa-icon [icon]="faTrash"></fa-icon> Delete User Data</button>
         <div class="form-text">Delete all user data retained by Gek.</div>
+      </div>
+      <div class="col-md-6">
+
       </div>
     </div>
 

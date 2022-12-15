@@ -48,7 +48,6 @@ export class NotificationEffects {
         HistoryActions.purgeErrorBufferSuccess,
         HistoryActions.purgeUnsortedSuccess,
         HistoryActions.deleteUnsortedItemSuccess,
-        HistoryActions.deleteErrorItemSuccess,
         RulesActions.addRuleSuccess,
         RulesActions.deleteRuleSuccess,
         RulesActions.updateRuleSuccess,

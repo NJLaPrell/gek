@@ -1,6 +1,6 @@
 {
   "name": "gek",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "scripts": {
     "start": "ntl -o -s 10",
     "start:dev": "npm-run-all start-all watch-logs",

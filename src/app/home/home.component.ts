@@ -29,7 +29,7 @@ export class HomeComponent {
     private store: Store,
     private router: Router
   ) {
-    this.store.select(selectLists).pipe().subscribe(l => this.firstPlaylistId = l[0].playlistId || '');
+    this.store.select(selectLists).pipe().subscribe(l => this.firstPlaylistId = l[0]?.playlistId || '');
   }
 
 

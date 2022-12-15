@@ -16,7 +16,6 @@
 
     .video-links {
       opacity: 0;
-      width: 100%;
       list-style-type: none;
       margin: 0px;
       padding-right: 10px;
@@ -24,6 +23,7 @@
         text-align: right;
       }      
       position: absolute;
+      right: 4px;
       top: 10px;
     }
 

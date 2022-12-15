@@ -31,3 +31,8 @@ export const selectAutoPlayPreference = createSelector(
   preferencesState,
   (state) => state.items.find(i => i.name === 'autoPlay')?.value || false
 );
+
+export const selectKeepPlaylistPreference = createSelector(
+  preferencesState,
+  (state) => state.items.find(i => i.name === 'keepPlaylist')?.value || false
+);

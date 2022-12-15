@@ -97,6 +97,9 @@ export class SortLists {
       }  
     });
   
+    const sortedresults = await this.threadedSort(this.updateQueue);
+
+    /*
     const sortedresults = await Promise.all(
       this.updateQueue.map((q:any) => this.api.addToPlaylist(q.playlistId, q.videoId)
         .then(() => this.counts.processed++)
@@ -114,9 +117,44 @@ export class SortLists {
         })
       )
     );
+    */
       
     this.writeStatus('');
     return sortedresults;
+  };
+
+  private threadedSort = async (queue: any, threads = 2, results: any[] = []): Promise<any> => {
+    let thread = 1;
+    const jobQueue = [];
+    while (thread <= threads && queue.length) {
+      const q = queue.pop();
+      jobQueue.push(
+        this.api.addToPlaylist(q.playlistId, q.videoId)
+          .then(() => this.counts.processed++)
+          .catch((e:any) => {
+            this.counts.errors.new++;
+            this.handleException('sorting video', e, true);
+            try {
+              const req = JSON.parse(e.response.config.body);
+              this.writeStatus(`  Failed adding videoId: ${req.snippet.resourceId.videoId} to playlistId: ${req.snippet.playlistId}`);  
+              const video = <Video>this.newVideos.find((v: Video) => v.videoId === req.snippet.resourceId.videoId);
+              this.errorQueue.items.push({ videoId: req.snippet.resourceId.videoId, playlistId: req.snippet.playlistId, errors: e.response.data.error.errors, video: video, failDate: Date.now() });       
+            } catch(e:any) {
+              this.handleException('adding video to the error queue', e, true);
+            }
+          })
+      );
+      thread++;
+    }
+
+    const sortedresults = await Promise.all(jobQueue);
+    results = results.concat(sortedresults || []);
+
+    if (queue.length) {  
+      return await this.threadedSort(queue, threads, results);
+    } else {
+      return results;
+    }
   };
 
   private sortUnsortedVideos = async () => {

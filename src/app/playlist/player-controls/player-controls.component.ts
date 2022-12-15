@@ -156,6 +156,8 @@ export class PlayerControlsComponent {
   }
 
   goToVideo(videoId: string) {
+    this.likeChange.emit(false);
+    this.dislikeChange.emit(false);
     this.router.navigate(['/', 'playlist', this.playlistId, 'video', videoId]);
   }
 
