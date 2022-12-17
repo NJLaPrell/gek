@@ -4,7 +4,7 @@
   </div>
 
   <div id="top-bar">
-    <app-top-bar (onPlaylistsClicked)="toggleSidebar()" [authenticated]="authenticated"></app-top-bar>
+    <app-top-bar [authenticated]="authenticated"></app-top-bar>
   </div>
 
   <div class="d-flex flex-row flex-grow-1 overflow-y-none">
@@ -14,11 +14,20 @@
         <fa-icon [icon]="faCircleChevronLeft" class="icon-button float-end" style="font-size: 1.3em;" (click)="toggleSidebar()"></fa-icon>
       </div>
       <div id="side-bar-content" class="overflow-y-auto">
-        <app-side-bar></app-side-bar>
+        <app-side-bar (onNavigatePlaylist)="navigatePlaylist()"></app-side-bar>
       </div>
     </div>
 
+
+    
     <div id="body" class="flex-grow-1 overflow-y-none h-100">
+      <button *ngIf="!showSidebar && mode !== 'viewer' && authenticated"
+        id="openSidebarButton"
+        class="btn btn-dark"
+        (click)="toggleSidebar()"
+        ngbTooltip="Show Playlists">
+        <fa-icon [icon]="faAngleRight"></fa-icon>
+      </button>
       <div id="body-header"></div>
       <div id="body-content" class="overflow-y-auto position-relative">
 

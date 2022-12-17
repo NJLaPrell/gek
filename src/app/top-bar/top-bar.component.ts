@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
-  faList, faRocket, faRotate, faClipboardList, faTrashCan,
+  faRocket, faRotate, faClipboardList, faTrashCan,
   faTriangleExclamation, faTableList, faUserGear, faSquareXmark, faTv, faTabletScreenButton,
   faRightFromBracket, faUser
 } from '@fortawesome/free-solid-svg-icons';
@@ -25,7 +25,7 @@ import { ToastService } from '../services/toast.service';
   styleUrls: ['./top-bar.component.scss']
 })
 export class TopBarComponent {
-  faList = faList;
+  // Font Awesome
   faRocket = faRocket;
   faRotate = faRotate;
   faClipboardList = faClipboardList;
@@ -51,8 +51,6 @@ export class TopBarComponent {
   displayName = '';
 
   @Input() authenticated = false;
-  
-  @Output() onPlaylistsClicked: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(
     private modalService: NgbModal,
@@ -75,10 +73,6 @@ export class TopBarComponent {
       this.selfConnected = c;
     });
     this.store.select(selectDisplayName).subscribe(n => this.displayName = n);
-  }
-
-  togglePlaylists() {
-    this.onPlaylistsClicked.emit();
   }
 
   openUnsorted() {

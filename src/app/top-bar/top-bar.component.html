@@ -8,10 +8,6 @@
     <span *ngIf="!environment.production" class="ms-2 text-danger">(DEV)</span>
   </div>
 
-  <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="togglePlaylists()" title="Toggle Playlists">
-    <fa-icon [icon]="faList"></fa-icon>
-    <span class="buttonTitle"> Playlists</span>
-  </button>
   <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="sortVideos()" title="Sort Videos Now">
     <fa-icon [icon]="faRocket"></fa-icon>
     <span class="buttonTitle"> Sort Videos</span>

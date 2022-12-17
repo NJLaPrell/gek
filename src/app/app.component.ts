@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import {  Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import { faCircleChevronLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { selectPageTitle } from './state/selectors/navState.selectors';
 import { selectConnected, selectPeerConnected, selectRemoteMode } from './state/selectors/remote.selectors';
 import { selectLastRun } from './state/selectors/history.selectors';
 import { skipWhile } from 'rxjs';
 import { selectAuthenticated } from './state/selectors/auth.selectors';
+import { selectStickypPlaylistPreference } from './state/selectors/preferences.selectors';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +15,9 @@ import { selectAuthenticated } from './state/selectors/auth.selectors';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+  // Font Awesome
   faCircleChevronLeft = faCircleChevronLeft;
+  faAngleRight = faAngleRight;
 
   pageTitle = '';
   showSidebar = true;
@@ -25,11 +28,14 @@ export class AppComponent implements OnInit {
   mode = '';
   connected = false;
   peerConnected = false;
+  stickyPlaylist = true;
 
   constructor(
     private store: Store,
     private router: Router
-  ) { }
+  ) {
+    this.store.select(selectStickypPlaylistPreference).subscribe((sticky: boolean) => this.stickyPlaylist = sticky);
+  }
 
   ngOnInit() {
     this.store.select(selectPageTitle).pipe(skipWhile(t => !t || t === 'undefined')).subscribe(t => this.pageTitle = t);
@@ -64,6 +70,12 @@ export class AppComponent implements OnInit {
       }
     } else if ((this.connected || this.peerConnected) && !disconnect) {
       this.router.navigate(['/', 'connecting']);
+    }
+  }
+
+  navigatePlaylist(): void {
+    if (!this.stickyPlaylist) {
+      this.toggleSidebar();
     }
   }
 

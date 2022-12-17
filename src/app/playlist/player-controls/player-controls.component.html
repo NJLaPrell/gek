@@ -7,7 +7,7 @@
             &nbsp; | &nbsp; Published: {{ video.publishedAt | fromNow }}
         </div>
 
-        <div #description class="video-description text-truncate text-start p-3 pe-auto" [innerHtml]="video.description || '' | safeHtml" (click)="description.classList.toggle('text-truncate')"></div>
+        <div #description class="video-description text-truncate text-start p-3 pe-auto alert bg-dark me-3" [innerHtml]="video.description || '' | safeHtml" (click)="description.classList.toggle('text-truncate')"></div>
 
         <div *ngIf="showRemote">
             <input name="progress" [(ngModel)]="progress" type="range" class="form-range" min="0" [max]="duration" step="1" id="progress" (change)="onProgressChanged()">
