@@ -41,7 +41,8 @@ export class PreferencesComponent {
         autoNext: this.getPref('autoNext'),
         almostDonePrompt: this.getPref('almostDonePrompt'),
         autoPlay: this.getPref('autoPlay'),
-        keepPlaylist: this.getPref('keepPlaylist')
+        keepPlaylist: this.getPref('keepPlaylist'),
+        stickyPlaylist: this.getPref('stickyPlaylist')
       };
     });
 
@@ -57,7 +58,8 @@ export class PreferencesComponent {
       { name: 'autoNext', value: this.prefs.autoNext },
       { name: 'almostDonePrompt', value: this.prefs.almostDonePrompt },
       { name: 'autoPlay', value: this.prefs.autoPlay },
-      { name: 'keepPlaylist', value: this.prefs.keepPlaylist }
+      { name: 'keepPlaylist', value: this.prefs.keepPlaylist },
+      { name: 'stickyPlaylist', value: this.prefs.stickyPlaylist }
     ];
     this.store.dispatch(setPreferences({ lastUpdated: false, items: prefs }));
     this.activeModal.close();
@@ -79,10 +81,8 @@ export class PreferencesComponent {
   }
 
   setKeepPlaylist(id: string) {
-    console.log('setKeepPlaylist', id);
     this.prefs.keepPlaylist = id;
     const ix = this.preferences.findIndex(p => p.name === 'keepPlaylist');
-    console.log(ix);
     if (ix === -1) {
       this.preferences.push({ name: 'keepPlaylist', value: id });
     } else {

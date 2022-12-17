@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { faList } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { Playlist } from 'src/app/state/models/list.model';
@@ -15,8 +15,11 @@ import { selectLists } from 'src/app/state/selectors/list.selectors';
 export class PlaylistsComponent {
   faList = faList;
 
+  @Output() onNavigatePlaylist: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   playlists: Playlist[];
   selectedPlaylist: string;
+  stickyPlaylist = true;
 
   constructor(
     private store: Store,
@@ -29,6 +32,7 @@ export class PlaylistsComponent {
   }
 
   onPlaylistClicked(playlistId: string): void {
+    this.onNavigatePlaylist.emit(true);
     this.router.navigate(['/', 'playlist', playlistId]);
   }
 

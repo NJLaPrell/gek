@@ -1,20 +1,22 @@
-<app-video-embed
-    [videoId]="video.videoId || ''"
-    (almostOver)="onAlmostOver($event)"
-    (videoEnded)="onVideoEnded($event)"
-    (ready)="onReady($event)"
-    (apiChange)="onApiChange($event)"
-    (error)="onError($event)"
-    [autoPlay]="autoPlayPref"
-    [duration]="video.duration || '0'"
-></app-video-embed>
+<div class="text-center">
+  <app-video-embed
+      [videoId]="video.videoId || ''"
+      (almostOver)="onAlmostOver($event)"
+      (videoEnded)="onVideoEnded($event)"
+      (ready)="onReady($event)"
+      (apiChange)="onApiChange($event)"
+      (error)="onError($event)"
+      [autoPlay]="autoPlayPref"
+      [duration]="video.duration || '0'"
+  ></app-video-embed>
 
-<app-player-controls #playerControls
-    [video]="video"
-    [playlistId]="playlistId"
-    [navState]="navState"
-    [(like)]="like"
-    [(dislike)]="dislike"
-    [(muted)]="muted"
-    [(playing)]="playing"
-></app-player-controls>
+  <app-player-controls #playerControls
+      [video]="video"
+      [playlistId]="playlistId"
+      [navState]="navState"
+      [(like)]="like"
+      [(dislike)]="dislike"
+      [(muted)]="muted"
+      [(playing)]="playing"
+  ></app-player-controls>
+</div>
