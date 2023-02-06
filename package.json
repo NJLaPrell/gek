@@ -1,6 +1,6 @@
 {
   "name": "gek",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "scripts": {
     "start": "ntl -o -s 10",
     "start:dev": "npm-run-all start-all watch-logs",
@@ -103,7 +103,7 @@
     "rimraf": "^3.0.2",
     "shelljs": "^0.8.5",
     "ts-node": "^10.9.1",
-    "typescript": "~4.7.2"
+    "typescript": "^4.9.5"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.7",
