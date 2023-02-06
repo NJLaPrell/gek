@@ -65,6 +65,15 @@ export class APIRoutes {
         })
         .catch((e: any) => res.status(e?.code || 500).json({ error: e?.message || e }));
     });
+
+    app.put('/api/resources/orderRule', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
+      log.debug('PUT: /api/resources/ordereRule');
+      new ResourceLoader(req.user.id, log).orderResourceItem('rules', 'id', req.body.id, req.body.index)
+        .then(() => {
+          res.status(204).send();
+        })
+        .catch((e: any) => res.status(e?.code || 500).json({ error: e?.message || e }));
+    });
     
     app.post('/api/resources/addRule', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       log.debug('POST: /api/resources/addRule');
