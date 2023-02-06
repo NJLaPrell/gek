@@ -50,7 +50,12 @@ export class UnsortedComponent implements OnInit {
   purge() {
     const modalRef = this.modalService.open(ConfirmPromptComponent);
     modalRef.componentInstance.prompt = 'Are you sure you wish to purge the list of unsorted videos?';
-    modalRef.closed.subscribe(c => c === 'Continue click' ? this.store.dispatch(purgeUnsorted()) : null);
+    modalRef.closed.subscribe(c => {
+      if (c === 'Continue click') {
+        this.store.dispatch(purgeUnsorted());
+        this.activeModal.close();
+      }
+    });    
   }
 
   getPlaylistTitle(id: string): string {
@@ -75,6 +80,10 @@ export class UnsortedComponent implements OnInit {
 
   getUnsortedCount() {
     return this.showErrors ? this.unsorted.length : this.unsorted.filter(u => !u?.errorMessage).length;
+  }
+
+  openVideo(videoId: string) {
+    window.open('https://www.youtube.com/watch?v=' + videoId);
   }
 
  

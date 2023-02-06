@@ -15,8 +15,8 @@
 }
 
 .unsorted-thumbnail {
-    width: 80px !important;
-    height: 60px;
+    width: 160px !important;
+    height: 120px;
     float: left;
     margin-right: 4px;
 }
@@ -44,4 +44,30 @@
 
 .unsorted-chanel {
     width: 200px;
+}
+
+.channelLink {
+  text-decoration: none;
+  font-size: 1.2em;
+  font-weight: 700;
+
+  font-family: 'Patrick Hand', cursive;
+  color: #309E10;
+
+
+  &:hover {
+    color: #CBC660;
+  }
+}
+
+.description {
+  cursor:pointer;
+  color: #AAA;
+}
+
+.description-truncate {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
 }
