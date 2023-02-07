@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { concat, Observable, of } from 'rxjs';
+import { concat, map, Observable, of, skipWhile } from 'rxjs';
 import { AppState } from './state';
 import { getAuthState } from './state/actions/auth.actions';
 import { getHistory } from './state/actions/history.actions';
@@ -18,7 +18,10 @@ export class InitializerService {
         private injector: Injector,
         private store: Store<AppState>
   ) { 
-    this.store.select(selectAuthenticated).subscribe(authenticated => this.initApp(authenticated));
+    this.store.select(selectAuthenticated).pipe(
+      skipWhile(auth => typeof auth === 'undefined'),
+      map(auth => Boolean(auth)),
+    ).subscribe(authenticated => this.initApp(authenticated));
   }
 
   private initApp(authenticated: boolean) {

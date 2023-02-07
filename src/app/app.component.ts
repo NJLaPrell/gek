@@ -5,7 +5,7 @@ import { faCircleChevronLeft, faAngleRight } from '@fortawesome/free-solid-svg-i
 import { selectPageTitle } from './state/selectors/navState.selectors';
 import { selectConnected, selectPeerConnected, selectRemoteMode } from './state/selectors/remote.selectors';
 import { selectLastRun } from './state/selectors/history.selectors';
-import { skipWhile } from 'rxjs';
+import { map, skipWhile } from 'rxjs';
 import { selectAuthenticated } from './state/selectors/auth.selectors';
 import { selectStickypPlaylistPreference } from './state/selectors/preferences.selectors';
 
@@ -54,7 +54,10 @@ export class AppComponent implements OnInit {
       
     }); 
     this.store.select(selectLastRun).subscribe(t => this.lastUpdated = t);
-    this.store.select(selectAuthenticated).subscribe(auth => this.authenticated = auth);
+    this.store.select(selectAuthenticated).pipe(
+      skipWhile(auth => typeof auth === 'undefined'),
+      map(auth => Boolean(auth)),
+    ).subscribe(auth => this.authenticated = auth);
   }
 
   toggleSidebar() {
