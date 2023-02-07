@@ -1,4 +1,7 @@
-<h2 id="page-title">{{ pageTitle }}</h2>
+<h2 id="page-title">
+  <a [routerLink]="'/playlist/' + playlistId" class="title-nav-link">{{ playlistTitle }}</a>
+  <span *ngIf="video"> > <a [routerLink]="'/playlist/' + playlistId + '/' + video.title" class="title-nav-link">{{ video.title }}</a></span>
+</h2>
 <div id="lastUpdated" class="text-muted ps-2">
   Last Updated: {{ lastUpdated | amTimeAgo }}
   <button type="button" class="btn btn-sm btn-dark">

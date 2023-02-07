@@ -28,14 +28,14 @@ export class PlaylistComponent {
   loading: boolean;
   navState: NavState = initialNavState;
   globalNavState!: NavState;
-  pageTitle = 'YouTube Playlists';
+  playlistTitle = 'YouTube Playlists';
   lastUpdated!: number;
   playlistLoading: boolean;
   
-
+  
   constructor(
     private store: Store,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
   ) {
     this.playlistLoading = false;
     this.loading = false;
@@ -73,7 +73,7 @@ export class PlaylistComponent {
       .subscribe(r => {
         this.playlistLoading = false;
         this.videoList = <Video[]>[...r.videoList];
-        this.pageTitle = r.titleLookup[this.playlistId] || 'YouTube Playlists';
+        this.playlistTitle = r.titleLookup[this.playlistId] || 'YouTube Playlists';
         this.lastUpdated = r.lastUpdated;
         if (r.routeParams.videoId) {
           const v = this.videoList.find(v => v.videoId == r.routeParams.videoId);
@@ -82,13 +82,11 @@ export class PlaylistComponent {
             this.video = v;
             const vIx = this.videoList.findIndex(v => v.videoId === this.video.videoId);
             this.navState.currentVideo = v;
-            this.navState.pageTitle = `${this.pageTitle} > ${this.video.title}`;
             this.navState.videoId = this.video.videoId ?? '';
             this.navState.videoTitle = this.video.title;
             this.navState.nextVideo = this.videoList.length > vIx + 1 ? this.videoList[vIx + 1] : false;
             this.navState.previousVideo = vIx > 0 ? this.videoList[vIx - 1] : false;
           }
-          this.pageTitle += ' > ' + this.video?.title;
         }
 
         if(this.videoList.length) {
