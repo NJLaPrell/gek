@@ -20,6 +20,7 @@
         <div class="row">
             <div class="col-sm-3 next-prev video-prev">
                 <div class="text-end m-0 p-0">
+                    <span class="next-prev-text">Previous:</span>
                     <img *ngIf="navState.previousVideo" class="videoThumbnail" [src]="navState.previousVideo.thumbnail" />       
                 </div>
                 <div *ngIf="navState.previousVideo" class="text-truncate">{{ navState.previousVideo.title }}</div>
@@ -29,7 +30,7 @@
                     <span class="publish-date">{{ navState.previousVideo.publishedAt | fromNow }}</span>
                 </div>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-1 next-prev-col">
                 <button type="button"
                     [disabled]="!navState.previousVideo"
                     class="btn btn-dark next-prev-btn"
@@ -70,7 +71,7 @@
                   </div>
               </div>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-1 next-prev-col next-col">
                 <button type="button"
                     [disabled]="!navState.nextVideo"
                     class="btn btn-dark next-prev-btn"
@@ -82,7 +83,8 @@
             </div>
             <div class="col-sm-3 next-prev video-next">
                 <div class="text-start m-0 p-0">
-                    <img *ngIf="navState.nextVideo" class="videoThumbnail" [src]="navState.nextVideo.thumbnail" />       
+                    <span class="next-prev-text">Up Next:</span>  
+                    <img *ngIf="navState.nextVideo" class="videoThumbnail" [src]="navState.nextVideo.thumbnail" />     
                 </div>
                 <div *ngIf="navState.nextVideo" class="text-truncate">{{ navState.nextVideo.title }}</div>
                 <div *ngIf="navState.nextVideo" class="text-truncate">

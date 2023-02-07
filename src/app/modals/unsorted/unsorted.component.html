@@ -1,6 +1,6 @@
 <div class="modal-header bg-dark text-light">
     <h4 class="modal-title">Unsorted Videos ({{ unsorted.length }})</h4>
-    <button type="button" class="btn-close btn-dark" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+    <button type="button" class="btn-close btn-dark" aria-label="Close" style="background-color: #AAA;" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body bg-dark">
     <table class="table table-dark table-responsive table-striped table-hover table-sm" style="table-layout:fixed;">
@@ -49,13 +49,14 @@
                   ngbTooltip="Click to open in a new window"
                   style="cursor:pointer;"
                 />
-                <div class="unsorted-title">{{ u?.title }}</div>
-                <div class="unsorted-details">Published {{ moment(u?.published).fromNow() }}</div>
                 <div #description 
                   class="description description-truncate"
                   (click)="description.classList.toggle('description-truncate')"
                   ngbTooltip="Click to show/hide more"
                 >{{ u?.description }}</div>
+                <div class="unsorted-title w-100">{{ u?.title }}</div>
+                <div class="unsorted-details">Published {{ moment(u?.published).fromNow() }}</div>
+                
             </td> 
                 
           </tr>

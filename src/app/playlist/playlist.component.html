@@ -26,19 +26,19 @@
 <app-video-list *ngIf="!videoId && playlistId" [playlistId]="playlistId" [videoList]="videoList"></app-video-list>
 
 <div id="playerContainer">
-    <app-player *ngIf="videoId && mode === 'player'"
+    <app-player *ngIf="video && mode === 'player'"
         [playlistId]="playlistId"
         [video]="video"
         [navState]="navState"
     ></app-player>
 
-    <app-remote *ngIf="videoId && mode === 'remote'"
+    <app-remote *ngIf="video && mode === 'remote'"
         [playlistId]="playlistId"
         [video]="video"
         [navState]="navState"
     ></app-remote>
 
-    <app-viewer *ngIf="videoId && mode === 'viewer'"
+    <app-viewer *ngIf="video && mode === 'viewer'"
         [playlistId]="playlistId"
         [video]="video"
         [navState]="navState"

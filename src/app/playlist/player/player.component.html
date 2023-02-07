@@ -1,4 +1,4 @@
-<div class="text-center">
+<div class="text-center" *ngIf="video">
   <app-video-embed
       [videoId]="video.videoId || ''"
       (almostOver)="onAlmostOver($event)"

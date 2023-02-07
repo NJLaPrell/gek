@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { faCircleChevronLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
@@ -29,12 +29,15 @@ export class AppComponent implements OnInit {
   connected = false;
   peerConnected = false;
   stickyPlaylist = true;
+  screenHeight = 0;
+  screenWidth = 0;
 
   constructor(
     private store: Store,
     private router: Router
   ) {
     this.store.select(selectStickypPlaylistPreference).subscribe((sticky: boolean) => this.stickyPlaylist = sticky);
+    this.getScreenSize();
   }
 
   ngOnInit() {
@@ -60,6 +63,13 @@ export class AppComponent implements OnInit {
     ).subscribe(auth => this.authenticated = auth);
   }
 
+  @HostListener('window:resize', ['$event'])
+  getScreenSize(event?: any) {
+    this.screenHeight = window.innerHeight;
+    this.screenWidth = window.innerWidth;
+    console.log(this.screenHeight, this.screenWidth, event);
+  }
+
   toggleSidebar() {
     this.showSidebar = !this.showSidebar;
   }
@@ -77,7 +87,7 @@ export class AppComponent implements OnInit {
   }
 
   navigatePlaylist(): void {
-    if (!this.stickyPlaylist) {
+    if (!this.stickyPlaylist || this.screenWidth <= 400) {
       this.toggleSidebar();
     }
   }

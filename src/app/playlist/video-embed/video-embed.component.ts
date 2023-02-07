@@ -63,7 +63,7 @@ export class VideoEmbedComponent implements OnInit {
   onResize = (): void => {
     if (!this.player)
       return;
-    this.width = Math.min(this.player.nativeElement.clientWidth, 1200);
+    this.width = Math.min(this.player.nativeElement.clientWidth, 400);
     this.height = this.width * 0.6;
     this._changeDetectorRef.detectChanges();
   };
