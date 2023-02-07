@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { Video } from 'src/app/state/models/video.model';
 import { selectErrorQueue, selectUnsorted } from 'src/app/state/selectors/history.selectors';
 import * as moment from 'moment';
-import { faTrash, faInfoCircle, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faInfoCircle, faTriangleExclamation, faArrowTurnUp } from '@fortawesome/free-solid-svg-icons';
 import { deleteErrorItem, deleteUnsortedItem, purgeUnsorted } from 'src/app/state/actions/history.actions';
 import { ConfirmPromptComponent } from '../confirm-prompt/confirm-prompt.component';
 import { selectPlaylistTitles } from 'src/app/state/selectors/list.selectors';
@@ -20,6 +20,7 @@ export class UnsortedComponent implements OnInit {
   faTrash = faTrash;
   faInfoCircle = faInfoCircle;
   faTriangleExclamation = faTriangleExclamation;
+  faArrowTurnUp = faArrowTurnUp;
 
   // State
   unsorted: Video[] = [];

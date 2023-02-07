@@ -4,29 +4,30 @@
 </div>
 <div class="modal-body bg-dark">
     <table class="table table-dark table-responsive table-striped table-hover table-sm" style="table-layout:fixed;">
-        <thead>
-            <tr>
-                <th class="unsorted-status">&nbsp;</th>
-                <th class="unsorted-chanel">Channel</th>
-                <th class="unsorted-video">Video</th>
-                <th class="unsorted-button-panel">&nbsp;</th>
-            </tr>
-        </thead>
         <tbody>
-            
-            <tr *ngFor="let u of unsorted">
+          <tr *ngFor="let u of unsorted">
                 
-              <td class="unsorted-status"><span *ngIf="u?.errorMessage" class="errorMessage" [ngbTooltip]="moment(u.errorMessage.failDate).fromNow() + ' - ' + u.errorMessage.errors[0].message"><fa-icon [icon]="faTriangleExclamation"></fa-icon></span></td>
-              <td class="unsorted-chanel"><a [href]="'https://www.youtube.com/channel/' + u.channelId" target="_blank" class="channelLink">{{ u?.channelName }}</a></td>
-              <td class="unsorted-video">
-                  <img class="unsorted-thumbnail" [src]="u?.thumbnail" (click)="openVideo(u.videoId || '')" ngbTooltip="Click to open in a new window" style="cursor:pointer;" />
-                  <div class="unsorted-title">{{ u?.title }}</div>
-                  <div class="unsorted-details">Published {{ moment(u?.published).fromNow() }}</div>
-                  <div #description class="description description-truncate" (click)="description.classList.toggle('description-truncate')" ngbTooltip="Click to show/hide more">{{ u?.description }}</div>
+              <td class="unsorted-status">
+                <span *ngIf="u?.errorMessage"
+                  class="errorMessage"
+                  [ngbTooltip]="moment(u.errorMessage.failDate).fromNow() + ' - ' + u.errorMessage.errors[0].message"
+                >
+                  <fa-icon [icon]="faTriangleExclamation"></fa-icon>
+                </span>
               </td>
-              <td class="text-end unsorted-button-panel">
+
+              <td>
+                <div class="text-end unsorted-button-panel float-end">
                   <div ngbDropdown class="d-inline-block" container="body">
-                      <button type="button" class="btn btn-dark btn-sm" [id]="'assign' + u?.id" ngbDropdownToggle>Move to Playlist</button>
+                      <button type="button"
+                        class="btn btn-dark btn-sm"
+                        [id]="'assign' + u?.id"
+                        ngbDropdownToggle
+                        container="body"
+                        ngbTooltip="Move to Playlist"
+                      >
+                        <fa-icon [icon]="faArrowTurnUp"></fa-icon>
+                      </button>
                       <div ngbDropdownMenu style="max-height: 60vh; overflow-y:auto">
                           <ng-container *ngFor="let pl of playlists">
                               <button (click)="moveToPlaylist(pl.id, u?.videoId || '')" ngbDropdownItem>{{ pl.title }}</button>
@@ -34,11 +35,31 @@
                       </div>
                   </div>
                   &nbsp;
-                  <button type="button" class="btn btn-danger btn-sm" (click)="deleteItem(u)" ngbTooltip="Remove from the list."><fa-icon [icon]="faTrash"></fa-icon></button>
-              </td>
+                  <button type="button" class="btn btn-danger btn-sm" (click)="deleteItem(u)" ngbTooltip="Remove from the list.">
+                    <fa-icon [icon]="faTrash"></fa-icon>
+                  </button>
+                </div>
+
+                <a [href]="'https://www.youtube.com/channel/' + u.channelId" target="_blank" class="channelLink">
+                  {{ u?.channelName }}
+                </a><br />
+                <img class="unsorted-thumbnail"
+                  [src]="u?.thumbnail"
+                  (click)="openVideo(u.videoId || '')"
+                  ngbTooltip="Click to open in a new window"
+                  style="cursor:pointer;"
+                />
+                <div class="unsorted-title">{{ u?.title }}</div>
+                <div class="unsorted-details">Published {{ moment(u?.published).fromNow() }}</div>
+                <div #description 
+                  class="description description-truncate"
+                  (click)="description.classList.toggle('description-truncate')"
+                  ngbTooltip="Click to show/hide more"
+                >{{ u?.description }}</div>
+            </td> 
                 
-            </tr>
-        </tbody>
+          </tr>
+      </tbody>
     </table>
 </div>
 <div class="modal-footer bg-dark">

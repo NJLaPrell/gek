@@ -8,9 +8,9 @@
 
 .unsorted-title {
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
-    font-size: 0.8em;
+    font-size: 1.4em;
     overflow:hidden;
 }
 
@@ -42,18 +42,12 @@
     width: 20px;
 }
 
-.unsorted-chanel {
-    width: 200px;
-}
-
 .channelLink {
   text-decoration: none;
-  font-size: 1.2em;
+  font-size: 1.4em;
   font-weight: 700;
-
   font-family: 'Patrick Hand', cursive;
   color: #309E10;
-
 
   &:hover {
     color: #CBC660;
@@ -68,6 +62,6 @@
 .description-truncate {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 6;
   overflow: hidden;
 }
