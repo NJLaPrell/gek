@@ -20,7 +20,7 @@
 
 
     
-    <div id="body" class="flex-grow-1 overflow-y-none h-100">
+    <div id="body" class="flex-grow-1 overflow-y-none h-100" [class.body-with-sidebar]="showSidebar && mode !== 'viewer' && authenticated">
       <button *ngIf="!showSidebar && mode !== 'viewer' && authenticated"
         id="openSidebarButton"
         class="btn btn-dark"
