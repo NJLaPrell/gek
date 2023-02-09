@@ -11,10 +11,10 @@ export interface TsAppVersion {
 export const versions: TsAppVersion = {
     version: '0.11.0',
     name: 'gek',
-    versionDate: '2023-02-07T23:36:21.932Z',
-    gitCommitHash: 'g27f42b4',
-    gitCommitDate: '2023-02-07T02:34:09.000Z',
-    versionLong: '0.11.0-g27f42b4',
+    versionDate: '2023-02-09T22:16:46.690Z',
+    gitCommitHash: 'g19eba49',
+    gitCommitDate: '2023-02-09T22:16:22.000Z',
+    versionLong: '0.11.0-g19eba49',
     gitTag: 'v0.10.0-beta',
 };
 export default versions;

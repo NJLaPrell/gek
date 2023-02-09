@@ -199,7 +199,7 @@ export class PlayerControlsComponent {
 
   keepVideo(video: Video): void {
     if (!this.keepPlaylist) {
-      this.toast.fail('You must first set a playlist to use as your "Keep" list in your preferences.', { delay: 10000});
+      this.toast.fail('You must first set a playlist to use as your "Keep" list in your preferences.', { delay: 10000 });
     } else {
       this.store.dispatch(addToPlaylist({ videoId: video.videoId || '', playlistId: this.keepPlaylist }));
     }
