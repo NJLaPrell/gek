@@ -28,7 +28,7 @@
                       >
                         <fa-icon [icon]="faArrowTurnUp"></fa-icon>
                       </button>
-                      <div ngbDropdownMenu style="max-height: 60vh; overflow-y:auto">
+                      <div ngbDropdownMenu style="max-height: 40vh; overflow-y:auto">
                           <ng-container *ngFor="let pl of playlists">
                               <button (click)="moveToPlaylist(pl.id, u?.videoId || '')" ngbDropdownItem>{{ pl.title }}</button>
                           </ng-container>

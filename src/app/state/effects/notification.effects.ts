@@ -48,13 +48,13 @@ export class NotificationEffects {
       ofType(
         HistoryActions.purgeErrorBufferSuccess,
         HistoryActions.purgeUnsortedSuccess,
-        //HistoryActions.deleteUnsortedItemSuccess,
+        HistoryActions.deleteUnsortedItemSuccess,
         RulesActions.addRuleSuccess,
         RulesActions.deleteRuleSuccess,
         RulesActions.updateRuleSuccess,
         VideoActions.addToPlaylistSuccess,
         VideoActions.rateVideoSuccess,
-        //VideoActions.removeFromPlaylistSuccess,
+        VideoActions.removeFromPlaylistSuccess,
         PreferencesActions.setPreferencesSuccess
       ),
       tap((action) => {
