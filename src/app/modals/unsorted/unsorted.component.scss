@@ -52,3 +52,9 @@
   -webkit-line-clamp: 5;
   overflow: hidden;
 }
+
+.playlist-menu {
+  max-height: 40vh;
+  overflow-y:auto;
+  max-width: 300px;
+}

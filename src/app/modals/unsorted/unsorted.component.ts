@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { Video } from 'src/app/state/models/video.model';
@@ -8,14 +8,16 @@ import { faTrash, faInfoCircle, faTriangleExclamation, faArrowTurnUp } from '@fo
 import { deleteErrorItem, deleteUnsortedItem, purgeUnsorted } from 'src/app/state/actions/history.actions';
 import { ConfirmPromptComponent } from '../confirm-prompt/confirm-prompt.component';
 import { selectPlaylistTitles } from 'src/app/state/selectors/list.selectors';
-import { addToPlaylist } from 'src/app/state/actions/video.actions';
+import { addToPlaylist, addToPlaylistSuccess } from 'src/app/state/actions/video.actions';
+import { Actions, ofType } from '@ngrx/effects';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-unsorted',
   templateUrl: './unsorted.component.html',
   styleUrls: ['./unsorted.component.scss']
 })
-export class UnsortedComponent implements OnInit {
+export class UnsortedComponent implements OnInit, OnDestroy {
   // Fontawesome
   faTrash = faTrash;
   faInfoCircle = faInfoCircle;
@@ -30,10 +32,13 @@ export class UnsortedComponent implements OnInit {
   // Utilities
   moment = moment;
 
+  private onDestroy$ = new Subject();
+
   constructor(
     public activeModal: NgbActiveModal,
     private store: Store,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private actions$: Actions
   ) { }
 
   ngOnInit(): void {
@@ -46,6 +51,17 @@ export class UnsortedComponent implements OnInit {
       this.sortList();
     });
     this.store.select(selectPlaylistTitles).subscribe(pl => this.playlists = Object.keys(pl).map(plid => ({ id: plid, title: pl[plid] })).map(pl => ({ title: pl.title, id: pl.id })));
+
+    // Delete the video when added to a playlist.
+    this.actions$.pipe(ofType(addToPlaylistSuccess), takeUntil(this.onDestroy$)).subscribe((props) => {
+      const video = <Video>this.unsorted.find(v => v.videoId == props.videoId);
+      this.deleteItem(video);
+    });
+  }
+
+  ngOnDestroy(): void {
+    //this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   purge() {

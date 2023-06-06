@@ -18,7 +18,7 @@
 
               <td>
                 <div class="text-end unsorted-button-panel float-end">
-                  <div ngbDropdown class="d-inline-block" container="body">
+                  <div ngbDropdown class="d-inline-block" container="body" display="dynamic">
                       <button type="button"
                         class="btn btn-dark btn-sm"
                         [id]="'assign' + u?.id"
@@ -28,9 +28,9 @@
                       >
                         <fa-icon [icon]="faArrowTurnUp"></fa-icon>
                       </button>
-                      <div ngbDropdownMenu style="max-height: 40vh; overflow-y:auto">
+                      <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end playlist-menu">
                           <ng-container *ngFor="let pl of playlists">
-                              <button (click)="moveToPlaylist(pl.id, u?.videoId || '')" ngbDropdownItem>{{ pl.title }}</button>
+                              <button (click)="moveToPlaylist(pl.id, u?.videoId || '')" ngbDropdownItem class="text-truncate">{{ pl.title }}</button>
                           </ng-container>
                       </div>
                   </div>
