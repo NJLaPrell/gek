@@ -9,30 +9,23 @@ import { getPreferences } from './state/actions/preferences.actions';
 import { getRules } from './state/actions/rules.actions';
 import { selectAuthenticated } from './state/selectors/auth.selectors';
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class InitializerService {
-  constructor(
-        private injector: Injector,
-        private store: Store<AppState>
-  ) { 
-    this.store.select(selectAuthenticated).pipe(
-      skipWhile(auth => typeof auth === 'undefined'),
-      map(auth => Boolean(auth)),
-    ).subscribe(authenticated => this.initApp(authenticated));
+  constructor(private injector: Injector, private store: Store<AppState>) {
+    this.store
+      .select(selectAuthenticated)
+      .pipe(
+        skipWhile(auth => typeof auth === 'undefined'),
+        map(auth => Boolean(auth))
+      )
+      .subscribe(authenticated => this.initApp(authenticated));
   }
 
   private initApp(authenticated: boolean) {
     if (authenticated) {
-      concat(
-        this.getLists(),
-        this.getHistory(),
-        this.getRules(),
-        this.getSubscriptions(),
-        this.getPreferences()
-      ).toPromise();
+      concat(this.getLists(), this.getHistory(), this.getRules(), this.getSubscriptions(), this.getPreferences()).toPromise();
     }
   }
 
@@ -64,8 +57,6 @@ export class InitializerService {
   }
 
   init(): Promise<any> {
-    return concat(
-      this.getAuthenticated()
-    ).toPromise();
+    return concat(this.getAuthenticated()).toPromise();
   }
 }

@@ -8,76 +8,72 @@ import * as ListActions from '../actions/list.actions';
 import * as PreferencesActions from '../actions/preferences.actions';
 import { ToastService } from 'src/app/services/toast.service';
 
-
-
 const DELAY = 5000;
 
 @Injectable()
 export class NotificationEffects {
-
-  fail$ = createEffect(() => 
-    this.actions$.pipe(
-      ofType(
-        HistoryActions.purgeErrorBufferFail,
-        HistoryActions.getHistoryFail,
-        HistoryActions.purgeUnsortedFail,
-        HistoryActions.deleteUnsortedItemFail,
-        HistoryActions.deleteErrorItemFail,
-        RulesActions.addRuleFail,
-        RulesActions.deleteRuleFail,
-        RulesActions.getRulesFail,
-        RulesActions.updateRuleFail,
-        RulesActions.orderRuleFail,
-        VideoActions.getPlaylistVideosFail,
-        VideoActions.addToPlaylistFail,
-        VideoActions.rateVideoFail,
-        VideoActions.removeFromPlaylistFail,
-        ListActions.getListsFail,
-        PreferencesActions.getPreferencesFail,
-        PreferencesActions.setPreferencesFail
+  fail$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(
+          HistoryActions.purgeErrorBufferFail,
+          HistoryActions.getHistoryFail,
+          HistoryActions.purgeUnsortedFail,
+          HistoryActions.deleteUnsortedItemFail,
+          HistoryActions.deleteErrorItemFail,
+          RulesActions.addRuleFail,
+          RulesActions.deleteRuleFail,
+          RulesActions.getRulesFail,
+          RulesActions.updateRuleFail,
+          RulesActions.orderRuleFail,
+          VideoActions.getPlaylistVideosFail,
+          VideoActions.addToPlaylistFail,
+          VideoActions.rateVideoFail,
+          VideoActions.removeFromPlaylistFail,
+          ListActions.getListsFail,
+          PreferencesActions.getPreferencesFail,
+          PreferencesActions.setPreferencesFail
+        ),
+        tap(action => {
+          this.notifyFail(action.error);
+        })
       ),
-      tap((action) => {
-        this.notifyFail(action.error);
-      })
-    ),
-  { dispatch: false }
+    { dispatch: false }
   );
 
-  success$ = createEffect(() => 
-    this.actions$.pipe(
-      ofType(
-        HistoryActions.purgeErrorBufferSuccess,
-        HistoryActions.purgeUnsortedSuccess,
-        HistoryActions.deleteUnsortedItemSuccess,
-        RulesActions.addRuleSuccess,
-        RulesActions.deleteRuleSuccess,
-        RulesActions.updateRuleSuccess,
-        VideoActions.addToPlaylistSuccess,
-        VideoActions.rateVideoSuccess,
-        VideoActions.removeFromPlaylistSuccess,
-        PreferencesActions.setPreferencesSuccess
+  success$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(
+          HistoryActions.purgeErrorBufferSuccess,
+          HistoryActions.purgeUnsortedSuccess,
+          HistoryActions.deleteUnsortedItemSuccess,
+          RulesActions.addRuleSuccess,
+          RulesActions.deleteRuleSuccess,
+          RulesActions.updateRuleSuccess,
+          VideoActions.addToPlaylistSuccess,
+          VideoActions.rateVideoSuccess,
+          VideoActions.removeFromPlaylistSuccess,
+          PreferencesActions.setPreferencesSuccess
+        ),
+        tap(action => {
+          this.notifySuccess(action.message);
+        })
       ),
-      tap((action) => {
-        this.notifySuccess(action.message);
-      })
-    ),
-  { dispatch: false }
+    { dispatch: false }
   );
 
   notifyFail(text: string) {
-    this.notify(text, { classname: 'bg-danger text-light', delay: DELAY/*, header: 'Error!'*/ });
+    this.notify(text, { classname: 'bg-danger text-light', delay: DELAY /*, header: 'Error!'*/ });
   }
 
   notifySuccess(text: string) {
-    this.notify(text, { classname: 'bg-success text-light', delay: 2000/*, header: 'Success!'*/ });
+    this.notify(text, { classname: 'bg-success text-light', delay: 2000 /*, header: 'Success!'*/ });
   }
 
   notify(text: string, options = {}) {
     this.toast.show(text, options);
   }
 
-  constructor(
-        private actions$: Actions,
-        public toast: ToastService
-  ) { }
+  constructor(private actions$: Actions, public toast: ToastService) {}
 }

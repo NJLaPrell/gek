@@ -9,17 +9,13 @@ import { SortService } from '../../services/sort.service';
 @Component({
   selector: 'app-sort-progress',
   templateUrl: './sort-progress.component.html',
-  styleUrls: ['./sort-progress.component.scss']
+  styleUrls: ['./sort-progress.component.scss'],
 })
 export class SortProgressComponent {
   @ViewChild('jobOutput') private jobOutput!: ElementRef;
   output = '';
 
-  constructor(
-    public activeModal: NgbActiveModal,
-    private sortService: SortService,
-    private store: Store
-  ) {
+  constructor(public activeModal: NgbActiveModal, private sortService: SortService, private store: Store) {
     this.sortService.runSortService().subscribe(response => {
       if (response.body) {
         const reader = response.body.getReader();
@@ -48,5 +44,4 @@ export class SortProgressComponent {
     this.store.dispatch(getRules());
     this.store.dispatch(getHistory());
   };
-
 }

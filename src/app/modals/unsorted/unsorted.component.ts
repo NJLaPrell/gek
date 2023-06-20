@@ -15,7 +15,7 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-unsorted',
   templateUrl: './unsorted.component.html',
-  styleUrls: ['./unsorted.component.scss']
+  styleUrls: ['./unsorted.component.scss'],
 })
 export class UnsortedComponent implements OnInit, OnDestroy {
   // Fontawesome
@@ -34,12 +34,7 @@ export class UnsortedComponent implements OnInit, OnDestroy {
 
   private onDestroy$ = new Subject();
 
-  constructor(
-    public activeModal: NgbActiveModal,
-    private store: Store,
-    private modalService: NgbModal,
-    private actions$: Actions
-  ) { }
+  constructor(public activeModal: NgbActiveModal, private store: Store, private modalService: NgbModal, private actions$: Actions) {}
 
   ngOnInit(): void {
     this.store.select(selectUnsorted).subscribe(u => {
@@ -50,10 +45,15 @@ export class UnsortedComponent implements OnInit, OnDestroy {
       this.unsorted = this.unsorted.concat(e.map(f => ({ ...f.video, errorMessage: { errors: f.errors, failDate: f.failDate } })));
       this.sortList();
     });
-    this.store.select(selectPlaylistTitles).subscribe(pl => this.playlists = Object.keys(pl).map(plid => ({ id: plid, title: pl[plid] })).map(pl => ({ title: pl.title, id: pl.id })));
+    this.store.select(selectPlaylistTitles).subscribe(
+      pl =>
+        (this.playlists = Object.keys(pl)
+          .map(plid => ({ id: plid, title: pl[plid] }))
+          .map(pl => ({ title: pl.title, id: pl.id })))
+    );
 
     // Delete the video when added to a playlist.
-    this.actions$.pipe(ofType(addToPlaylistSuccess), takeUntil(this.onDestroy$)).subscribe((props) => {
+    this.actions$.pipe(ofType(addToPlaylistSuccess), takeUntil(this.onDestroy$)).subscribe(props => {
       const video = <Video>this.unsorted.find(v => v.videoId == props.videoId);
       this.deleteItem(video);
     });
@@ -72,7 +72,7 @@ export class UnsortedComponent implements OnInit, OnDestroy {
         this.store.dispatch(purgeUnsorted());
         this.activeModal.close();
       }
-    });    
+    });
   }
 
   getPlaylistTitle(id: string): string {
@@ -92,7 +92,7 @@ export class UnsortedComponent implements OnInit, OnDestroy {
   }
 
   sortList() {
-    this.unsorted.sort((a, b) => new Date(a?.published || 0) > new Date(b?.published || 0) ? 1 : -1);
+    this.unsorted.sort((a, b) => (new Date(a?.published || 0) > new Date(b?.published || 0) ? 1 : -1));
   }
 
   getUnsortedCount() {
@@ -102,8 +102,4 @@ export class UnsortedComponent implements OnInit, OnDestroy {
   openVideo(videoId: string) {
     window.open('https://www.youtube.com/watch?v=' + videoId);
   }
-
- 
-
 }
-

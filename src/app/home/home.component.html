@@ -1,5 +1,4 @@
 <div class="card-row">
-
   <div class="card bg-dark actionCard">
     <fa-icon [icon]="faClipboardList" class="largeIcon"></fa-icon>
     <div class="card-body pt-0">
@@ -15,7 +14,10 @@
     <fa-icon [icon]="faRocket" class="largeIcon"></fa-icon>
     <div class="card-body pt-0">
       <h5 class="card-title">Sort</h5>
-      <p class="card-text text-start">New videos are sorted automatically every hour (configurable in your <a href="#" (click)="openPreferences()" class="text-decoration-underline color-primary">preferences</a>). You can sort new videos any time by running the sort process.</p>
+      <p class="card-text text-start">
+        New videos are sorted automatically every hour (configurable in your <a href="#" (click)="openPreferences()" class="text-decoration-underline color-primary">preferences</a>). You can sort new
+        videos any time by running the sort process.
+      </p>
     </div>
     <div class="card-footer">
       <button class="btn btn-primary" (click)="sortVideos()"><fa-icon [icon]="faRocket"></fa-icon> Run Sort</button>
@@ -26,13 +28,14 @@
     <fa-icon [icon]="faTableList" class="largeIcon"></fa-icon>
     <div class="card-body pt-0">
       <h5 class="card-title">Review</h5>
-      <p class="card-text text-start">Any video that does not match any of your rules is placed in the unsorted list, where you can review the videos and manually sort them into a playlist or remove them from your unsorted list.</p>
+      <p class="card-text text-start">
+        Any video that does not match any of your rules is placed in the unsorted list, where you can review the videos and manually sort them into a playlist or remove them from your unsorted list.
+      </p>
     </div>
     <div class="card-footer">
       <button class="btn btn-primary" (click)="openUnsorted()"><fa-icon [icon]="faTableList"></fa-icon> Review Unsorted</button>
     </div>
   </div>
-
 </div>
 
 <div class="card bg-dark actionCard card-row-last">

@@ -3,14 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { HistoryState } from '../state/models/history.model';
 import { Observable, shareReplay } from 'rxjs';
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class HistoryService {
-  constructor(
-        private http: HttpClient
-  ) { }
+  constructor(private http: HttpClient) {}
 
   get = (): Observable<HistoryState> => this.http.get<HistoryState>('/api/history/getHistory').pipe(shareReplay());
 
@@ -21,5 +18,4 @@ export class HistoryService {
   deleteErrorItem = (id: string): Observable<any> => this.http.delete<any>(`/api/history/deleteErrorItem/${id}`);
 
   purgeErrors = (): Observable<any> => this.http.post<any>('/api/history/purgeErrors', '');
-
 }

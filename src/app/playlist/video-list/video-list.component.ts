@@ -13,7 +13,7 @@ import { selectKeepPlaylistPreference } from 'src/app/state/selectors/preference
 @Component({
   selector: 'app-video-list',
   templateUrl: './video-list.component.html',
-  styleUrls: ['./video-list.component.scss']
+  styleUrls: ['./video-list.component.scss'],
 })
 export class VideoListComponent {
   // Fontawesome
@@ -29,14 +29,14 @@ export class VideoListComponent {
   playlists: any = [];
   keepPlaylist: string | false = false;
 
-  constructor(
-    private router: Router,
-    private store: Store,
-    private modalService: NgbModal,
-    private toast: ToastService,
-  ) {
-    this.store.select(selectPlaylistTitles).subscribe(pl => this.playlists = Object.keys(pl).map(plid => ({ id: plid, title: pl[plid] })).map(pl => ({ title: pl.title, id: pl.id })));
-    this.store.select(selectKeepPlaylistPreference).subscribe(p => this.keepPlaylist = p);
+  constructor(private router: Router, private store: Store, private modalService: NgbModal, private toast: ToastService) {
+    this.store.select(selectPlaylistTitles).subscribe(
+      pl =>
+        (this.playlists = Object.keys(pl)
+          .map(plid => ({ id: plid, title: pl[plid] }))
+          .map(pl => ({ title: pl.title, id: pl.id })))
+    );
+    this.store.select(selectKeepPlaylistPreference).subscribe(p => (this.keepPlaylist = p));
   }
 
   videoClicked(videoId: string) {
@@ -48,7 +48,7 @@ export class VideoListComponent {
       const doIt = () => this.store.dispatch(removeFromPlaylist({ playlistItemId }));
       const modalRef = this.modalService.open(ConfirmPromptComponent);
       modalRef.componentInstance.prompt = 'Are you sure you wish to remove this video from the playlist?';
-      modalRef.closed.subscribe(c => c === 'Continue click' ? doIt() : null);
+      modalRef.closed.subscribe(c => (c === 'Continue click' ? doIt() : null));
     }
   }
 
@@ -67,7 +67,7 @@ export class VideoListComponent {
 
   keepVideo(video: Video): void {
     if (!this.keepPlaylist) {
-      this.toast.fail('You must first set a playlist to use as your "Keep" list in your preferences.', { delay: 10000});
+      this.toast.fail('You must first set a playlist to use as your "Keep" list in your preferences.', { delay: 10000 });
     } else {
       this.store.dispatch(addToPlaylist({ videoId: video.videoId || '', playlistId: this.keepPlaylist }));
     }

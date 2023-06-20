@@ -11,12 +11,12 @@ const HANDSHAKE_INTERVAL: number = environment.handshakeInterval;
 const DEBUG = environment.debug.socketService;
 
 export interface SocketMessage {
-    payload: any;
-    type: 'message' | 'ping' | 'handshake' | 'peerDisconnect';
+  payload: any;
+  type: 'message' | 'ping' | 'handshake' | 'peerDisconnect';
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SocketService {
   private connection!: WebSocketSubject<SocketMessage>;
@@ -45,7 +45,7 @@ export class SocketService {
 
   // Connect to the socket server if not already connected.
   public connect() {
-    if(!this.connected || this.connection.closed) {
+    if (!this.connected || this.connection.closed) {
       this.connectClient();
     }
   }
@@ -86,13 +86,12 @@ export class SocketService {
 
     // Disconnect the socket connection.
     this.connection.complete();
-    this.connected = false;  
+    this.connected = false;
   }
-
 
   /**************************************************
    * EVENT LISTENERS/TRIGGERS
-   * 
+   *
    * "on" methods attach a listener to an event.
    * "fire" methods trigger the attached event listeners.
    */
@@ -122,7 +121,7 @@ export class SocketService {
   public onConnect(connectListener: Function) {
     this.connectListeners.push(connectListener);
   }
-  
+
   private fireOnConnect() {
     this.debug('[Socket Service] - Connected');
     clearTimeout(this.pingTimeout);
@@ -133,7 +132,7 @@ export class SocketService {
   public onReconnect(reconnectListener: Function) {
     this.reconnectListeners.push(reconnectListener);
   }
-  
+
   private fireOnReconnect() {
     this.debug('[Socket Service] - Reconnected');
     clearTimeout(this.pingTimeout);
@@ -145,7 +144,7 @@ export class SocketService {
     this.handshakeListeners.push(handshakeListener);
   }
 
-  private fireOnHandshake(payload: { clientId:string; clientType: string }) {
+  private fireOnHandshake(payload: { clientId: string; clientType: string }) {
     this.debug(`[Socket Service] - Handshake received from: ${payload.clientId} (${payload.clientType})`);
     this.handshakeListeners.forEach(func => func(payload));
   }
@@ -180,7 +179,6 @@ export class SocketService {
     this.disconnectListeners.forEach(func => func());
   }
 
-
   /**************************************************
    * INTERNAL EVENT HANDLING
    */
@@ -200,7 +198,7 @@ export class SocketService {
         clearTimeout(this.reconnectInterval);
         this.reconnectInterval = setTimeout(() => this.retry(), RECONNECT_INTERVAL);
       },
-      complete: () => this.fireOnClosed() // Called when connection is closed (for whatever reason).
+      complete: () => this.fireOnClosed(), // Called when connection is closed (for whatever reason).
     });
   }
 
@@ -212,15 +210,15 @@ export class SocketService {
       this.fireOnConnect();
       this.heartbeat();
     }
-    // Handle messages by type.        
-    if(msg.type === 'message') {
+    // Handle messages by type.
+    if (msg.type === 'message') {
       this.debug('[Socket Service] - Message Recieved.', msg);
       this.messageListeners.forEach(func => func(msg.payload));
     } else if (msg.type === 'handshake') {
       this.debug('[Socket Service] - Handshake Recieved.', msg);
       clearTimeout(this.handshakeTimout);
       this.fireOnHandshake(msg.payload);
-    } else if (msg.type=== 'peerDisconnect') {
+    } else if (msg.type === 'peerDisconnect') {
       this.debug('[Socket Service] - Peer Disconnect Recieved.', msg);
       this.firePeerDisconnect(msg.payload);
     } else if (msg.type === 'ping') {
@@ -230,11 +228,10 @@ export class SocketService {
     }
   }
 
-
   /**************************************************
    * UTILITY METHODS
-   * 
-   * Expect a ping from the server every interval. If one is not 
+   *
+   * Expect a ping from the server every interval. If one is not
    * received, assume the server is unreachable, close the
    * connection, and start retry attempts.
    */
@@ -246,13 +243,12 @@ export class SocketService {
 
   private sendPing = () => this.sendRawMessage({ type: 'ping', payload: 'ping' });
 
-  private debug = (...args: any) => DEBUG ? console.debug(...args) : null;
-  
+  private debug = (...args: any) => (DEBUG ? console.debug(...args) : null);
 
   /**************************************************
    * HEARTBEAT
-   * 
-   * Expect a ping from the server every interval. If one is not 
+   *
+   * Expect a ping from the server every interval. If one is not
    * received, assume the server is unreachable, close the
    * connection, and start retry attempts.
    */
@@ -280,5 +276,4 @@ export class SocketService {
       this.debug('[Socket Service] - Unable to reconnect.');
     }
   }
-
 }

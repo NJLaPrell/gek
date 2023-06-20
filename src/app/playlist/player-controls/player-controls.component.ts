@@ -1,8 +1,19 @@
 import { Component, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import {
-  faVolumeXmark, faVolumeHigh, faPlay, faPause, faArrowUpRightFromSquare, faEye, faThumbsUp,
-  faBackward, faForward, faTrashAlt, faThumbsDown, faVault, faArrowTurnUp
+  faVolumeXmark,
+  faVolumeHigh,
+  faPlay,
+  faPause,
+  faArrowUpRightFromSquare,
+  faEye,
+  faThumbsUp,
+  faBackward,
+  faForward,
+  faTrashAlt,
+  faThumbsDown,
+  faVault,
+  faArrowTurnUp,
 } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
@@ -18,7 +29,7 @@ import { selectKeepPlaylistPreference } from 'src/app/state/selectors/preference
 @Component({
   selector: 'app-player-controls',
   templateUrl: './player-controls.component.html',
-  styleUrls: ['./player-controls.component.scss']
+  styleUrls: ['./player-controls.component.scss'],
 })
 export class PlayerControlsComponent {
   faArrowUpRightFromSquare = faArrowUpRightFromSquare;
@@ -64,28 +75,30 @@ export class PlayerControlsComponent {
 
   @Output() videoNavClicked: EventEmitter<Video> = new EventEmitter<Video>();
 
-  @ViewChild('endOfVideoToast') endOfVideoToast!: TemplateRef<any>;  // Template for the end of video toast.
+  @ViewChild('endOfVideoToast') endOfVideoToast!: TemplateRef<any>; // Template for the end of video toast.
 
   playlists: any = [];
   keepPlaylist: string | false = false;
 
-  constructor(
-    private store: Store,
-    private router: Router,
-    private toast: ToastService,
-    private modalService: NgbModal
-  ) {
-    this.store.select(selectPlaylistTitles).subscribe(pl => this.playlists = Object.keys(pl).map(plid => ({ id: plid, title: pl[plid] })).map(pl => ({ title: pl.title, id: pl.id })));
-    this.store.select(selectKeepPlaylistPreference).subscribe(p => this.keepPlaylist = p);
+  constructor(private store: Store, private router: Router, private toast: ToastService, private modalService: NgbModal) {
+    this.store.select(selectPlaylistTitles).subscribe(
+      pl =>
+        (this.playlists = Object.keys(pl)
+          .map(plid => ({ id: plid, title: pl[plid] }))
+          .map(pl => ({ title: pl.title, id: pl.id })))
+    );
+    this.store.select(selectKeepPlaylistPreference).subscribe(p => (this.keepPlaylist = p));
   }
 
   sendCommand(command: any): void {
-    this.store.dispatch(sendCommand( {
-      id: uuid(),
-      client: 'viewer',
-      timestamp: Date.now(),
-      command
-    }));
+    this.store.dispatch(
+      sendCommand({
+        id: uuid(),
+        client: 'viewer',
+        timestamp: Date.now(),
+        command,
+      })
+    );
   }
 
   onAlmostOver() {
@@ -159,10 +172,10 @@ export class PlayerControlsComponent {
   }
 
   removeVideo() {
-    const doIt = () => this.video?.playlistItemId ? this.store.dispatch(removeFromPlaylist({ playlistItemId: this.video?.playlistItemId })) : null;
+    const doIt = () => (this.video?.playlistItemId ? this.store.dispatch(removeFromPlaylist({ playlistItemId: this.video?.playlistItemId })) : null);
     const modalRef = this.modalService.open(ConfirmPromptComponent);
     modalRef.componentInstance.prompt = 'Are you sure you wish to remove this video from the playlist?';
-    modalRef.closed.subscribe(c => c === 'Continue click' ? doIt() : null);
+    modalRef.closed.subscribe(c => (c === 'Continue click' ? doIt() : null));
   }
 
   goToVideo(videoId: string) {
@@ -204,5 +217,4 @@ export class PlayerControlsComponent {
       this.store.dispatch(addToPlaylist({ videoId: video.videoId || '', playlistId: this.keepPlaylist }));
     }
   }
-
 }

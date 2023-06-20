@@ -9,19 +9,18 @@ import * as https from 'https';
  * @return {Promise<ClientRequest>}
  */
 export const httpsRequest = (params: any, postData?: any) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     const req = https.request(params, (res: IncomingMessage) => {
-      
       if (<number>res.statusCode < 200 || <number>res.statusCode >= 300) {
         return reject(new Error(`statusCode=${res.statusCode}`));
       }
-    
+
       let body = '';
-      res.on('data', (chunk) => body += chunk);
+      res.on('data', chunk => (body += chunk));
       res.on('end', () => resolve(body));
     });
 
-    req.on('error', (err) => reject(err));
+    req.on('error', err => reject(err));
 
     if (postData) {
       req.write(postData);
@@ -48,9 +47,8 @@ export const promiseAllInBatches = async (task: any, items: any, batchSize: numb
   let results: any = [];
   while (position < items.length) {
     const itemsForBatch = items.slice(position, position + batchSize);
-    results = [...results, ...await Promise.all(itemsForBatch.map((item: any) => task(item)))];
+    results = [...results, ...(await Promise.all(itemsForBatch.map((item: any) => task(item))))];
     position += batchSize;
   }
   return results;
 };
-

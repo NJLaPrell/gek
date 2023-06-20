@@ -10,10 +10,10 @@ const DEBUG = true;
 @Component({
   selector: 'app-player',
   templateUrl: './player.component.html',
-  styleUrls: ['./player.component.scss']
+  styleUrls: ['./player.component.scss'],
 })
 export class PlayerComponent {
-  @ViewChild(PlayerControlsComponent) private playerControls!: PlayerControlsComponent;    // Player controls
+  @ViewChild(PlayerControlsComponent) private playerControls!: PlayerControlsComponent; // Player controls
 
   almostDonePref!: boolean;
   autoNextPref!: boolean;
@@ -22,20 +22,17 @@ export class PlayerComponent {
   @Input() playlistId!: string;
   @Input() video!: Video;
   @Input() navState: any;
-  
+
   api: any;
   like = false;
   dislike = false;
   muted = false;
   playing = false;
-  
-  constructor(
-    private router: Router,
-    private store: Store
-  ) {
-    this.store.select(selectAutoNextPreference).subscribe(p => this.autoNextPref = p);
-    this.store.select(selectAlmostDonePreference).subscribe(p => this.almostDonePref = p);
-    this.store.select(selectAutoPlayPreference).subscribe(c => this.autoPlayPref = Boolean(c));
+
+  constructor(private router: Router, private store: Store) {
+    this.store.select(selectAutoNextPreference).subscribe(p => (this.autoNextPref = p));
+    this.store.select(selectAlmostDonePreference).subscribe(p => (this.almostDonePref = p));
+    this.store.select(selectAutoPlayPreference).subscribe(c => (this.autoPlayPref = Boolean(c)));
   }
 
   // Fires 30 seconds before the end of a video.
@@ -76,7 +73,7 @@ export class PlayerComponent {
   }
 
   private debug(...args: any) {
-    if(DEBUG) {
+    if (DEBUG) {
       console.debug(...args);
     }
   }
@@ -84,5 +81,4 @@ export class PlayerComponent {
   onError(error: { message: string; error: any }) {
     console.error(error);
   }
-
 }

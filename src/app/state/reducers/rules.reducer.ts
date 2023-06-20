@@ -27,10 +27,8 @@ export const rulesReducer = createReducer(
     const currentIx = rules.findIndex(r => r.id === action.id);
     const item = Object.assign({}, rules[currentIx]);
     rules.splice(action.index, 0, item);
-    rules.splice((currentIx > action.index ? currentIx + 1 : currentIx), 1);
-
+    rules.splice(currentIx > action.index ? currentIx + 1 : currentIx, 1);
 
     return { rules };
   })
-
 );

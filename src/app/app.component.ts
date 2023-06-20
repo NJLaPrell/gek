@@ -12,7 +12,7 @@ import { selectStickypPlaylistPreference } from './state/selectors/preferences.s
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
   // Font Awesome
@@ -32,35 +32,35 @@ export class AppComponent implements OnInit {
   screenHeight = 0;
   screenWidth = 0;
 
-  constructor(
-    private store: Store,
-    private router: Router
-  ) {
-    this.store.select(selectStickypPlaylistPreference).subscribe((sticky: boolean) => this.stickyPlaylist = sticky);
+  constructor(private store: Store, private router: Router) {
+    this.store.select(selectStickypPlaylistPreference).subscribe((sticky: boolean) => (this.stickyPlaylist = sticky));
     this.getScreenSize();
   }
 
   ngOnInit() {
-    this.store.select(selectPageTitle).pipe(skipWhile(t => !t || t === 'undefined')).subscribe(t => this.pageTitle = t);
-    this.store.select(selectRemoteMode).subscribe(m => this.mode = m);
+    this.store
+      .select(selectPageTitle)
+      .pipe(skipWhile(t => !t || t === 'undefined'))
+      .subscribe(t => (this.pageTitle = t));
+    this.store.select(selectRemoteMode).subscribe(m => (this.mode = m));
     this.store.select(selectConnected).subscribe(c => {
       const disconnect = this.connected && this.peerConnected && !c;
       this.connected = c;
       this.connectionChanged(disconnect);
-      
     });
     this.store.select(selectPeerConnected).subscribe(c => {
       const disconnect = this.connected && this.peerConnected && !c;
       this.peerConnected = c;
       this.connectionChanged(disconnect);
-      
-      
-    }); 
-    this.store.select(selectLastRun).subscribe(t => this.lastUpdated = t);
-    this.store.select(selectAuthenticated).pipe(
-      skipWhile(auth => typeof auth === 'undefined'),
-      map(auth => Boolean(auth)),
-    ).subscribe(auth => this.authenticated = auth);
+    });
+    this.store.select(selectLastRun).subscribe(t => (this.lastUpdated = t));
+    this.store
+      .select(selectAuthenticated)
+      .pipe(
+        skipWhile(auth => typeof auth === 'undefined'),
+        map(auth => Boolean(auth))
+      )
+      .subscribe(auth => (this.authenticated = auth));
   }
 
   @HostListener('window:resize', ['$event'])
@@ -91,5 +91,4 @@ export class AppComponent implements OnInit {
       this.toggleSidebar();
     }
   }
-
 }

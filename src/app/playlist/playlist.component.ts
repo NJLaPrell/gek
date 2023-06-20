@@ -15,7 +15,7 @@ import { initialNavState, NavState } from 'server/models/shared/navState.model';
 @Component({
   selector: 'app-playlist',
   templateUrl: './playlist.component.html',
-  styleUrls: ['./playlist.component.scss']
+  styleUrls: ['./playlist.component.scss'],
 })
 export class PlaylistComponent {
   faRefresh = faRefresh;
@@ -31,20 +31,16 @@ export class PlaylistComponent {
   playlistTitle = 'YouTube Playlists';
   lastUpdated!: number;
   playlistLoading: boolean;
-  
-  
-  constructor(
-    private store: Store,
-    private activatedRoute: ActivatedRoute,
-  ) {
+
+  constructor(private store: Store, private activatedRoute: ActivatedRoute) {
     this.playlistLoading = false;
     this.loading = false;
 
     // Set the mode
-    this.store.select(selectRemoteMode).subscribe(m => this.mode = m);
+    this.store.select(selectRemoteMode).subscribe(m => (this.mode = m));
 
     // Set the nav state
-    this.store.select(selectNavState).subscribe(n => this.globalNavState = n);
+    this.store.select(selectNavState).subscribe(n => (this.globalNavState = n));
 
     // Get the route params and dispatch getPlaylistVideos to build the list.
     this.activatedRoute.paramMap.subscribe(m => {
@@ -56,18 +52,16 @@ export class PlaylistComponent {
     });
 
     // Wait until we have the video list for the playlist, the playlist title lookup, and the route params to get them.
-    combineLatest([
-      this.store.select(selectLists),
-      this.store.select(selectPlaylistTitles),
-      this.activatedRoute.paramMap
-    ])
+    combineLatest([this.store.select(selectLists), this.store.select(selectPlaylistTitles), this.activatedRoute.paramMap])
       .pipe(
         filter((r: any) => r[0].length > 0 && r[2]),
         map((r: any) => ({
-          videoList: [...r[0].find((pl: Playlist) => pl.playlistId === this.playlistId)?.videos || []].sort((a: Video, b:Video) => new Date(a.publishedAt || '') > new Date(b.publishedAt || '') ? 1 : -1),
+          videoList: [...(r[0].find((pl: Playlist) => pl.playlistId === this.playlistId)?.videos || [])].sort((a: Video, b: Video) =>
+            new Date(a.publishedAt || '') > new Date(b.publishedAt || '') ? 1 : -1
+          ),
           titleLookup: r[1],
           routeParams: { playlistId: r[2].get('playlistId'), videoId: r[2].get('videoId') },
-          lastUpdated: r[0].find((pl: Playlist) => pl.playlistId === this.playlistId).lastUpdated
+          lastUpdated: r[0].find((pl: Playlist) => pl.playlistId === this.playlistId).lastUpdated,
         }))
       )
       .subscribe(r => {
@@ -89,29 +83,28 @@ export class PlaylistComponent {
           }
         }
 
-        if(this.videoList.length) {
+        if (this.videoList.length) {
           this.loading = false;
         } else {
-          setTimeout(() => this.loading = false, 3000);
+          setTimeout(() => (this.loading = false), 3000);
         }
 
-        // Set the navigation state in the store. 
-        this.store.dispatch(setNavState({ 
-          props: { 
-            playlistId: this.playlistId,
-            videoId: this.videoId,
-            videoList: this.videoList,
-            titleLookup: r.titleLookup
-          }
-        }));
-        
-        
+        // Set the navigation state in the store.
+        this.store.dispatch(
+          setNavState({
+            props: {
+              playlistId: this.playlistId,
+              videoId: this.videoId,
+              videoList: this.videoList,
+              titleLookup: r.titleLookup,
+            },
+          })
+        );
       });
   }
-  
+
   refresh(): void {
     this.playlistLoading = true;
     this.store.dispatch(getPlaylistVideos({ playlistId: this.playlistId, bypassCache: true }));
   }
-
 }

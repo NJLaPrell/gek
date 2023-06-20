@@ -3,7 +3,6 @@ import { UserAuthToken } from 'server/models/auth.models';
 import { google } from 'googleapis';
 import { JSONClient } from 'google-auth-library/build/src/auth/googleauth';
 
-
 export class UserAuthentication {
   private userId: string;
   private store: DataStore;
@@ -19,14 +18,12 @@ export class UserAuthentication {
   private getCachedCredentials = (): Promise<UserAuthToken | false> => this.store.getUserAuthToken();
 
   public cacheCredentials = (credentials: UserAuthToken): Promise<boolean> => this.store.cacheUserAuthToken(credentials);
-  
+
   public getAuthClient = async (): Promise<JSONClient | false> => {
-    if (this.authClient)
-      return this.authClient;
+    if (this.authClient) return this.authClient;
 
     return this.getCachedCredentials().then(cachedToken => {
-      if (!cachedToken) 
-        return false;
+      if (!cachedToken) return false;
 
       const authClient = google.auth.fromJSON(cachedToken, { forceRefreshOnFailure: true });
       if (authClient) {
@@ -46,8 +43,6 @@ export class UserAuthentication {
     const token = client?.credentials?.refresh_token;
     if (token) {
       client.revokeToken(token);
-    }    
+    }
   };
-
-
 }

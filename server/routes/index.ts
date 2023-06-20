@@ -20,5 +20,4 @@ export class Routes {
     this.authRoutes.apply(this.app, this.passport, this.ensureGuest);
     this.apiRoutes.apply(this.app, this.ensureAuth);
   };
-
 }

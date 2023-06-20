@@ -32,7 +32,6 @@ devEnv.environment.debug.viewerComponent = String(process.env['DEBUG_VIEWER_COMP
 
 fs.writeFileSync('src/environments/environment.dev.ts', `export const environment = ${JSON.stringify(devEnv.environment, null, 2)};`);
 
-
 // environment.prod.ts
 console.log('Generating src/environments/environment.prod.ts');
 dotenv.config({ path: '.env.prod', override: true });
@@ -58,6 +57,3 @@ angularJson.projects.gek.architect.serve.options.sslCert = process.env['SSL_CERT
 angularJson.projects.gek.architect.serve.options.host = process.env['HOST_NAME'];
 
 fs.writeFileSync('angular.json', JSON.stringify(angularJson, null, 2));
-
-
-

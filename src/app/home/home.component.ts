@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent {
   // Font Awesome
@@ -24,14 +24,12 @@ export class HomeComponent {
 
   firstPlaylistId = '';
 
-  constructor(
-    private modalService: NgbModal,
-    private store: Store,
-    private router: Router
-  ) {
-    this.store.select(selectLists).pipe().subscribe(l => this.firstPlaylistId = l[0]?.playlistId || '');
+  constructor(private modalService: NgbModal, private store: Store, private router: Router) {
+    this.store
+      .select(selectLists)
+      .pipe()
+      .subscribe(l => (this.firstPlaylistId = l[0]?.playlistId || ''));
   }
-
 
   openRules() {
     this.modalService.open(RulesListComponent, { size: 'xl', scrollable: true });
@@ -52,5 +50,4 @@ export class HomeComponent {
   watchNow() {
     this.router.navigate(['/', 'playlist', this.firstPlaylistId]);
   }
-
 }
