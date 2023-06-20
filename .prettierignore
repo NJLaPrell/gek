@@ -1,0 +1,13 @@
+*.*
+
+!*.ts
+!*.js
+!*.html
+
+.angular
+.github
+.vscode
+certs
+dist
+gek-docker
+node_modules
