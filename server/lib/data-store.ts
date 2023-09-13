@@ -57,7 +57,7 @@ export class DataStore {
 
   public updateResourceItem = async (resourceName: string, uniqueIdentifier: string, idValue: string, resourceItem: any): Promise<FirebaseFirestore.WriteResult> => {
     const resourceItems = await (await this.db.collection(`resource:${resourceName}`).doc(this.userId).get()).data()?.['items'];
-    const updateIx = resourceItems.find((item: any) => item[uniqueIdentifier] === idValue);
+    const updateIx = resourceItems.findIndex((item: any) => item[uniqueIdentifier] === idValue);
     if (updateIx === -1)
       throw { message: `Unable to find a resource item where ${uniqueIdentifier} = "${idValue}"`, code: 404 };
 
@@ -68,11 +68,25 @@ export class DataStore {
 
   public deleteResourceItem = async (resourceName: string, uniqueIdentifier: string, idValue: string): Promise<FirebaseFirestore.WriteResult> => {
     const resourceItems = await (await this.db.collection(`resource:${resourceName}`).doc(this.userId).get()).data()?.['items'];
-    const deleteIx = resourceItems.find((item: any) => item[uniqueIdentifier] === idValue);
+    const deleteIx = resourceItems.findIndex((item: any) => item[uniqueIdentifier] === idValue);
     if (deleteIx === -1)
       throw { message: `Unable to find a resource item where ${uniqueIdentifier} = "${idValue}"`, code: 404 };
 
     resourceItems.splice(deleteIx, 1);
+    const resource = { lastUpdated: Date.now(), items: resourceItems };
+    return this.saveResource(resourceName, resource);
+  };
+
+  public orderResourceItem = async (resourceName: string, uniqueIdentifier: string, idValue: string, index: number): Promise<FirebaseFirestore.WriteResult> => {
+    const resourceItems = await (await this.db.collection(`resource:${resourceName}`).doc(this.userId).get()).data()?.['items'];
+    const currentIx = resourceItems.findIndex((item: any) => item[uniqueIdentifier] === idValue);
+    if (currentIx === -1)
+      throw { message: `Unable to find a resource item where ${uniqueIdentifier} = "${idValue}"`, code: 404 };
+
+    const item = Object.assign({}, resourceItems[currentIx]);
+    resourceItems.splice(index, 0, item);
+    resourceItems.splice((currentIx > index ? currentIx + 1 : currentIx), 1);
+        
     const resource = { lastUpdated: Date.now(), items: resourceItems };
     return this.saveResource(resourceName, resource);
   };

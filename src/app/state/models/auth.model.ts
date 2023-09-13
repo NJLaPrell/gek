@@ -1,5 +1,5 @@
 export interface AuthState {
-    authenticated: boolean;
+    authenticated?: boolean;
     userId: string | false;
     displayName: string;
   }

@@ -20,7 +20,7 @@
 
 
     
-    <div id="body" class="flex-grow-1 overflow-y-none h-100">
+    <div id="body" class="flex-grow-1 overflow-y-none h-100" [class.body-with-sidebar]="showSidebar && mode !== 'viewer' && authenticated">
       <button *ngIf="!showSidebar && mode !== 'viewer' && authenticated"
         id="openSidebarButton"
         class="btn btn-dark"
@@ -31,20 +31,21 @@
       <div id="body-header"></div>
       <div id="body-content" class="overflow-y-auto position-relative">
 
-        <router-outlet
-          (activate)="routed=true"
-          (deactivate)="routed=false"
-        ></router-outlet>
+        <div id="route-container">
+          <router-outlet
+            (activate)="routed=true"
+            (deactivate)="routed=false"
+          ></router-outlet>
 
-        <div *ngIf="!routed" class="text-center mt-5">
-          <div *ngIf="lastUpdated" class="text-center">Sort Last Run: {{ lastUpdated | amTimeAgo }}</div>
-          <div *ngIf="!authenticated" class="p-4">
-            <p>Sign in to Google with your YouTube account to continue...</p>
+          <div *ngIf="!routed" class="text-center mt-5">
+            <div *ngIf="lastUpdated" class="text-center">Sort Last Run: {{ lastUpdated | amTimeAgo }}</div>
+            <div *ngIf="!authenticated" class="p-4">
+              <p>Sign in to Google with your YouTube account to continue...</p>
+            </div>
+
+            <app-home *ngIf="authenticated"></app-home>
           </div>
-
-          <app-home *ngIf="authenticated"></app-home>
         </div>
-
         <app-footer></app-footer>
 
       </div>

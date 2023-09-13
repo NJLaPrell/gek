@@ -7,7 +7,7 @@
             &nbsp; | &nbsp; Published: {{ video.publishedAt | fromNow }}
         </div>
 
-        <div #description class="video-description text-truncate text-start p-3 pe-auto alert bg-dark me-3" [innerHtml]="video.description || '' | safeHtml" (click)="description.classList.toggle('text-truncate')"></div>
+        <div class="video-description text-start p-3 pe-auto alert bg-dark me-3" [class.text-truncate]="truncateDescription" [innerHtml]="video.description || '' | safeHtml" (click)="truncateDescription = !truncateDescription"></div>
 
         <div *ngIf="showRemote">
             <input name="progress" [(ngModel)]="progress" type="range" class="form-range" min="0" [max]="duration" step="1" id="progress" (change)="onProgressChanged()">
@@ -20,8 +20,10 @@
         <div class="row">
             <div class="col-sm-3 next-prev video-prev">
                 <div class="text-end m-0 p-0">
+                    <span class="next-prev-text">Previous:</span>
                     <img *ngIf="navState.previousVideo" class="videoThumbnail" [src]="navState.previousVideo.thumbnail" />       
                 </div>
+                <div *ngIf="navState.previousVideo" class="text-truncate">{{ navState.previousVideo.channelTitle }}</div>
                 <div *ngIf="navState.previousVideo" class="text-truncate">{{ navState.previousVideo.title }}</div>
                 <div *ngIf="navState.previousVideo" class="text-truncate">
                     <span class="view-count">{{ navState.previousVideo.viewCount | viewCount }} <fa-icon [icon]="faEye"></fa-icon></span>
@@ -29,7 +31,7 @@
                     <span class="publish-date">{{ navState.previousVideo.publishedAt | fromNow }}</span>
                 </div>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-1 next-prev-col">
                 <button type="button"
                     [disabled]="!navState.previousVideo"
                     class="btn btn-dark next-prev-btn"
@@ -70,7 +72,7 @@
                   </div>
               </div>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-1 next-prev-col next-col">
                 <button type="button"
                     [disabled]="!navState.nextVideo"
                     class="btn btn-dark next-prev-btn"
@@ -82,8 +84,10 @@
             </div>
             <div class="col-sm-3 next-prev video-next">
                 <div class="text-start m-0 p-0">
-                    <img *ngIf="navState.nextVideo" class="videoThumbnail" [src]="navState.nextVideo.thumbnail" />       
+                    <span class="next-prev-text">Up Next:</span>  
+                    <img *ngIf="navState.nextVideo" class="videoThumbnail" [src]="navState.nextVideo.thumbnail" />     
                 </div>
+                <div *ngIf="navState.nextVideo" class="text-truncate">{{ navState.nextVideo.channelTitle }}</div>
                 <div *ngIf="navState.nextVideo" class="text-truncate">{{ navState.nextVideo.title }}</div>
                 <div *ngIf="navState.nextVideo" class="text-truncate">
                     <span class="view-count">{{ navState.nextVideo.viewCount | viewCount }} <fa-icon [icon]="faEye"></fa-icon></span>
