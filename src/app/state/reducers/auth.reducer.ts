@@ -5,7 +5,6 @@ import { AuthState } from '../models/auth.model';
 export const authFeatureKey = 'auth';
 
 export const initialState: AuthState = {
-  authenticated: false,
   userId: false,
   displayName: ''
 };

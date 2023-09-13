@@ -109,6 +109,7 @@ export class ResourceLoader {
 
   public updateResourceItem = async (resourceName: string, uniqueIdentifier: string, idValue: string, resourceItem: any) => this.store.updateResourceItem(resourceName, uniqueIdentifier, idValue, resourceItem);
   public deleteResourceItem = async (resourceName: string, uniqueIdentifier: string, idValue: string) => this.store.deleteResourceItem(resourceName, uniqueIdentifier, idValue);
+  public orderResourceItem = async (resourceName: string, uniqueIdentifier: string, idValue: string, index: number) => this.store.orderResourceItem(resourceName, uniqueIdentifier, idValue, index);
   public addResourceItem = async (resourceName: string, resourceItem: any) => this.store.addResourceItem(resourceName, resourceItem);
   public purgeResourceItem = async (resourceName: string) => this.cacheResource(resourceName, await returnEmptyResource());
 }

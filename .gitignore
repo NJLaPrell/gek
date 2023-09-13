@@ -58,3 +58,6 @@ src/environments/environment.prod.ts
 .env.dev
 /gek-docker/ui/dist
 /gek-docker/server/dist
+/gek-docker/server/package-lock.json
+/gek-docker/server/package.json
+

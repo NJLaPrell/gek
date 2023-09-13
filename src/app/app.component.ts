@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { faCircleChevronLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { selectPageTitle } from './state/selectors/navState.selectors';
 import { selectConnected, selectPeerConnected, selectRemoteMode } from './state/selectors/remote.selectors';
 import { selectLastRun } from './state/selectors/history.selectors';
-import { skipWhile } from 'rxjs';
+import { map, skipWhile } from 'rxjs';
 import { selectAuthenticated } from './state/selectors/auth.selectors';
 import { selectStickypPlaylistPreference } from './state/selectors/preferences.selectors';
 
@@ -29,12 +29,15 @@ export class AppComponent implements OnInit {
   connected = false;
   peerConnected = false;
   stickyPlaylist = true;
+  screenHeight = 0;
+  screenWidth = 0;
 
   constructor(
     private store: Store,
     private router: Router
   ) {
     this.store.select(selectStickypPlaylistPreference).subscribe((sticky: boolean) => this.stickyPlaylist = sticky);
+    this.getScreenSize();
   }
 
   ngOnInit() {
@@ -54,7 +57,17 @@ export class AppComponent implements OnInit {
       
     }); 
     this.store.select(selectLastRun).subscribe(t => this.lastUpdated = t);
-    this.store.select(selectAuthenticated).subscribe(auth => this.authenticated = auth);
+    this.store.select(selectAuthenticated).pipe(
+      skipWhile(auth => typeof auth === 'undefined'),
+      map(auth => Boolean(auth)),
+    ).subscribe(auth => this.authenticated = auth);
+  }
+
+  @HostListener('window:resize', ['$event'])
+  getScreenSize(event?: any) {
+    this.screenHeight = window.innerHeight;
+    this.screenWidth = window.innerWidth;
+    console.log(this.screenHeight, this.screenWidth, event);
   }
 
   toggleSidebar() {
@@ -74,7 +87,7 @@ export class AppComponent implements OnInit {
   }
 
   navigatePlaylist(): void {
-    if (!this.stickyPlaylist) {
+    if (!this.stickyPlaylist || this.screenWidth <= 400) {
       this.toggleSidebar();
     }
   }

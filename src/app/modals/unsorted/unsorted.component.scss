@@ -1,37 +1,24 @@
-.unsorted-description {
+.unsorted-title {
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
-    font-size: 0.8em;
+    font-size: 1.1em;
     overflow:hidden;
 }
 
-.unsorted-title {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    font-size: 0.8em;
-    overflow:hidden;
+.unsorted-details {
+  font-size: 0.9em;
 }
 
 .unsorted-thumbnail {
-    width: 80px !important;
-    height: 60px;
+    width: 160px !important;
+    height: 120px;
     float: left;
     margin-right: 4px;
 }
 
 .errorMessage {
     color: red;
-}
-
-.show-errors-switch {
-    margin-left: 50px;
-    input, label {
-        cursor: pointer;
-        font-size: 1.2em;
-    }
-    
 }
 
 .unsorted-button-panel {
@@ -42,6 +29,32 @@
     width: 20px;
 }
 
-.unsorted-chanel {
-    width: 200px;
+.channelLink {
+  text-decoration: none;
+  font-size: 1.4em;
+  font-weight: 700;
+  font-family: 'Patrick Hand', cursive;
+  color: #309E10;
+
+  &:hover {
+    color: #CBC660;
+  }
+}
+
+.description {
+  cursor:pointer;
+  color: #AAA;
+}
+
+.description-truncate {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  overflow: hidden;
+}
+
+.playlist-menu {
+  max-height: 40vh;
+  overflow-y:auto;
+  max-width: 300px;
 }

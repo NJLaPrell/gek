@@ -65,6 +65,15 @@ export class APIRoutes {
         })
         .catch((e: any) => res.status(e?.code || 500).json({ error: e?.message || e }));
     });
+
+    app.put('/api/resources/orderRule', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
+      log.debug('PUT: /api/resources/ordereRule');
+      new ResourceLoader(req.user.id, log).orderResourceItem('rules', 'id', req.body.id, req.body.index)
+        .then(() => {
+          res.status(204).send();
+        })
+        .catch((e: any) => res.status(e?.code || 500).json({ error: e?.message || e }));
+    });
     
     app.post('/api/resources/addRule', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       log.debug('POST: /api/resources/addRule');
@@ -92,7 +101,7 @@ export class APIRoutes {
     app.delete('/api/history/deleteUnsortedItem/:id', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       const id = req.params['id'];
       log.debug(`DELETE: /api/history/deleteUnsortedItem/${id}`);
-      new ResourceLoader(req.user.id, log).deleteResourceItem('unsortedVideos', 'videoId', req.body.id)
+      new ResourceLoader(req.user.id, log).deleteResourceItem('unsortedVideos', 'videoId', id)
         .then(() => res.status(204).send())
         .catch((e: any) => res.status(e?.code || 500).json({ error: e?.message || e }));
     });
@@ -100,7 +109,7 @@ export class APIRoutes {
     app.delete('/api/history/deleteErrorItem/:id', ensureAuth, (req: ExpressRequest, res: ExpressResponse) => {
       const id = req.params['id'];
       log.debug(`DELETE: /api/history/deleteErrorItem/${id}`);
-      new ResourceLoader(req.user.id, log).deleteResourceItem('errorQueue', 'videoId', req.body.id)
+      new ResourceLoader(req.user.id, log).deleteResourceItem('errorQueue', 'videoId', id)
         .then(() => res.status(204).send())
         .catch((e: any) => res.status(e?.code || 500).json({ error: e?.message || e }));
     });

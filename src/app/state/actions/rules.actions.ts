@@ -60,4 +60,19 @@ export const deleteRuleFail = createAction(
   props<{ error: string }>()
 );
 
+export const orderRule = createAction(
+  '[Rules] Order Rule',
+  props<{ id: string, index: number }>()
+);
+
+export const orderRuleSuccess = createAction(
+  '[Rules] Order Rule Success',
+  props<{ id: string, index: number }>()
+);
+
+export const orderRuleFail = createAction(
+  '[Rules] Order Rule Fail',
+  props<{ error: string }>()
+);
+
 

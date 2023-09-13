@@ -29,4 +29,6 @@ export class ResourcesService {
 
   deleteRule = (id: string): Observable<any> => this.http.delete<any>(`/api/resources/deleteRule/${id}`);
 
+  orderRule = (id: string, index: number): Observable<any> => this.http.put<any>('/api/resources/orderRule/', { id, index });
+
 }
