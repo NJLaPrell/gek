@@ -87,3 +87,62 @@
 #moveToPlaylist::after {
   display: none !important;
 }
+
+@media screen and (max-width: 400px) {
+  .video-card {
+    width: 100%;
+    border-top: 1px inset #AAA;
+    
+    .video-card-body {
+      .video-card-title {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        font-size: 0.8em;
+        margin-bottom: 0px;
+        margin-top: 8px;
+        overflow:hidden;
+      }
+    }
+
+    .video-links {
+      padding-left: 0px;
+      li {
+        position: absolute;
+        button {
+          width: 60px;
+          height: 60px;
+          font-size: 30px;
+        }
+      }
+
+      .vb-1 {
+        top: 0px;
+      }
+
+      .vb-2 {
+        left: calc(100vw - 144px);
+        top: 0px;
+      }
+
+      .vb-3 {
+        top: 106px;
+      }
+
+      .vb-4 {
+        left: calc(100vw - 144px);
+        top: 106px;
+      }
+
+      position: absolute;
+      top: 10px;
+      right: auto !important;
+      left: 20px !important;
+    }
+  }
+
+  .move-to-playlist-btn {
+    margin-left: -80%;
+  }
+
+}

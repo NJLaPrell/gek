@@ -6,7 +6,7 @@ import { ToastService } from '../services/toast.service';
   template: `
 		<ngb-toast
 			*ngFor="let toast of toastService.toasts"
-			[class]="toast.classname"
+			[class]="toast.classname + ' toast-container'"
 			[autohide]="true"
       (mouseenter)="toast.autohide = false"
       (mouseleave)="toast.autohide = true"

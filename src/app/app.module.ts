@@ -49,6 +49,7 @@ import { PrivacyPolicyComponent } from './legal/privacy-policy/privacy-policy.co
 import { FooterComponent } from './footer/footer.component';
 import { LegalComponent } from './modals/legal/legal.component';
 import { DeleteDataComponent } from './legal/delete-data/delete-data.component';
+import { DndModule } from 'ngx-drag-drop';
 
 export const initApp = (provider: InitializerService) => () => provider.init();
 
@@ -117,7 +118,8 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     YouTubePlayerModule,
     FormsModule,
     HttpClientXsrfModule,
-    CoolSocialLoginButtonsModule
+    CoolSocialLoginButtonsModule,
+    DndModule
   ],
   providers: [
     InitializerService, {

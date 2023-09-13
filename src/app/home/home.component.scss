@@ -12,3 +12,24 @@
     font-weight: bolder;
   }
 }
+
+.card-row {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.card-row-last {
+  width: 50%;
+  margin-top: 1%;
+  margin-left: 25%;
+}
+
+@media screen and (max-width: 900px) {
+  .card-row {
+    display: block;
+  }
+  .actionCard, .card-row-last {
+    width: 96%;
+    margin: 2%;
+  }
+}

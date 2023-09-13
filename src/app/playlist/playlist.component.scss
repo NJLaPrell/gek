@@ -10,3 +10,12 @@
   font-size: 1em;
   line-height: 1em;
 }
+
+.title-nav-link {
+  text-decoration: none;
+  color: #FFF;
+  font-weight: bold;
+  &:hover {
+    color: #CBC660;
+  }
+}

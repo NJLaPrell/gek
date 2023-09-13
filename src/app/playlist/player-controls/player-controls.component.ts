@@ -34,6 +34,7 @@ export class PlayerControlsComponent {
   faVolumeHigh = faVolumeHigh;
   faVault = faVault;
   faArrowTurnUp = faArrowTurnUp;
+  truncateDescription = true;
 
   @Input() video: Video | undefined;
   @Input() playlistId = '';
@@ -167,6 +168,7 @@ export class PlayerControlsComponent {
   goToVideo(videoId: string) {
     this.likeChange.emit(false);
     this.dislikeChange.emit(false);
+    this.truncateDescription = true;
     this.router.navigate(['/', 'playlist', this.playlistId, 'video', videoId]);
   }
 
@@ -197,7 +199,7 @@ export class PlayerControlsComponent {
 
   keepVideo(video: Video): void {
     if (!this.keepPlaylist) {
-      this.toast.fail('You must first set a playlist to use as your "Keep" list in your preferences.', { delay: 10000});
+      this.toast.fail('You must first set a playlist to use as your "Keep" list in your preferences.', { delay: 10000 });
     } else {
       this.store.dispatch(addToPlaylist({ videoId: video.videoId || '', playlistId: this.keepPlaylist }));
     }

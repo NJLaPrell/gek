@@ -30,7 +30,6 @@
     .next-prev-btn {
         font-size: 1.5em;
         display: block;
-        width: 100%;
         line-height: 160px;
     }
 
@@ -55,4 +54,36 @@
     display: none !important;
 }
 
+.next-col {
+  margin-left: -40px;
+}
+
+.next-prev-text {
+  display: none;
+}
+
+@media screen and (max-width: 575px) {
+  .next-prev-col {
+    width: 10%;
+  }
+  .center-buttons {
+    width: 80%;
+  }
+  .next-prev {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    div {
+      text-align: left !important;
+    }
+  }
+  .next-prev-text {
+    display: inline !important;
+    font-size: 1.4em;
+    font-weight: 500;
+  }
+  .videoThumbnail {
+    display: none;
+  }
+  
+}
 

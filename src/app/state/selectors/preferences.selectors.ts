@@ -36,3 +36,8 @@ export const selectKeepPlaylistPreference = createSelector(
   preferencesState,
   (state) => state.items.find(i => i.name === 'keepPlaylist')?.value || false
 );
+
+export const selectStickypPlaylistPreference = createSelector(
+  preferencesState,
+  (state) => state.items.find(i => i.name === 'stickyPlaylist')?.value || false
+);

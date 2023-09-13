@@ -16,7 +16,14 @@
     width: 80%;
     #body-content {
         height: calc(100vh - 60px);
-        overflow:auto;
+        min-height: calc(100vh - 60px);
+        overflow-y: auto;
+        overflow-x: hidden;
+        position: relative;
+        #route-container {
+          padding-left: 20px;
+          padding-right: 20px;
+        }
     }
 }
 
@@ -89,5 +96,30 @@
       background-color: #ebebeb;
       box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 1px 1px rgba(0, 0, 0, .25);
       cursor: not-allowed;
+    }
+  }
+
+  #openSidebarButton {
+    position: absolute;
+    left: 0;
+    height: 80px;
+    z-index: 999;
+    opacity: 0.25;
+    &:hover {
+      opacity: 1.0;
+    }
+  }
+
+  @media screen and (max-width: 900px) {
+    #body {
+      width: 100%;
+    }
+    #side-bar {
+      width: 100%;
+    }
+
+    .body-with-sidebar {
+      width: 0px !important;
+      padding: 0px !important;
     }
   }

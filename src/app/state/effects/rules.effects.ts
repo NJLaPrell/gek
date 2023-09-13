@@ -42,6 +42,14 @@ export class RulesEffects {
     ))
   ));
 
+  orderRule$= createEffect(() => this.actions$.pipe(
+    ofType(RulesActions.orderRule),
+    mergeMap((action) => this.resourceService.orderRule(action.id, action.index).pipe(
+      map(() => RulesActions.orderRuleSuccess({ id: action.id, index: action.index })),
+      catchError((error: HttpErrorResponse) => of(RulesActions.orderRuleFail({ error: error.message })))
+    ))
+  ));
+
   constructor(
         private actions$: Actions,
         private resourceService: ResourcesService
