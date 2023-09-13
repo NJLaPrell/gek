@@ -13,6 +13,7 @@ import { selectAuthenticated } from './state/selectors/auth.selectors';
   providedIn: 'root'
 })
 export class InitializerService implements OnDestroy {
+export class InitializerService {
   constructor(
         private injector: Injector,
         private store: Store<AppState>
@@ -33,17 +34,16 @@ export class InitializerService implements OnDestroy {
         this.getPreferences()
       ).subscribe();
     }
-  }
+  ```
+    constructor(
+          private injector: Injector,
+          private store: Store<AppState>
+    ) { 
+      this.store.select(selectAuthenticated).subscribe(authenticated => this.initApp(authenticated));
+    }
   
-  ngOnDestroy(): void {
-    this.historyUpdateSubscription.unsubscribe();
-  }
-
-  private getLists(): Observable<any> {
-    this.store.dispatch(getUncachedLists());
-    return of([]);
-  }
-
+    private historyUpdateSubscription: Subscription = new Subscription();
+  ```
   private getHistory(): Observable<any> {
     this.store.dispatch(getHistory());
     return of([]);
