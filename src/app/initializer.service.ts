@@ -1,6 +1,6 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { concat, Observable, of } from 'rxjs';
+import { concat, Observable, of, interval, merge, Subscription, switchMap } from 'rxjs';
 import { AppState } from './state';
 import { getAuthState } from './state/actions/auth.actions';
 import { getHistory } from './state/actions/history.actions';
@@ -9,10 +9,10 @@ import { getPreferences } from './state/actions/preferences.actions';
 import { getRules } from './state/actions/rules.actions';
 import { selectAuthenticated } from './state/selectors/auth.selectors';
 
-
 @Injectable({
   providedIn: 'root'
 })
+export class InitializerService implements OnDestroy {
 export class InitializerService {
   constructor(
         private injector: Injector,
@@ -21,16 +21,22 @@ export class InitializerService {
     this.store.select(selectAuthenticated).subscribe(authenticated => this.initApp(authenticated));
   }
 
+  private historyUpdateSubscription: Subscription;
+  
   private initApp(authenticated: boolean) {
     if (authenticated) {
-      concat(
+      this.historyUpdateSubscription = merge(
         this.getLists(),
-        this.getHistory(),
+        interval(60000).pipe(switchMap(() => this.getHistory())),
         this.getRules(),
         this.getSubscriptions(),
         this.getPreferences()
-      ).toPromise();
+      ).subscribe();
     }
+  }
+  
+  ngOnDestroy(): void {
+    this.historyUpdateSubscription.unsubscribe();
   }
 
   private getLists(): Observable<any> {
