@@ -8,6 +8,7 @@ import { selectLastRun } from './state/selectors/history.selectors';
 import { map, skipWhile } from 'rxjs';
 import { selectAuthenticated } from './state/selectors/auth.selectors';
 import { selectStickypPlaylistPreference } from './state/selectors/preferences.selectors';
+import { PreferenceItem } from './state/models/preferences.model';
 
 @Component({
   selector: 'app-root',
@@ -33,7 +34,7 @@ export class AppComponent implements OnInit {
   screenWidth = 0;
 
   constructor(private store: Store, private router: Router) {
-    this.store.select(selectStickypPlaylistPreference).subscribe((sticky: boolean) => (this.stickyPlaylist = sticky));
+    this.store.select(selectStickypPlaylistPreference).subscribe((sticky: PreferenceItem["value"]) => (this.stickyPlaylist = Boolean(sticky)));
     this.getScreenSize();
   }
 
@@ -64,7 +65,7 @@ export class AppComponent implements OnInit {
   }
 
   @HostListener('window:resize', ['$event'])
-  getScreenSize(event?: any) {
+  getScreenSize(event?: undefined) {
     this.screenHeight = window.innerHeight;
     this.screenWidth = window.innerWidth;
     console.log(this.screenHeight, this.screenWidth, event);

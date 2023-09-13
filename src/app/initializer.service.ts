@@ -29,34 +29,34 @@ export class InitializerService {
     }
   }
 
-  private getLists(): Observable<any> {
+  private getLists(): Observable<[]> {
     this.store.dispatch(getUncachedLists());
     return of([]);
   }
 
-  private getHistory(): Observable<any> {
+  private getHistory(): Observable<[]> {
     this.store.dispatch(getHistory());
     return of([]);
   }
-  private getRules(): Observable<any> {
+  private getRules(): Observable<[]> {
     this.store.dispatch(getRules());
     return of([]);
   }
 
-  private getSubscriptions(): Observable<any> {
+  private getSubscriptions(): Observable<[]> {
     this.store.dispatch(getSubscriptions());
     return of([]);
   }
-  private getAuthenticated(): Observable<any> {
+  private getAuthenticated(): Observable<[]> {
     this.store.dispatch(getAuthState());
     return of([]);
   }
-  private getPreferences(): Observable<any> {
+  private getPreferences(): Observable<[]> {
     this.store.dispatch(getPreferences());
     return of([]);
   }
 
-  init(): Promise<any> {
+  init(): Promise<[] | undefined> {
     return concat(this.getAuthenticated()).toPromise();
   }
 }

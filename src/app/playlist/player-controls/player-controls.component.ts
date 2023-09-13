@@ -25,6 +25,7 @@ import { sendCommand } from '../../state/actions/remote.actions';
 import { v4 as uuid } from 'uuid';
 import { selectPlaylistTitles } from 'src/app/state/selectors/list.selectors';
 import { selectKeepPlaylistPreference } from 'src/app/state/selectors/preferences.selectors';
+import { PlaylistTitle } from 'src/app/state/models/list.model';
 
 @Component({
   selector: 'app-player-controls',
@@ -77,8 +78,8 @@ export class PlayerControlsComponent {
 
   @ViewChild('endOfVideoToast') endOfVideoToast!: TemplateRef<any>; // Template for the end of video toast.
 
-  playlists: any = [];
-  keepPlaylist: string | false = false;
+  playlists: PlaylistTitle[] = [];
+  keepPlaylist = '';
 
   constructor(private store: Store, private router: Router, private toast: ToastService, private modalService: NgbModal) {
     this.store.select(selectPlaylistTitles).subscribe(
@@ -87,7 +88,7 @@ export class PlayerControlsComponent {
           .map(plid => ({ id: plid, title: pl[plid] }))
           .map(pl => ({ title: pl.title, id: pl.id })))
     );
-    this.store.select(selectKeepPlaylistPreference).subscribe(p => (this.keepPlaylist = p));
+    this.store.select(selectKeepPlaylistPreference).subscribe(p => (this.keepPlaylist = String(p)));
   }
 
   sendCommand(command: any): void {

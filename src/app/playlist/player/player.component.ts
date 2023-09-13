@@ -30,8 +30,8 @@ export class PlayerComponent {
   playing = false;
 
   constructor(private router: Router, private store: Store) {
-    this.store.select(selectAutoNextPreference).subscribe(p => (this.autoNextPref = p));
-    this.store.select(selectAlmostDonePreference).subscribe(p => (this.almostDonePref = p));
+    this.store.select(selectAutoNextPreference).subscribe(p => (this.autoNextPref = Boolean(p)));
+    this.store.select(selectAlmostDonePreference).subscribe(p => (this.almostDonePref = Boolean(p)));
     this.store.select(selectAutoPlayPreference).subscribe(c => (this.autoPlayPref = Boolean(c)));
   }
 
@@ -72,6 +72,7 @@ export class PlayerComponent {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private debug(...args: any) {
     if (DEBUG) {
       console.debug(...args);

@@ -4,7 +4,8 @@ import { Store } from '@ngrx/store';
 import { setPreferences } from 'src/app/state/actions/preferences.actions';
 import { selectPreferences } from 'src/app/state/selectors/preferences.selectors';
 import { faSave, faTrash, faArrowTurnUp } from '@fortawesome/free-solid-svg-icons';
-import { PreferenceItem } from 'src/app/state/models/preferences.model';
+import { PreferenceItem, ClientPreferences, defaultClientPreferences } from 'src/app/state/models/preferences.model';
+import { PlaylistTitle } from 'src/app/state/models/list.model';
 import { ConfirmPromptComponent } from '../confirm-prompt/confirm-prompt.component';
 import { ToastService } from 'src/app/services/toast.service';
 import { PreferencesService } from 'src/app/services/preferences.service';
@@ -23,20 +24,20 @@ export class PreferencesComponent {
 
   private preferences: PreferenceItem[] = [];
 
-  public prefs: any;
-  public playlists: any = [];
+  public prefs: ClientPreferences = defaultClientPreferences;
+  public playlists: PlaylistTitle[] = [];
 
   constructor(private store: Store, public activeModal: NgbActiveModal, private modalService: NgbModal, private toast: ToastService, private preferencesService: PreferencesService) {
     this.store.select(selectPreferences).subscribe((prefs: PreferenceItem[]) => {
       this.preferences = [...prefs];
       this.prefs = {
-        autoSort: this.getPref('autoSort'),
+        autoSort: Boolean(this.getPref('autoSort')),
         autoSortInterval: Number.parseInt(String(this.getPref('autoSortInterval')) || '60000', 10) / 60000,
-        autoNext: this.getPref('autoNext'),
-        almostDonePrompt: this.getPref('almostDonePrompt'),
-        autoPlay: this.getPref('autoPlay'),
-        keepPlaylist: this.getPref('keepPlaylist'),
-        stickyPlaylist: this.getPref('stickyPlaylist'),
+        autoNext: Boolean(this.getPref('autoNext')),
+        almostDonePrompt: Boolean(this.getPref('almostDonePrompt')),
+        autoPlay: Boolean(this.getPref('autoPlay')),
+        keepPlaylist: String(this.getPref('keepPlaylist')),
+        stickyPlaylist: String(this.getPref('stickyPlaylist')),
       };
     });
 
@@ -76,7 +77,7 @@ export class PreferencesComponent {
   }
 
   getKeepPlaylistName(): string {
-    return this.playlists.find((pl: any) => pl.id === this.getPref('keepPlaylist'))?.title || 'None';
+    return this.playlists.find((pl: PlaylistTitle) => pl.id === this.getPref('keepPlaylist'))?.title || 'None';
   }
 
   setKeepPlaylist(id: string) {

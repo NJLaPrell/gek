@@ -42,6 +42,11 @@ export interface Playlist {
   id?: string; //XXXXXX
 }
 
+export interface PlaylistTitle {
+  id: string;
+  title: string;
+}
+
 // ###################################
 // ## SUBSCRIPTION MODEL
 // ###################################

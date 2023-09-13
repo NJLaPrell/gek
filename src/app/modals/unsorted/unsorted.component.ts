@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { Video } from 'src/app/state/models/video.model';
+import { PlaylistTitle } from 'src/app/state/models/list.model';
 import { selectErrorQueue, selectUnsorted } from 'src/app/state/selectors/history.selectors';
 import * as moment from 'moment';
 import { faTrash, faInfoCircle, faTriangleExclamation, faArrowTurnUp } from '@fortawesome/free-solid-svg-icons';
@@ -26,7 +27,7 @@ export class UnsortedComponent implements OnInit, OnDestroy {
 
   // State
   unsorted: Video[] = [];
-  playlists: any = [];
+  playlists: PlaylistTitle[] = [];
   showErrors = false;
 
   // Utilities
@@ -76,7 +77,7 @@ export class UnsortedComponent implements OnInit, OnDestroy {
   }
 
   getPlaylistTitle(id: string): string {
-    return this.playlists.find((pl: any) => pl.id === id)?.title || 'Move to Playlist...';
+    return this.playlists.find((pl: PlaylistTitle) => pl.id === id)?.title || 'Move to Playlist...';
   }
 
   moveToPlaylist(playlistId: string, videoId: string) {

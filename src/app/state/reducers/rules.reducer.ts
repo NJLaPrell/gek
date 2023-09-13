@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import * as RulesActions from '../actions/rules.actions';
-import { initialRulesState, Rule } from '../models/rules.model';
+import { initialRulesState } from '../models/rules.model';
 
 export const rulesFeatureKey = 'rules';
 

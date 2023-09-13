@@ -9,7 +9,7 @@ services:
     hostname: "gek.ui"
     container_name: 'gek-ui'
     networks:
-    - "gek"
+    - "default"
     restart: unless-stopped
 
   server:
@@ -22,12 +22,15 @@ services:
       - "8080:8080"
     hostname: 'gek.server'
     container_name: 'gek-server'
+    dns:
+      - 8.8.8.8  # Google's DNS
+      - 8.8.4.4  # Secondary Google's DNS
     networks:
-    - "gek"
+    - "default"
     restart: unless-stopped
 #    env_file: ../.env
 
 networks:
-  gek:
-    name: nginx-proxy-manager_default
+  default:
+    name: proxy-manager
     external: true

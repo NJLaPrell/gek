@@ -18,7 +18,7 @@ export class SortProgressComponent {
   constructor(public activeModal: NgbActiveModal, private sortService: SortService, private store: Store) {
     this.sortService.runSortService().subscribe(response => {
       if (response.body) {
-        const reader = response.body.getReader();
+        const reader = <ReadableStreamDefaultReader<Uint8Array>>response.body.getReader();
         return this.readChunk(reader);
       } else {
         return;
@@ -26,8 +26,8 @@ export class SortProgressComponent {
     });
   }
 
-  private readChunk = (reader: any) => {
-    reader.read().then(({ done, value }: any) => {
+  private readChunk = (reader: ReadableStreamDefaultReader<Uint8Array>) => {
+    reader.read().then(({ done, value }) => {
       if (done) {
         this.reloadData();
         return;
