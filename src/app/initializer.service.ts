@@ -13,11 +13,13 @@ import { selectAuthenticated } from './state/selectors/auth.selectors';
   providedIn: 'root'
 })
 export class InitializerService implements OnDestroy {
+export class InitializerService {
   constructor(
         private injector: Injector,
         private store: Store<AppState>
   ) { 
     this.store.select(selectAuthenticated).subscribe(authenticated => this.initApp(authenticated));
+    this.historyUpdateSubscription = new Subscription();
   }
 
   private historyUpdateSubscription: Subscription;
