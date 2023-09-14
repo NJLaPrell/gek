@@ -19,25 +19,17 @@
   <button *ngIf="mode !=='viewer' && authenticated" class="btn btn-dark btn-sm" (click)="openUnsorted()" title="View Unsorted">
     <fa-icon [icon]="faTableList"></fa-icon>
     <span class="buttonTitle"> Unsorted </span>
-    <span *ngIf="unsortedCount" class="badge text-bg-primary">{{ unsortedCount }}</span>
-  </button>
-
-
-  <button *ngIf="mode !== 'player' && authenticated" type="button" class="btn btn-sm btn-dark" (click)="handleModeToggle('player')">
-    <fa-icon [icon]="faSquareXmark"></fa-icon> Disconnect
-  </button>
-  <div *ngIf="mode === 'player' && authenticated" ngbDropdown class="d-inline-block">
-    <button type="button" class="btn btn-outline-dark btn-sm text-light" id="mode" ngbDropdownToggle>Mode</button>
-    <div ngbDropdownMenu aria-labelledby="mode">
-      <button ngbDropdownItem (click)="handleModeToggle('remote')"><fa-icon [icon]="faTabletScreenButton"></fa-icon> Remote</button>
-      <button ngbDropdownItem (click)="handleModeToggle('viewer')"><fa-icon [icon]="faTv"></fa-icon> Viewer</button>
-    </div>
-  </div>
-
-  <div *ngIf="waitingPeerReconnect" class="d-inline-block text-warning pe-2">
-    ( Waiting for peer to reconnect... <span class="spinner-border" role="status" style="font-size: 0.6em; width: 14px; height: 14px"></span> )
-  </div>
-
+    export class TopBarComponent {
+       // Font Awesome
+       faRocket = faRocket;
+       ...
+       userId: string | false = false;
+     
+       environment = environment;
+       displayName = '';
+     
+       @Input() authenticated = false;
+       showModeButton = false;
   <div *ngIf="authenticated" ngbDropdown class="d-inline-block float-end">
     <button type="button" class="btn btn-outline-dark btn-sm text-light" id="user" ngbDropdownToggle>
       <fa-icon [icon]="faUser"></fa-icon>
