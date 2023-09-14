@@ -25,8 +25,8 @@ import { ToastService } from '../services/toast.service';
   styleUrls: ['./top-bar.component.scss']
 })
 export class TopBarComponent {
-  // Font Awesome
-  faRocket = faRocket;
+   // Font Awesome
+   faRocket = faRocket;
   faRotate = faRotate;
   faClipboardList = faClipboardList;
   faTrashCan = faTrashCan;
@@ -45,12 +45,13 @@ export class TopBarComponent {
   waitingPeerReconnect = false;
   private peerConnected = false;
   private selfConnected = false;
-  userId: string | false = false;
-
-  environment = environment;
-  displayName = '';
-
-  @Input() authenticated = false;
+   userId: string | false = false;
+ 
+   environment = environment;
+   displayName = '';
+ 
+   @Input() authenticated = false;
+   showModeButton = false;
 
   constructor(
     private modalService: NgbModal,
