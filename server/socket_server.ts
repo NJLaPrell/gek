@@ -7,4 +7,3 @@ import { SocketServer } from './lib/socket-server';
 const soc = new SocketServer();
 
 soc.serve();
-

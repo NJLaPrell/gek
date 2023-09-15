@@ -16,10 +16,8 @@ const serviceAccount = <ServiceAccount>{
   auth_uri: 'https://accounts.google.com/o/oauth2/auth',
   token_uri: 'https://oauth2.googleapis.com/token',
   auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
-  client_x509_cert_url: process.env['CLIENT_X509_CERT_URL']
+  client_x509_cert_url: process.env['CLIENT_X509_CERT_URL'],
 };
-
-
 
 export class DataStore {
   private db!: Firestore;
@@ -27,13 +25,13 @@ export class DataStore {
 
   constructor(userId: string) {
     this.userId = userId;
-    
+
     try {
       firebaseAdmin.initializeApp({ credential: cert(serviceAccount) });
     } catch (e) {
       firebaseAdmin.app();
     }
-    
+
     this.db = getFirestore();
   }
 
@@ -42,7 +40,7 @@ export class DataStore {
     return docRef.set(user);
   }
 
-  public  getUser = async (): Promise<any> => {
+  public getUser = async (): Promise<any> => {
     const doc = await this.db.collection('users').doc(this.userId).get();
     return doc.data();
   };
@@ -52,14 +50,12 @@ export class DataStore {
     return <UserResource | undefined>doc.data();
   };
 
-  public saveResource = (resourceName: string, resource: UserResource): Promise<FirebaseFirestore.WriteResult> => 
-    this.db.collection(`resource:${resourceName}`).doc(this.userId).set(resource);
+  public saveResource = (resourceName: string, resource: UserResource): Promise<FirebaseFirestore.WriteResult> => this.db.collection(`resource:${resourceName}`).doc(this.userId).set(resource);
 
   public updateResourceItem = async (resourceName: string, uniqueIdentifier: string, idValue: string, resourceItem: any): Promise<FirebaseFirestore.WriteResult> => {
     const resourceItems = await (await this.db.collection(`resource:${resourceName}`).doc(this.userId).get()).data()?.['items'];
     const updateIx = resourceItems.findIndex((item: any) => item[uniqueIdentifier] === idValue);
-    if (updateIx === -1)
-      throw { message: `Unable to find a resource item where ${uniqueIdentifier} = "${idValue}"`, code: 404 };
+    if (updateIx === -1) throw { message: `Unable to find a resource item where ${uniqueIdentifier} = "${idValue}"`, code: 404 };
 
     resourceItems[updateIx] = resourceItem;
     const resource = { lastUpdated: Date.now(), items: resourceItems };
@@ -69,8 +65,7 @@ export class DataStore {
   public deleteResourceItem = async (resourceName: string, uniqueIdentifier: string, idValue: string): Promise<FirebaseFirestore.WriteResult> => {
     const resourceItems = await (await this.db.collection(`resource:${resourceName}`).doc(this.userId).get()).data()?.['items'];
     const deleteIx = resourceItems.findIndex((item: any) => item[uniqueIdentifier] === idValue);
-    if (deleteIx === -1)
-      throw { message: `Unable to find a resource item where ${uniqueIdentifier} = "${idValue}"`, code: 404 };
+    if (deleteIx === -1) throw { message: `Unable to find a resource item where ${uniqueIdentifier} = "${idValue}"`, code: 404 };
 
     resourceItems.splice(deleteIx, 1);
     const resource = { lastUpdated: Date.now(), items: resourceItems };
@@ -80,13 +75,12 @@ export class DataStore {
   public orderResourceItem = async (resourceName: string, uniqueIdentifier: string, idValue: string, index: number): Promise<FirebaseFirestore.WriteResult> => {
     const resourceItems = await (await this.db.collection(`resource:${resourceName}`).doc(this.userId).get()).data()?.['items'];
     const currentIx = resourceItems.findIndex((item: any) => item[uniqueIdentifier] === idValue);
-    if (currentIx === -1)
-      throw { message: `Unable to find a resource item where ${uniqueIdentifier} = "${idValue}"`, code: 404 };
+    if (currentIx === -1) throw { message: `Unable to find a resource item where ${uniqueIdentifier} = "${idValue}"`, code: 404 };
 
     const item = Object.assign({}, resourceItems[currentIx]);
     resourceItems.splice(index, 0, item);
-    resourceItems.splice((currentIx > index ? currentIx + 1 : currentIx), 1);
-        
+    resourceItems.splice(currentIx > index ? currentIx + 1 : currentIx, 1);
+
     const resource = { lastUpdated: Date.now(), items: resourceItems };
     return this.saveResource(resourceName, resource);
   };
@@ -98,37 +92,58 @@ export class DataStore {
     return this.saveResource(resourceName, resource);
   };
 
-  public cacheUserAuthToken = async (authToken: UserAuthToken): Promise<boolean> => 
-    this.db.collection('auth-tokens').doc(this.userId).set(authToken).then(() => true).catch((e) => {
-      console.log(e);
-      return false;
-    });
+  public cacheUserAuthToken = async (authToken: UserAuthToken): Promise<boolean> =>
+    this.db
+      .collection('auth-tokens')
+      .doc(this.userId)
+      .set(authToken)
+      .then(() => true)
+      .catch(e => {
+        console.log(e);
+        return false;
+      });
 
   public getUserAuthToken = async (): Promise<UserAuthToken | false> =>
-    this.db.collection('auth-tokens').doc(this.userId).get()
-      .then((result) => {
+    this.db
+      .collection('auth-tokens')
+      .doc(this.userId)
+      .get()
+      .then(result => {
         const res = result.data();
         return res ? <UserAuthToken>res : false;
       })
-      .catch((e) => {console.log(e); return false;});
+      .catch(e => {
+        console.log(e);
+        return false;
+      });
 
   public getAutoSortUsers = async (): Promise<any> => {
     // TODO: Refactor using firestore features. May need to change schema.
-    const users = await this.db.collection('resource:preferences').get()
-      .then(
-        (result) => result.docs.map(
-          d => ({ userId: d.id, autoSort: d.data()['items'].find((i: any) => i.name === 'autoSort').value, autoSortInterval: d.data()['items'].find((i: any) => i.name === 'autoSortInterval').value })
-        ).filter(d => d.autoSort === true)
+    const users = await this.db
+      .collection('resource:preferences')
+      .get()
+      .then(result =>
+        result.docs
+          .map(d => ({
+            userId: d.id,
+            autoSort: d.data()['items'].find((i: any) => i.name === 'autoSort').value,
+            autoSortInterval: d.data()['items'].find((i: any) => i.name === 'autoSortInterval').value,
+          }))
+          .filter(d => d.autoSort === true)
       );
     const usersList = users.map(d => d.userId);
     // TODO: Refactor this mess as well.
-    return await this.db.collection('resource:history').get()
-      .then(
-        (result) => result.docs.filter(d => usersList.indexOf(d.id) !== -1).map(doc => ({ userId: doc.id, lastRun: doc.data()['lastUpdated'], autoSortInterval: users.find(u => u.userId === doc.id)?.autoSortInterval }))
+    return await this.db
+      .collection('resource:history')
+      .get()
+      .then(result =>
+        result.docs
+          .filter(d => usersList.indexOf(d.id) !== -1)
+          .map(doc => ({ userId: doc.id, lastRun: doc.data()['lastUpdated'], autoSortInterval: users.find(u => u.userId === doc.id)?.autoSortInterval }))
       );
   };
 
-  public purgeUserData = async() => {
+  public purgeUserData = async () => {
     const playlists = await (await this.db.collection('resource:playlists').doc(this.userId).get()).data();
     const playlistIds = playlists?.['items']?.map((i: any) => i.playlistId);
 
@@ -154,7 +169,5 @@ export class DataStore {
     if (await (await authToken.get()).exists) {
       await authToken.delete();
     }
-   
   };
-
 }

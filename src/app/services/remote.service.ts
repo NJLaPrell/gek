@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { RemoteCommand } from '../state/models/remote.model';
-import {  SocketService } from './socket.service';
+import { SocketService } from './socket.service';
 import { Store } from '@ngrx/store';
 import * as Actions from '../state/actions/remote.actions';
 import { environment } from '../../environments/environment';
@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 const DEBUG = environment.debug.remoteService;
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RemoteService {
   public clientType: 'remote' | 'viewer' | 'player' = 'viewer';
@@ -17,11 +17,9 @@ export class RemoteService {
   private peer = false;
 
   constructor(
-       private socket: SocketService,
-       private store: Store
-  ) {
-        
-  }
+    private socket: SocketService,
+    private store: Store
+  ) {}
 
   public initializeSocketConnection(clientType: 'remote' | 'viewer' | 'player', userId: string) {
     this.peer = false;
@@ -32,7 +30,9 @@ export class RemoteService {
       this.store.dispatch(Actions.connectionEstablished({ clientType }));
       this.socket.sendHandshake(this.userId, this.clientType);
     });
-    this.socket.onHandshake((payload: { clientType: 'remote' | 'viewer' | 'player'; clientId: string }) => payload.clientType !== this.clientType && !this.peer ? this.store.dispatch(Actions.receivedHandshake({ clientType: payload.clientType })) : null);
+    this.socket.onHandshake((payload: { clientType: 'remote' | 'viewer' | 'player'; clientId: string }) =>
+      payload.clientType !== this.clientType && !this.peer ? this.store.dispatch(Actions.receivedHandshake({ clientType: payload.clientType })) : null
+    );
     this.socket.onPeerDisconnect(() => {
       this.store.dispatch(Actions.peerDisconnected());
       this.socket.sendHandshake(this.userId, this.clientType);
@@ -41,13 +41,12 @@ export class RemoteService {
     this.socket.onReconnect(() => this.socket.sendHandshake(this.userId, this.clientType));
     this.socket.onMessageReceived((msg: any) => {
       this.debug('message received', msg, msg?.type, msg?.command?.client);
-      if(msg?.type === 'command' && msg?.command?.client === this.clientType) {
+      if (msg?.type === 'command' && msg?.command?.client === this.clientType) {
         this.debug('[Remote Service] - Received Command.', msg);
         this.store.dispatch(Actions.receivedCommand({ ...msg.command }));
       }
     });
     this.socket.connect();
-    
   }
 
   public sendCommand(command: RemoteCommand) {
@@ -59,15 +58,14 @@ export class RemoteService {
     this.socket.disconnect();
     this.peer = false;
   }
-    
+
   public peerConnected() {
     this.peer = true;
   }
 
   private debug(...args: any) {
-    if(DEBUG) {
+    if (DEBUG) {
       console.debug(...args);
     }
-  }    
-
+  }
 }

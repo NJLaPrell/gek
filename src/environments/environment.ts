@@ -11,14 +11,12 @@ export const environment = {
   reconnectMaxAttempts: 10,
   viewerStateInterval: 5000,
 
-
-
   debug: {
     remoteService: false,
     socketService: false,
     remoteComponent: false,
-    viewerComponent: false
-  }
+    viewerComponent: false,
+  },
 };
 
 /*

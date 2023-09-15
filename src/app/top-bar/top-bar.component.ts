@@ -1,8 +1,17 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import {
-  faRocket, faRotate, faClipboardList, faTrashCan,
-  faTriangleExclamation, faTableList, faUserGear, faSquareXmark, faTv, faTabletScreenButton,
-  faRightFromBracket, faUser
+  faRocket,
+  faRotate,
+  faClipboardList,
+  faTrashCan,
+  faTriangleExclamation,
+  faTableList,
+  faUserGear,
+  faSquareXmark,
+  faTv,
+  faTabletScreenButton,
+  faRightFromBracket,
+  faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UnsortedComponent } from '../modals/unsorted/unsorted.component';
@@ -22,7 +31,7 @@ import { ToastService } from '../services/toast.service';
 @Component({
   selector: 'app-top-bar',
   templateUrl: './top-bar.component.html',
-  styleUrls: ['./top-bar.component.scss']
+  styleUrls: ['./top-bar.component.scss'],
 })
 export class TopBarComponent {
   // Font Awesome
@@ -58,12 +67,12 @@ export class TopBarComponent {
     private router: Router,
     private toast: ToastService
   ) {
-    this.store.select(selectUserId).subscribe(uid => this.userId = uid);
+    this.store.select(selectUserId).subscribe(uid => (this.userId = uid));
     this.store.select(selectHistoryState).subscribe(h => {
       this.errorCount = h.errorQueue.length;
       this.unsortedCount = h.unsorted.length;
     });
-    this.store.select(selectRemoteMode).subscribe(m => this.mode = m);
+    this.store.select(selectRemoteMode).subscribe(m => (this.mode = m));
     this.store.select(selectPeerConnected).subscribe(c => {
       this.waitingPeerReconnect = this.peerConnected && this.selfConnected && !c;
       this.peerConnected = c;
@@ -72,7 +81,7 @@ export class TopBarComponent {
       this.waitingPeerReconnect = this.peerConnected && this.selfConnected && !c;
       this.selfConnected = c;
     });
-    this.store.select(selectDisplayName).subscribe(n => this.displayName = n);
+    this.store.select(selectDisplayName).subscribe(n => (this.displayName = n));
   }
 
   openUnsorted() {
@@ -103,7 +112,7 @@ export class TopBarComponent {
     this.modalService.open(LegalComponent);
   }
 
-  handleModeToggle(mode: 'player'|'remote'|'viewer'){
+  handleModeToggle(mode: 'player' | 'remote' | 'viewer') {
     if (!this.userId) {
       console.error('No userId is set. Unable to initialize socket connection without a userId.');
       return;
@@ -116,5 +125,4 @@ export class TopBarComponent {
       this.store.dispatch(initializeSocketConnection({ clientType: mode, userId: this.userId }));
     }
   }
-
 }

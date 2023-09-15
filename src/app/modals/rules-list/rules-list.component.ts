@@ -13,7 +13,7 @@ import { DndDropEvent, DropEffect } from 'ngx-drag-drop';
 @Component({
   selector: 'app-rules-list',
   templateUrl: './rules-list.component.html',
-  styleUrls: ['./rules-list.component.scss']
+  styleUrls: ['./rules-list.component.scss'],
 })
 export class RulesListComponent {
   // Font Awesome
@@ -34,7 +34,7 @@ export class RulesListComponent {
     data: 'myDragData',
     effectAllowed: 'move',
     disable: false,
-    handle: true
+    handle: true,
   };
 
   constructor(
@@ -42,7 +42,7 @@ export class RulesListComponent {
     private store: Store,
     private modalService: NgbModal
   ) {
-    this.store.select(selectRules).subscribe(r => this.rules = JSON.parse(JSON.stringify(r)));
+    this.store.select(selectRules).subscribe(r => (this.rules = JSON.parse(JSON.stringify(r))));
     this.store.select(selectSubscriptions).subscribe(s => {
       s.forEach(sub => {
         this.subscriptionsList[sub.title] = sub.channelId;
@@ -62,10 +62,10 @@ export class RulesListComponent {
   updateRule(r: any) {
     r.edit = false;
     if (r.id) {
-      this.store.dispatch(updateRule({ rule:r }));
+      this.store.dispatch(updateRule({ rule: r }));
     } else {
       r.id = uuid();
-      this.store.dispatch(addRule({ rule:r }));
+      this.store.dispatch(addRule({ rule: r }));
     }
   }
 
@@ -84,24 +84,20 @@ export class RulesListComponent {
   confirmDelete(id: string) {
     const modalRef = this.modalService.open(ConfirmPromptComponent);
     modalRef.componentInstance.prompt = 'Are you sure you wish to delete this rule?';
-    modalRef.closed.subscribe(c => c === 'Continue click' ? this.store.dispatch(deleteRule({ id })) : null);
+    modalRef.closed.subscribe(c => (c === 'Continue click' ? this.store.dispatch(deleteRule({ id })) : null));
   }
 
-  onDrop( event:DndDropEvent, list?:any[] ) {
-    if(list && (event.dropEffect === 'move')) {
+  onDrop(event: DndDropEvent, list?: any[]) {
+    if (list && event.dropEffect === 'move') {
       const index = typeof event.index === 'undefined' ? list.length : event.index;
-      list.splice( index, 0, event.data );
+      list.splice(index, 0, event.data);
       this.store.dispatch(orderRule({ id: event.data.id, index }));
     }
   }
 
-  onDragged( item:any, list:any[], effect:DropEffect ) {
-    if(effect === 'move') {
+  onDragged(item: any, list: any[], effect: DropEffect) {
+    if (effect === 'move') {
       list.splice(list.indexOf(item), 1);
     }
   }
-
-  
-
-
 }

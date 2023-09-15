@@ -4,13 +4,10 @@ import { HttpXsrfTokenExtractor } from '@angular/common/http';
 import { fromFetch } from 'rxjs/fetch';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SortService {
-
-  constructor(
-        private tokenExtractor: HttpXsrfTokenExtractor,
-  ) { }
+  constructor(private tokenExtractor: HttpXsrfTokenExtractor) {}
 
   runSortService = () => {
     const token = <string>this.tokenExtractor.getToken();
@@ -20,9 +17,8 @@ export class SortService {
       headers: {
         Accept: 'application/json, text/plain, */*',
         'Content-Type': 'application/json',
-        'X-XSRF-TOKEN': token
+        'X-XSRF-TOKEN': token,
       },
     });
   };
-
 }

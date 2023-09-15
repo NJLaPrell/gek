@@ -1,0 +1,10 @@
+*.*
+
+!*.ts
+!*.js
+!*.html
+
+certs
+dist
+gek-docker
+utils

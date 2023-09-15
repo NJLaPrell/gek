@@ -1,10 +1,10 @@
-<app-video-embed *ngIf="videoId"
-    [videoId]="videoId"
-    (almostOver)="onAlmostOver($event)"
-    (videoEnded)="onVideoEnded($event)"
-    (ready)="onReady($event)"
-    (apiChange)="onApiChange($event)"
-    (error)="onError($event)"
-    [autoPlay]="autoPlay"
-    (externalHandler)="onExternalHandlerChange($event)"
-></app-video-embed>
+<app-video-embed
+  *ngIf="videoId"
+  [videoId]="videoId"
+  (almostOver)="onAlmostOver($event)"
+  (videoEnded)="onVideoEnded($event)"
+  (ready)="onReady($event)"
+  (apiChange)="onApiChange($event)"
+  (error)="onError($event)"
+  [autoPlay]="autoPlay"
+  (externalHandler)="onExternalHandlerChange($event)"></app-video-embed>

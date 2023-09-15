@@ -1,28 +1,13 @@
-import { createFeatureSelector, createSelector } from "@ngrx/store";
-import { HistoryState } from "../models/history.model";
+import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { HistoryState } from '../models/history.model';
 import * as fromHistory from '../reducers/history.reducer';
 
+export const selectHistoryState = createFeatureSelector<HistoryState>(fromHistory.historyFeatureKey);
 
-export const selectHistoryState = createFeatureSelector<HistoryState>(
-    fromHistory.historyFeatureKey
-);
+export const selectHistory = createSelector(selectHistoryState, state => state);
 
-export const selectHistory = createSelector(
-    selectHistoryState,
-    (state) => state
-);
+export const selectErrorQueue = createSelector(selectHistoryState, state => state.errorQueue);
 
-export const selectErrorQueue = createSelector(
-    selectHistoryState,
-    (state) => state.errorQueue
-);
+export const selectUnsorted = createSelector(selectHistoryState, state => state.unsorted);
 
-export const selectUnsorted = createSelector(
-    selectHistoryState,
-    (state) => state.unsorted
-);
-
-export const selectLastRun = createSelector(
-    selectHistoryState,
-    (state) => state.lastRun
-);
+export const selectLastRun = createSelector(selectHistoryState, state => state.lastRun);

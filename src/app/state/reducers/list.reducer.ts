@@ -8,40 +8,40 @@ export const listFeatureKey = 'list';
 export const listReducer = createReducer(
   initialListState,
   on(ListActions.getListsSuccess, (state, action) => {
-    const playlistLookup:any = {};
-    const items = [...action.items].sort((a, b) => a.title.replace(/\W+/g,'') > b.title.replace(/\W+/g,'') ? 1 : -1);
-    items.forEach((i: Playlist) => playlistLookup[i.playlistId || 1] = i.title);
+    const playlistLookup: any = {};
+    const items = [...action.items].sort((a, b) => (a.title.replace(/\W+/g, '') > b.title.replace(/\W+/g, '') ? 1 : -1));
+    items.forEach((i: Playlist) => (playlistLookup[i.playlistId || 1] = i.title));
     return {
       ...state,
       items,
-      playlistLookup 
+      playlistLookup,
     };
   }),
   on(VideoActions.getPlaylistVideosSuccess, (state, action) => {
     const ix = state.items.findIndex((pl: Playlist) => pl.playlistId === action.playlistId);
     const playlists: Playlist[] = [...state.items];
-    
-    playlists[ix] = { 
+
+    playlists[ix] = {
       ...playlists[ix],
       lastUpdated: action.response.lastUpdated,
       itemCount: action.response.items.length,
-      newItemCount: action.response.items.filter(v => new Date(v.publishedAt || '').getTime() > (Date.now() - 86400000)).length,
-      videos: [ ...action.response.items ]
+      newItemCount: action.response.items.filter(v => new Date(v.publishedAt || '').getTime() > Date.now() - 86400000).length,
+      videos: [...action.response.items],
     };
     return {
       ...state,
-      items: playlists
+      items: playlists,
     };
   }),
   on(ListActions.getSubscriptionsSuccess, (state, action) => ({ ...state, subscriptions: action.response.items })),
-  on(ListActions.getListsFail, state => ({ ...initialListState })),
-  on(ListActions.removePlaylistItem, (state, action) =>({ 
-    ...state, 
+  on(ListActions.getListsFail, () => ({ ...initialListState })),
+  on(ListActions.removePlaylistItem, (state, action) => ({
+    ...state,
     items: state.items.map(pl => ({
       ...pl,
       itemCount: pl.videos?.filter(v => v.playlistItemId !== action.playlistItemId).length,
-      newItemCount: pl.videos?.filter(v => new Date(v.publishedAt || '').getTime() > (Date.now() - 86400000) && v.playlistItemId !== action.playlistItemId).length,
-      videos: pl.videos?.filter(v => v.playlistItemId !== action.playlistItemId)
-    }))
+      newItemCount: pl.videos?.filter(v => new Date(v.publishedAt || '').getTime() > Date.now() - 86400000 && v.playlistItemId !== action.playlistItemId).length,
+      videos: pl.videos?.filter(v => v.playlistItemId !== action.playlistItemId),
+    })),
   }))
 );

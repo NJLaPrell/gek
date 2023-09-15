@@ -2,6 +2,9 @@
   "name": "gek",
   "version": "0.11.0",
   "scripts": {
+    "restart-all": "npm-run-all stop-all start-all",
+    "lint": "eslint server src --fix",
+    "prettier": "prettier -w .",
     "start": "ntl -o -s 10",
     "start:dev": "npm-run-all start-all watch-logs",
     "stop-all": "pm2 stop all",
@@ -29,6 +32,7 @@
     "descriptions": {
       "start:dev": "Start & watch UI and servers for development.",
       "stop-all": "Stop all dev services.",
+      "restart-all": "Restart all dev services.",
       "watch-logs": "Tail the logs.",
       "build:package": "Clean and build a production tar.gz package.",
       "deploy-package": "SCP the package to the server.",
@@ -101,6 +105,9 @@
     "karma-jasmine-html-reporter": "~2.0.0",
     "npm-run-all": "^4.1.5",
     "ntl": "^5.1.0",
+    "pm2": "^5.3.0",
+    "postcss": "^8.4.29",
+    "prettier": "^3.0.3",
     "rimraf": "^3.0.2",
     "shelljs": "^0.8.5",
     "ts-node": "^10.9.1",

@@ -6,7 +6,7 @@ export const preferencesFeatureKey = 'preferences';
 
 export const initialState: Preferences = {
   lastUpdated: false,
-  items: []
+  items: [],
 };
 
 export const preferencesReducer = createReducer(

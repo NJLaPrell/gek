@@ -1,14 +1,16 @@
-import { IncomingMessage } from 'http';
 import { Server, WebSocket, ServerOptions, RawData } from 'ws';
 import { v4 as uuid } from 'uuid';
 import { Logger } from './logger';
 import * as https from 'https';
 
-const credentials = process.env['SSL_KEY'] && process.env['SSL_CERT'] &&  process.env['SSL_CA'] ? { 
-  key: Buffer.from(process.env['SSL_KEY'], 'base64').toString('ascii'),
-  cert: Buffer.from(process.env['SSL_CERT'], 'base64').toString('ascii'),
-  ca: Buffer.from(process.env['SSL_CA'], 'base64').toString('ascii') 
-} : false;
+const credentials =
+  process.env['SSL_KEY'] && process.env['SSL_CERT'] && process.env['SSL_CA']
+    ? {
+        key: Buffer.from(process.env['SSL_KEY'], 'base64').toString('ascii'),
+        cert: Buffer.from(process.env['SSL_CERT'], 'base64').toString('ascii'),
+        ca: Buffer.from(process.env['SSL_CA'], 'base64').toString('ascii'),
+      }
+    : false;
 
 const log = new Logger('socket');
 
@@ -16,7 +18,7 @@ const HEARTBEAT_INTERVAL = Number.parseInt(process.env['SOC_HEARTBEAT_INTERVAL']
 const PORT = Number.parseInt(process.env['SOC_PORT'] || '8080', 10);
 const LOG_LEVEL = process.env['SOC_LOG_LEVEL'];
 
-export type LogLevel = 'off'| 'debug' | 'info' | 'warning' | 'error';
+export type LogLevel = 'off' | 'debug' | 'info' | 'warning' | 'error';
 
 interface ExtendedWebSocket extends WebSocket {
   isAlive?: boolean;
@@ -42,8 +44,8 @@ export class SocketServer {
 
   private clients: ExtendedWebSocket[] = [];
 
-  public setPort = (port: number) => this.port = port;
-  public setHeartbeatInterval = (interval: number) => this.heartbeatInterval = interval;
+  public setPort = (port: number) => (this.port = port);
+  public setHeartbeatInterval = (interval: number) => (this.heartbeatInterval = interval);
 
   public serve = (): void => {
     log.info(' ');
@@ -61,10 +63,10 @@ export class SocketServer {
 
     this.server = new WebSocket.Server(options);
 
-    log.info(`Establishing heartbeat at interval: ${this.heartbeatInterval/1000} seconds.`);
+    log.info(`Establishing heartbeat at interval: ${this.heartbeatInterval / 1000} seconds.`);
     this.pingClients();
-    
-    this.server.on('connection', (socket: ExtendedWebSocket, message: IncomingMessage) => this.onConnection(socket, message));
+
+    this.server.on('connection', (socket: ExtendedWebSocket) => this.onConnection(socket));
     this.server.on('close', () => this.onClose());
     this.server.on('error', (error: Error) => this.onError(error));
   };
@@ -78,44 +80,44 @@ export class SocketServer {
   private clientById = (id: string) => this.clients.find(c => c.clientId === id);
 
   private processMessage = (msg: SocketMessage, clientId: string): void => {
-    switch(msg.type) {
-    case 'handshake':
-      log.debug('Processing handshake message');
-      if (!msg.payload.userId || !msg.payload.clientType) {
-        log.warn(`Client ${clientId} sent invalid handshake payload.`, msg);
-      } else {
-        const client = this.clientById(clientId);
-        if (client) {
-          client.userId = msg.payload.userId;
-          client.clientType = msg.payload.clientType;
-        }
-        
-        const peer = this.clients.find(c => c.userId === msg.payload.userId && c.clientType !== msg.payload.clientType);
-        if (peer) {
-          log.info(`Peer connection established: ${clientId} / ${peer.clientId}.`);
-          if (client) {
-            client.peer = peer;
-            client.peerId = peer.clientId?.slice() || '';
-          }
-          peer.peer = client;
-          peer.peerId = client?.clientId?.slice() || '';
-          this.sendMsg(peer.clientId || '', { type: 'handshake', origin: 'peer', payload: { clientId: clientId, clientType: msg.payload.clientType } });
-          this.sendMsg(clientId, { type: 'handshake', origin: 'peer', payload: { clientId: peer.clientId, clientType: peer.clientType } });
+    switch (msg.type) {
+      case 'handshake':
+        log.debug('Processing handshake message');
+        if (!msg.payload.userId || !msg.payload.clientType) {
+          log.warn(`Client ${clientId} sent invalid handshake payload.`, msg);
         } else {
-          log.debug('No suitable peer found. Waiting for handshake...');
-        }
-      }
-      break;
+          const client = this.clientById(clientId);
+          if (client) {
+            client.userId = msg.payload.userId;
+            client.clientType = msg.payload.clientType;
+          }
 
-    case 'message':
-      msg.origin = 'peer';
-      // eslint-disable-next-line no-case-declarations
-      const client = this.clientById(clientId);
-      if (client && client.peer) {
-        log.debug(`Forwarding message to peer: ${client.peer.clientId}.`);
-        this.sendMsg(client.peer.clientId || '', msg);
-      }
-      break;
+          const peer = this.clients.find(c => c.userId === msg.payload.userId && c.clientType !== msg.payload.clientType);
+          if (peer) {
+            log.info(`Peer connection established: ${clientId} / ${peer.clientId}.`);
+            if (client) {
+              client.peer = peer;
+              client.peerId = peer.clientId?.slice() || '';
+            }
+            peer.peer = client;
+            peer.peerId = client?.clientId?.slice() || '';
+            this.sendMsg(peer.clientId || '', { type: 'handshake', origin: 'peer', payload: { clientId: clientId, clientType: msg.payload.clientType } });
+            this.sendMsg(clientId, { type: 'handshake', origin: 'peer', payload: { clientId: peer.clientId, clientType: peer.clientType } });
+          } else {
+            log.debug('No suitable peer found. Waiting for handshake...');
+          }
+        }
+        break;
+
+      case 'message':
+        msg.origin = 'peer';
+        // eslint-disable-next-line no-case-declarations
+        const client = this.clientById(clientId);
+        if (client && client.peer) {
+          log.debug(`Forwarding message to peer: ${client.peer.clientId}.`);
+          this.sendMsg(client.peer.clientId || '', msg);
+        }
+        break;
     }
   };
 
@@ -123,7 +125,7 @@ export class SocketServer {
    * EVENT HANDLERS
    */
 
-  private onConnection = (socket: ExtendedWebSocket, message: IncomingMessage) => {
+  private onConnection = (socket: ExtendedWebSocket) => {
     const clientId = uuid();
     socket.clientId = clientId;
     socket.isAlive = true;
@@ -142,7 +144,7 @@ export class SocketServer {
     if (client) {
       client.isAlive = true;
     }
-    
+
     log.debug('Received (' + clientId + '): %s', data);
     let msg: SocketMessage;
     try {
@@ -151,7 +153,7 @@ export class SocketServer {
         throw 'Unexpected message format. Missing type or message property.';
       }
       this.processMessage(msg, clientId);
-    } catch(e) {
+    } catch (e) {
       log.warn(`Received malformed message (${clientId}): ${data}`, e);
     }
   };
@@ -177,7 +179,6 @@ export class SocketServer {
       this.clients.splice(clientIx);
     }
     this.clientById(clientId)?.terminate();
-    
   };
 
   private onClientError = (error: Error, clientId: string) => {
@@ -189,23 +190,19 @@ export class SocketServer {
    */
 
   private logDebug = (...args: any) => {
-    if (['debug'].indexOf(this.logging) !== -1)
-      log.debug(...args);
+    if (['debug'].indexOf(this.logging) !== -1) log.debug(...args);
   };
 
   private logInfo = (...args: any) => {
-    if (['debug', 'info'].indexOf(this.logging) !== -1)
-      console.info(...args);
+    if (['debug', 'info'].indexOf(this.logging) !== -1) console.info(...args);
   };
 
   private logWarning = (...args: any) => {
-    if (['debug', 'info', 'warning'].indexOf(this.logging) !== -1)
-      console.warn(...args);
+    if (['debug', 'info', 'warning'].indexOf(this.logging) !== -1) console.warn(...args);
   };
 
   private logError = (...args: any) => {
-    if (['debug', 'info', 'warning', 'error'].indexOf(this.logging) !== -1)
-      console.error(...args);
+    if (['debug', 'info', 'warning', 'error'].indexOf(this.logging) !== -1) console.error(...args);
   };
 
   /***************************************
@@ -230,16 +227,17 @@ export class SocketServer {
 
   // For each zombie, signal disconnect to the peer, close the connection, and remove the client.
   private killZombies = () => {
-    this.clients.filter(c => c.isAlive === false).forEach(c => {
-      const peer = this.clientById(c.peer?.clientId || '');
-      if (peer) {
-        this.sendMsg(c.peer?.clientId || '', { type: 'peerDisconnect', payload: 'Peer disconnected: Timeout.' });
-        log.debug(`Peer disconnected due to timeout: ${peer.clientId}.`);
-      }
-      const clientIx = this.clients.findIndex(client => client.clientId === c.clientId);  
-      c.terminate();
-      this.clients.splice(clientIx);
-    });
+    this.clients
+      .filter(c => c.isAlive === false)
+      .forEach(c => {
+        const peer = this.clientById(c.peer?.clientId || '');
+        if (peer) {
+          this.sendMsg(c.peer?.clientId || '', { type: 'peerDisconnect', payload: 'Peer disconnected: Timeout.' });
+          log.debug(`Peer disconnected due to timeout: ${peer.clientId}.`);
+        }
+        const clientIx = this.clients.findIndex(client => client.clientId === c.clientId);
+        c.terminate();
+        this.clients.splice(clientIx);
+      });
   };
-
 }

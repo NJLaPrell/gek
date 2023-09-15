@@ -17,7 +17,7 @@ export class NavStateHelper {
       videoTitle: video ? video.title : false,
       previousVideo: props.videoList && videoIndex > 0 ? props.videoList[videoIndex - 1] : false,
       currentVideo: video || false,
-      nextVideo: props.videoList && videoIndex <= props.videoList.length ? props.videoList[videoIndex + 1] : false
+      nextVideo: props.videoList && videoIndex <= props.videoList.length ? props.videoList[videoIndex + 1] : false,
     };
   }
 
@@ -29,17 +29,17 @@ export class NavStateHelper {
 // ###################################
 
 export interface NavState {
-    pageTitle: string;
-    playlistId: string;
-    playlistTitle: string;
-    videoId: string | false;
-    videoTitle: string | false;
-    previousVideo: Video | false;
-    currentVideo: Video | false;
-    nextVideo: Video | false;
+  pageTitle: string;
+  playlistId: string;
+  playlistTitle: string;
+  videoId: string | false;
+  videoTitle: string | false;
+  previousVideo: Video | false;
+  currentVideo: Video | false;
+  nextVideo: Video | false;
 }
 
-export const initialNavState = <NavState> {
+export const initialNavState = <NavState>{
   pageTitle: '',
   playlistId: '',
   playlistTitle: '',
@@ -47,14 +47,12 @@ export const initialNavState = <NavState> {
   videoTitle: false,
   previousVideo: false,
   currentVideo: false,
-  nextVideo: false
+  nextVideo: false,
 };
 
 export interface NavStateProps {
-    playlistId: string,
-    videoId: string | false,
-    videoList: Video[] | false,
-    titleLookup: {[key: string] : string} | false
+  playlistId: string;
+  videoId: string | false;
+  videoList: Video[] | false;
+  titleLookup: { [key: string]: string } | false;
 }
-
-

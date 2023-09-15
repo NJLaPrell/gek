@@ -24,7 +24,7 @@ export const reducers: ActionReducerMap<AppState> = {
   [fromNavState.navStateFeatureKey]: fromNavState.navStateReducer,
   [fromRemoteState.remoteFeatureKey]: fromRemoteState.remoteReducer,
   [fromListState.listFeatureKey]: fromListState.listReducer,
-  [fromPreferences.preferencesFeatureKey] : fromPreferences.preferencesReducer
+  [fromPreferences.preferencesFeatureKey]: fromPreferences.preferencesReducer,
 };
 
 export const metaReducers: MetaReducer<AppState>[] = [];

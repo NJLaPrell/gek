@@ -3,13 +3,13 @@ import { Component, Input, OnInit, Output, EventEmitter, ElementRef, ViewChild, 
 @Component({
   selector: 'app-video-embed',
   templateUrl: './video-embed.component.html',
-  styleUrls: ['./video-embed.component.scss']
+  styleUrls: ['./video-embed.component.scss'],
 })
 export class VideoEmbedComponent implements OnInit {
   @Input() videoId!: string;
   @Input() quality: YT.SuggestedVideoQuality = 'highres';
   @Input() autoPlay = true;
-  @Input() duration!:string;
+  @Input() duration!: string;
   width = 0;
   height = 0;
   start = 0;
@@ -27,9 +27,7 @@ export class VideoEmbedComponent implements OnInit {
 
   @ViewChild('player') player!: ElementRef<HTMLDivElement>;
 
-  constructor(
-    private _changeDetectorRef: ChangeDetectorRef
-  ) { }
+  constructor(private _changeDetectorRef: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     // Youtube player API
@@ -61,8 +59,7 @@ export class VideoEmbedComponent implements OnInit {
 
   // Fit the video player width with the page.
   onResize = (): void => {
-    if (!this.player)
-      return;
+    if (!this.player) return;
     this.width = Math.min(this.player.nativeElement.clientWidth, 1200);
     this.height = this.width * 0.6;
     this._changeDetectorRef.detectChanges();
@@ -104,11 +101,10 @@ export class VideoEmbedComponent implements OnInit {
       this.externalHandler.emit(youtubeWindow);
       const duration: number = parseInt(this.duration, 10);
       if (!Number.isNaN(duration) && duration > 0) {
-        setTimeout(() => youtubeWindow?.close(), (duration * 1000) + 5000);
+        setTimeout(() => youtubeWindow?.close(), duration * 1000 + 5000);
       }
     } else {
       this.api.playVideo();
     }
   };
-
 }

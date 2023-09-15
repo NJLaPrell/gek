@@ -6,11 +6,11 @@ export const authFeatureKey = 'auth';
 
 export const initialState: AuthState = {
   userId: false,
-  displayName: ''
+  displayName: '',
 };
 
 export const authReducer = createReducer(
   initialState,
   on(AuthActions.getAuthStateSuccess, (state, action) => ({ ...action.authState })),
-  on(AuthActions.getAuthStateFail, () => (initialState))
+  on(AuthActions.getAuthStateFail, () => initialState)
 );

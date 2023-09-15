@@ -4,19 +4,19 @@ import { Video } from './video.model';
 // ## LIST MODEL
 // ###################################
 export interface ListState {
-    items: Playlist[];
-    playlistLookup: { [key: string]: string };
-    subscriptions: Subscription[];
+  items: Playlist[];
+  playlistLookup: { [key: string]: string };
+  subscriptions: Subscription[];
 }
 
 export const initialListState: ListState = {
   items: [],
   playlistLookup: {},
-  subscriptions: []
+  subscriptions: [],
 };
 
 export interface GetListResponse {
-    items: Playlist[];
+  items: Playlist[];
 }
 
 // ###################################
@@ -24,22 +24,22 @@ export interface GetListResponse {
 // ###################################
 
 export interface Playlists {
-    lastUpdated: number | false;
-    items: Playlist[];
+  lastUpdated: number | false;
+  items: Playlist[];
 }
 
 export interface Playlist {
-    playlistId?: string;      //------
-    title: string;
-    description: string;
-    thumbnail: string;
-    lastUpdated?: number;
-    newItemCount?: number;    // TODO
-    itemCount?: number;       //------
-    videos?: Video[];         //------
-    channelId?: string;       //XXXXXX
-    publishedDate?: Date;     //XXXXXX
-    id?: string;              //XXXXXX
+  playlistId?: string; //------
+  title: string;
+  description: string;
+  thumbnail: string;
+  lastUpdated?: number;
+  newItemCount?: number; // TODO
+  itemCount?: number; //------
+  videos?: Video[]; //------
+  channelId?: string; //XXXXXX
+  publishedDate?: Date; //XXXXXX
+  id?: string; //XXXXXX
 }
 
 // ###################################
@@ -47,14 +47,14 @@ export interface Playlist {
 // ###################################
 
 export interface Subscription {
-    channelId: string;
-    title: string;
-    description: string;
-    thumbnail: string;
-    newItemCount: number;
+  channelId: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  newItemCount: number;
 }
 
 export interface GetSubscriptionsResponse {
-    lastUpdated: number;
-    items: Subscription[];
+  lastUpdated: number;
+  items: Subscription[];
 }

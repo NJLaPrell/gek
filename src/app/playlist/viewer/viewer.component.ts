@@ -14,7 +14,7 @@ const DEBUG = environment.debug.viewerComponent;
 @Component({
   selector: 'app-viewer',
   templateUrl: './viewer.component.html',
-  styleUrls: ['./viewer.component.scss']
+  styleUrls: ['./viewer.component.scss'],
 })
 export class ViewerComponent implements OnInit {
   @Input() playlistId!: string;
@@ -26,14 +26,15 @@ export class ViewerComponent implements OnInit {
   autoPlay = true;
   youtubeWindow: any = false;
   externalOnly = false;
-  
-  constructor(
-    private store: Store
-  ) { }
+
+  constructor(private store: Store) {}
 
   ngOnInit(): void {
-    this.store.select(selectLastCommand).pipe(skipWhile(c => c === null)).subscribe(c => this.executeCommand(c));
-    this.store.select(selectAutoPlayPreference).subscribe(c => this.autoPlay = Boolean(c));
+    this.store
+      .select(selectLastCommand)
+      .pipe(skipWhile(c => c === null))
+      .subscribe(c => this.executeCommand(c));
+    this.store.select(selectAutoPlayPreference).subscribe(c => (this.autoPlay = Boolean(c)));
   }
 
   // #####################
@@ -44,7 +45,7 @@ export class ViewerComponent implements OnInit {
   onAlmostOver(e: YT.OnStateChangeEvent) {
     this.debug('onAlmostOver()', e);
     this.sendCommand({
-      directive: 'almostOver'
+      directive: 'almostOver',
     });
   }
 
@@ -52,7 +53,7 @@ export class ViewerComponent implements OnInit {
   onVideoEnded(e: YT.OnStateChangeEvent) {
     this.debug('Video Ended', e);
     this.sendCommand({
-      directive: 'videoEnded'
+      directive: 'videoEnded',
     });
   }
 
@@ -155,40 +156,39 @@ export class ViewerComponent implements OnInit {
     setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
   }
 
-
   executeCommand(c: any) {
     switch (c.command.directive) {
-    case 'navigate':
-      this.goToVideo(c.command.params.playlistId, c.command.params.videoId);
-      break;
-      
-    case 'pause':
-      this.pause();
-      break;
+      case 'navigate':
+        this.goToVideo(c.command.params.playlistId, c.command.params.videoId);
+        break;
 
-    case 'play':
-      this.play();
-      break;
+      case 'pause':
+        this.pause();
+        break;
 
-    case 'unmute':
-      this.unmute();
-      break;
+      case 'play':
+        this.play();
+        break;
 
-    case 'mute':
-      this.mute();
-      break;
+      case 'unmute':
+        this.unmute();
+        break;
 
-    case 'volume':
-      this.setVolume(c.command.params.value);
-      break;
+      case 'mute':
+        this.mute();
+        break;
 
-    case 'seek':
-      this.seek(c.command.params.value);
-      break;
+      case 'volume':
+        this.setVolume(c.command.params.value);
+        break;
 
-    case 'closeExternal':
-      this.youtubeWindow?.close();
-      break;
+      case 'seek':
+        this.seek(c.command.params.value);
+        break;
+
+      case 'closeExternal':
+        this.youtubeWindow?.close();
+        break;
     }
 
     setTimeout(() => this.sendPlayerState(), 200);
@@ -201,21 +201,23 @@ export class ViewerComponent implements OnInit {
         params: {
           currentTime: this.api.playerInfo.currentTime,
           duration: this.api.playerInfo.duration,
-          muted: this.api.playerInfo.muted, 
+          muted: this.api.playerInfo.muted,
           volume: this.api.playerInfo.volume,
-          externalOnly: this.externalOnly
-        }
+          externalOnly: this.externalOnly,
+        },
       });
     }
   }
 
   sendCommand(command: any): void {
-    this.store.dispatch(sendCommand( {
-      id: uuid(),
-      client: 'remote',
-      timestamp: Date.now(),
-      command
-    }));
+    this.store.dispatch(
+      sendCommand({
+        id: uuid(),
+        client: 'remote',
+        timestamp: Date.now(),
+        command,
+      })
+    );
   }
 
   playerStateInterval() {
@@ -248,9 +250,8 @@ export class ViewerComponent implements OnInit {
   };
 
   private debug(...args: any) {
-    if(DEBUG) {
+    if (DEBUG) {
       console.debug(...args);
     }
   }
-
 }

@@ -13,7 +13,7 @@ import { selectPlaylistTitles } from 'src/app/state/selectors/list.selectors';
 @Component({
   selector: 'app-preferences',
   templateUrl: './preferences.component.html',
-  styleUrls: ['./preferences.component.scss']
+  styleUrls: ['./preferences.component.scss'],
 })
 export class PreferencesComponent {
   // Font Awesome
@@ -22,7 +22,7 @@ export class PreferencesComponent {
   faArrowTurnUp = faArrowTurnUp;
 
   private preferences: PreferenceItem[] = [];
-  
+
   public prefs: any;
   public playlists: any = [];
 
@@ -37,20 +37,25 @@ export class PreferencesComponent {
       this.preferences = [...prefs];
       this.prefs = {
         autoSort: this.getPref('autoSort'),
-        autoSortInterval: Number.parseInt(String(this.getPref('autoSortInterval')) || '60000', 10)/60000,
+        autoSortInterval: Number.parseInt(String(this.getPref('autoSortInterval')) || '60000', 10) / 60000,
         autoNext: this.getPref('autoNext'),
         almostDonePrompt: this.getPref('almostDonePrompt'),
         autoPlay: this.getPref('autoPlay'),
         keepPlaylist: this.getPref('keepPlaylist'),
-        stickyPlaylist: this.getPref('stickyPlaylist')
+        stickyPlaylist: this.getPref('stickyPlaylist'),
       };
     });
 
-    this.store.select(selectPlaylistTitles).subscribe(pl => this.playlists = Object.keys(pl).map(plid => ({ id: plid, title: pl[plid] })).map(pl => ({ title: pl.title, id: pl.id })));
+    this.store.select(selectPlaylistTitles).subscribe(
+      pl =>
+        (this.playlists = Object.keys(pl)
+          .map(plid => ({ id: plid, title: pl[plid] }))
+          .map(pl => ({ title: pl.title, id: pl.id })))
+    );
   }
 
-  private getPref = (prefName: string) =>this.preferences.find((p: PreferenceItem) => p.name === prefName)?.value;
-  
+  private getPref = (prefName: string) => this.preferences.find((p: PreferenceItem) => p.name === prefName)?.value;
+
   savePreferences(): void {
     const prefs = [
       { name: 'autoSort', value: this.prefs.autoSort },
@@ -59,7 +64,7 @@ export class PreferencesComponent {
       { name: 'almostDonePrompt', value: this.prefs.almostDonePrompt },
       { name: 'autoPlay', value: this.prefs.autoPlay },
       { name: 'keepPlaylist', value: this.prefs.keepPlaylist },
-      { name: 'stickyPlaylist', value: this.prefs.stickyPlaylist }
+      { name: 'stickyPlaylist', value: this.prefs.stickyPlaylist },
     ];
     this.store.dispatch(setPreferences({ lastUpdated: false, items: prefs }));
     this.activeModal.close();
@@ -68,12 +73,12 @@ export class PreferencesComponent {
   confirmDelete() {
     const modalRef = this.modalService.open(ConfirmPromptComponent);
     modalRef.componentInstance.prompt = 'Deleting user data will permanently remove all of your data, including rules and unsorted videos. Are you sure you wish to continue?';
-    modalRef.closed.subscribe(c => c === 'Continue click' ? this.delete() : null);
+    modalRef.closed.subscribe(c => (c === 'Continue click' ? this.delete() : null));
   }
 
   delete() {
     this.toast.info('Deleting User Data. Please wait...', { delay: 60000 });
-    this.preferencesService.delete().subscribe(() => window.location.href='/logout?dataDeleted=true');
+    this.preferencesService.delete().subscribe(() => (window.location.href = '/logout?dataDeleted=true'));
   }
 
   getKeepPlaylistName(): string {
@@ -89,5 +94,4 @@ export class PreferencesComponent {
       this.preferences[ix].value = id;
     }
   }
-
 }

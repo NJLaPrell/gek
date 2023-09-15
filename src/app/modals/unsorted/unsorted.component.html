@@ -1,69 +1,48 @@
 <div class="modal-header bg-dark text-light">
-    <h4 class="modal-title">Unsorted Videos ({{ unsorted.length }})</h4>
-    <button type="button" class="btn-close btn-dark" aria-label="Close" style="background-color: #AAA;" (click)="activeModal.dismiss('Cross click')"></button>
+  <h4 class="modal-title">Unsorted Videos ({{ unsorted.length }})</h4>
+  <button type="button" class="btn-close btn-dark" aria-label="Close" style="background-color: #aaa" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body bg-dark">
-    <table class="table table-dark table-responsive table-striped table-hover table-sm" style="table-layout:fixed;">
-        <tbody>
-          <tr *ngFor="let u of unsorted">
-                
-              <td class="unsorted-status">
-                <span *ngIf="u?.errorMessage"
-                  class="errorMessage"
-                  [ngbTooltip]="moment(u.errorMessage.failDate).fromNow() + ' - ' + u.errorMessage.errors[0].message"
-                >
-                  <fa-icon [icon]="faTriangleExclamation"></fa-icon>
-                </span>
-              </td>
+  <table class="table table-dark table-responsive table-striped table-hover table-sm" style="table-layout: fixed">
+    <tbody>
+      <tr *ngFor="let u of unsorted">
+        <td class="unsorted-status">
+          <span *ngIf="u?.errorMessage" class="errorMessage" [ngbTooltip]="moment(u.errorMessage.failDate).fromNow() + ' - ' + u.errorMessage.errors[0].message">
+            <fa-icon [icon]="faTriangleExclamation"></fa-icon>
+          </span>
+        </td>
 
-              <td>
-                <div class="text-end unsorted-button-panel float-end">
-                  <div ngbDropdown class="d-inline-block" container="body" display="dynamic">
-                      <button type="button"
-                        class="btn btn-dark btn-sm"
-                        [id]="'assign' + u?.id"
-                        ngbDropdownToggle
-                        container="body"
-                        ngbTooltip="Move to Playlist"
-                      >
-                        <fa-icon [icon]="faArrowTurnUp"></fa-icon>
-                      </button>
-                      <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end playlist-menu">
-                          <ng-container *ngFor="let pl of playlists">
-                              <button (click)="moveToPlaylist(pl.id, u?.videoId || '')" ngbDropdownItem class="text-truncate">{{ pl.title }}</button>
-                          </ng-container>
-                      </div>
-                  </div>
-                  &nbsp;
-                  <button type="button" class="btn btn-danger btn-sm" (click)="deleteItem(u)" ngbTooltip="Remove from the list.">
-                    <fa-icon [icon]="faTrash"></fa-icon>
-                  </button>
-                </div>
+        <td>
+          <div class="text-end unsorted-button-panel float-end">
+            <div ngbDropdown class="d-inline-block" container="body" display="dynamic">
+              <button type="button" class="btn btn-dark btn-sm" [id]="'assign' + u?.id" ngbDropdownToggle container="body" ngbTooltip="Move to Playlist">
+                <fa-icon [icon]="faArrowTurnUp"></fa-icon>
+              </button>
+              <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end playlist-menu">
+                <ng-container *ngFor="let pl of playlists">
+                  <button (click)="moveToPlaylist(pl.id, u?.videoId || '')" ngbDropdownItem class="text-truncate">{{ pl.title }}</button>
+                </ng-container>
+              </div>
+            </div>
+            &nbsp;
+            <button type="button" class="btn btn-danger btn-sm" (click)="deleteItem(u)" ngbTooltip="Remove from the list.">
+              <fa-icon [icon]="faTrash"></fa-icon>
+            </button>
+          </div>
 
-                <a [href]="'https://www.youtube.com/channel/' + u.channelId" target="_blank" class="channelLink">
-                  {{ u?.channelName }}
-                </a><br />
-                <img class="unsorted-thumbnail"
-                  [src]="u?.thumbnail"
-                  (click)="openVideo(u.videoId || '')"
-                  ngbTooltip="Click to open in a new window"
-                  style="cursor:pointer;"
-                />
-                <div #description 
-                  class="description description-truncate"
-                  (click)="description.classList.toggle('description-truncate')"
-                  ngbTooltip="Click to show/hide more"
-                >{{ u?.description }}</div>
-                <div class="unsorted-title w-100">{{ u?.title }}</div>
-                <div class="unsorted-details">Published {{ moment(u?.published).fromNow() }}</div>
-                
-            </td> 
-                
-          </tr>
-      </tbody>
-    </table>
+          <a [href]="'https://www.youtube.com/channel/' + u.channelId" target="_blank" class="channelLink">
+            {{ u?.channelName }} </a
+          ><br />
+          <img class="unsorted-thumbnail" [src]="u?.thumbnail" (click)="openVideo(u.videoId || '')" ngbTooltip="Click to open in a new window" style="cursor: pointer" />
+          <div #description class="description description-truncate" (click)="description.classList.toggle('description-truncate')" ngbTooltip="Click to show/hide more">{{ u?.description }}</div>
+          <div class="unsorted-title w-100">{{ u?.title }}</div>
+          <div class="unsorted-details">Published {{ moment(u?.published).fromNow() }}</div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 <div class="modal-footer bg-dark">
-    <button type="button" class="btn btn-danger" (click)="purge()"><fa-icon [icon]="faTrash"></fa-icon> Purge Unsorted Videos</button>
-    <button type="button" class="btn btn-dark" (click)="activeModal.close('Close click')">Close</button>
+  <button type="button" class="btn btn-danger" (click)="purge()"><fa-icon [icon]="faTrash"></fa-icon> Purge Unsorted Videos</button>
+  <button type="button" class="btn btn-dark" (click)="activeModal.close('Close click')">Close</button>
 </div>

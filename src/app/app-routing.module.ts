@@ -15,11 +15,11 @@ const routes: Routes = [
   { path: 'viewer', component: ViewerComponent, canActivate: [IsAuthenticatedGuard] },
   { path: 'privacy-policy', component: PrivacyPolicyComponent },
   { path: 'terms-of-service', component: TermsOfServiceComponent },
-  { path: 'data-deleted', component: DeleteDataComponent }
+  { path: 'data-deleted', component: DeleteDataComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

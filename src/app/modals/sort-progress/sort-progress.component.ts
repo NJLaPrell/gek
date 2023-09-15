@@ -9,7 +9,7 @@ import { SortService } from '../../services/sort.service';
 @Component({
   selector: 'app-sort-progress',
   templateUrl: './sort-progress.component.html',
-  styleUrls: ['./sort-progress.component.scss']
+  styleUrls: ['./sort-progress.component.scss'],
 })
 export class SortProgressComponent {
   @ViewChild('jobOutput') private jobOutput!: ElementRef;
@@ -48,5 +48,4 @@ export class SortProgressComponent {
     this.store.dispatch(getRules());
     this.store.dispatch(getHistory());
   };
-
 }
