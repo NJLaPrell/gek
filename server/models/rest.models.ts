@@ -7,7 +7,7 @@ export interface ExpressRequest extends Request {
   user: AuthUser;
 }
 
-export type ExpressResponse = Response
+export type ExpressResponse = Response;
 
 export interface GoogleAuthProfile {
   id: string;
@@ -33,7 +33,7 @@ export interface GoogleAuthProfile {
     email: string;
     email_verified: boolean;
     locale: string;
-  }
+  };
 }
 
 export interface AuthUser {

@@ -4,9 +4,8 @@ import { Store } from '@ngrx/store';
 import { map, Observable, skipWhile, tap } from 'rxjs';
 import { selectAuthenticated } from './state/selectors/auth.selectors';
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class IsAuthenticatedGuard implements CanActivate {
   private authenticated = false;
@@ -14,7 +13,7 @@ export class IsAuthenticatedGuard implements CanActivate {
   constructor(
     private store: Store,
     private route: Router
-  ) { }
+  ) {}
 
   canActivate(): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
     return this.store.select(selectAuthenticated).pipe(
@@ -23,7 +22,8 @@ export class IsAuthenticatedGuard implements CanActivate {
       tap(auth => {
         if (!auth) {
           this.route.navigateByUrl('/');
-        }})
+        }
+      })
     );
   }
 }

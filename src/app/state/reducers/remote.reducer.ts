@@ -9,18 +9,18 @@ export const remoteReducer = createReducer(
   on(RemoteActions.initializeSocketConnection, (state, action) => ({ ...state, mode: action.clientType })),
   on(RemoteActions.connectionEstablished, (state, action) => ({
     ...state,
-    ...(action.clientType === 'remote' ? { remoteConnected: true } : {} ),
-    ...(action.clientType === 'viewer' ? { viewerConnected: true } : {} )
+    ...(action.clientType === 'remote' ? { remoteConnected: true } : {}),
+    ...(action.clientType === 'viewer' ? { viewerConnected: true } : {}),
   })),
   on(RemoteActions.receivedHandshake, (state, action) => ({
     ...state,
-    ...(action.clientType === 'remote' ? { remoteConnected: true } : {} ),
-    ...(action.clientType === 'viewer' ? { viewerConnected: true } : {} )
+    ...(action.clientType === 'remote' ? { remoteConnected: true } : {}),
+    ...(action.clientType === 'viewer' ? { viewerConnected: true } : {}),
   })),
   on(RemoteActions.receivedCommand, (state, action) => {
     state.receivedCommands.unshift(action);
     return {
-      ...state
+      ...state,
     };
   }),
   on(RemoteActions.sendCommand, (state, action) => {
@@ -28,21 +28,20 @@ export const remoteReducer = createReducer(
     newCommand.ack = false;
     state.sentCommands.unshift(newCommand);
     return {
-      ...state
+      ...state,
     };
   }),
-  on(RemoteActions.serverTimeout, (state) => ({ ...initialRemoteCommandState })),
+  on(RemoteActions.serverTimeout, () => ({ ...initialRemoteCommandState })),
   on(RemoteActions.reconnected, (state, action) => ({
     ...state,
-    ...(action.clientType === 'remote' ? { remoteConnected: true } : {} ),
-    ...(action.clientType === 'viewer' ? { viewerConnected: true } : {} )
+    ...(action.clientType === 'remote' ? { remoteConnected: true } : {}),
+    ...(action.clientType === 'viewer' ? { viewerConnected: true } : {}),
   })),
-  on(RemoteActions.peerDisconnected, (state) => ({
+  on(RemoteActions.peerDisconnected, state => ({
     ...state,
-    ...(state.mode === 'remote' ? { viewerConnected: false } : {} ),
-    ...(state.mode === 'viewer' ? { remoteConnected: false } : {} )
+    ...(state.mode === 'remote' ? { viewerConnected: false } : {}),
+    ...(state.mode === 'viewer' ? { remoteConnected: false } : {}),
   })),
   on(RemoteActions.disconnect, () => ({ ...initialRemoteCommandState })),
   on(RemoteActions.clientDisconnected, () => ({ ...initialRemoteCommandState }))
-    
 );

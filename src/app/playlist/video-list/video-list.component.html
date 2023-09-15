@@ -1,32 +1,37 @@
 <div *ngFor="let video of videoList" class="video-card text-center">
-    <div class="position-relative d-inline-block" (click)="videoClicked($any(video.videoId))">
-        <img class="videoThumbnail" [src]="video.thumbnail" />
-        <span class="badge text-bg-dark" style="position: absolute; bottom: 10px; right: 50px;">{{ video.duration || '' | durationFromISO }}</span>
+  <div class="position-relative d-inline-block" (click)="videoClicked($any(video.videoId))">
+    <img class="videoThumbnail" [src]="video.thumbnail" />
+    <span class="badge text-bg-dark" style="position: absolute; bottom: 10px; right: 50px">{{ video.duration || '' | durationFromISO }}</span>
+  </div>
+  <ul class="video-links">
+    <li class="vb-1">
+      <button type="button" class="btn btn-sm btn-dark" (click)="openVideo(video.videoId || '')" ngbTooltip="Open in New Window"><fa-icon [icon]="faArrowUpRightFromSquare"></fa-icon></button>
+    </li>
+    <li class="vb-2">
+      <button type="button" class="btn btn-sm btn-dark mt-1" (click)="removeVideo(video.playlistItemId)" ngbTooltip="Remove From Playlist"><fa-icon [icon]="faTrash"></fa-icon></button>
+    </li>
+    <li class="vb-3">
+      <button type="button" class="btn btn-sm btn-dark mt-1" (click)="keepVideo(video)" ngbTooltip="Keep Video"><fa-icon [icon]="faVault"></fa-icon></button>
+    </li>
+    <li ngbDropdown container="body" class="vb-4">
+      <button id="moveToPlaylist" type="button" class="btn btn-sm btn-dark mt-1" ngbTooltip="Move to Playlist..." ngbDropdownToggle><fa-icon [icon]="faArrowTurnUp"></fa-icon></button>
+      <div ngbDropdownMenu style="max-height: 60vh; overflow-y: auto" aria-labelledby="moveToPlaylist" class="move-to-playlist-btn">
+        <ng-container *ngFor="let pl of playlists">
+          <button (click)="moveToPlaylist(pl.id, video)" ngbDropdownItem>{{ pl.title }}</button>
+        </ng-container>
+      </div>
+    </li>
+  </ul>
+
+  <div class="video-card-body text-start" (click)="videoClicked($any(video.videoId))">
+    <h3 class="video-card-title" [ngbTooltip]="video.title">{{ video.title }}</h3>
+    <div class="channel">
+      <a class="channel-link" [href]="'https://www.youtube.com/channel/' + video.channelId" target="_blank">{{ video.channelTitle }}</a>
     </div>
-    <ul class="video-links">
-      <li class="vb-1"><button type="button" class="btn btn-sm btn-dark" (click)="openVideo(video.videoId || '')" ngbTooltip="Open in New Window"><fa-icon [icon]="faArrowUpRightFromSquare"></fa-icon></button></li>
-      <li class="vb-2"><button type="button" class="btn btn-sm btn-dark mt-1" (click)="removeVideo(video.playlistItemId)" ngbTooltip="Remove From Playlist"><fa-icon [icon]="faTrash"></fa-icon></button></li>
-      <li class="vb-3"><button type="button" class="btn btn-sm btn-dark mt-1" (click)="keepVideo(video)" ngbTooltip="Keep Video"><fa-icon [icon]="faVault"></fa-icon></button></li>
-      <li ngbDropdown container="body" class="vb-4">
-        <button id="moveToPlaylist" type="button" class="btn btn-sm btn-dark mt-1" ngbTooltip="Move to Playlist..." ngbDropdownToggle><fa-icon [icon]="faArrowTurnUp"></fa-icon></button>
-        <div ngbDropdownMenu style="max-height: 60vh; overflow-y:auto" aria-labelledby="moveToPlaylist" class="move-to-playlist-btn">
-            <ng-container *ngFor="let pl of playlists">
-                <button (click)="moveToPlaylist(pl.id, video)" ngbDropdownItem>{{ pl.title }}</button>
-            </ng-container>
-        </div>
-      </li>
-    </ul>
-    
-    
-    <div class="video-card-body text-start" (click)="videoClicked($any(video.videoId))">
-        <h3 class="video-card-title" [ngbTooltip]="video.title">{{ video.title }}</h3>
-        <div class="channel">
-            <a class="channel-link" [href]="'https://www.youtube.com/channel/' + video.channelId" target="_blank">{{ video.channelTitle }}</a>
-        </div>
-        <div class="counts">
-            <span class="view-count">{{ video.viewCount | viewCount }} <fa-icon [icon]="faEye"></fa-icon></span>
-            &nbsp;•&nbsp;
-            <span class="publish-date">{{ video.publishedAt | fromNow }}</span>
-        </div>
+    <div class="counts">
+      <span class="view-count">{{ video.viewCount | viewCount }} <fa-icon [icon]="faEye"></fa-icon></span>
+      &nbsp;•&nbsp;
+      <span class="publish-date">{{ video.publishedAt | fromNow }}</span>
     </div>
+  </div>
 </div>

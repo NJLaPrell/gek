@@ -1,12 +1,13 @@
 <div class="modal-header bg-dark text-light">
-    <h4 class="modal-title">Sort Job Output</h4>
-    <button type="button" class="btn-close btn-dark" aria-label="Close" style="background-color: #AAA;" (click)="activeModal.dismiss('Cross click')"></button>
+  <h4 class="modal-title">Sort Job Output</h4>
+  <button type="button" class="btn-close btn-dark" aria-label="Close" style="background-color: #aaa" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body bg-dark text-light" #jobOutput>
-  <pre id="jobOutput">Processing...
+  <pre id="jobOutput">
+Processing...
 {{ output }}
   </pre>
 </div>
 <div class="modal-footer bg-dark">
-    <button type="button" class="btn btn-primary" (click)="activeModal.close('Close click')">Close</button>
+  <button type="button" class="btn btn-primary" (click)="activeModal.close('Close click')">Close</button>
 </div>

@@ -5,17 +5,14 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-legal',
   templateUrl: './legal.component.html',
-  styleUrls: ['./legal.component.scss']
+  styleUrls: ['./legal.component.scss'],
 })
 export class LegalComponent {
   faHandshake = faHandshake;
 
-  constructor(
-    public activeModal: NgbActiveModal,
-  ) { }
+  constructor(public activeModal: NgbActiveModal) {}
 
-  login():void {
+  login(): void {
     window.location.href = '/login';
   }
-
 }

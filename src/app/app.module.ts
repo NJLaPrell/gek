@@ -26,9 +26,7 @@ import { PlayerComponent } from './playlist/player/player.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PlaylistsComponent } from './side-bar/playlists/playlists.component';
 import { YouTubePlayerModule } from '@angular/youtube-player';
-import {
-  SafeHtmlPipe, DurationFromIsoPipe, FromNowPipe, ViewCountPipe, ThumbCountPipe,
-  DurationFromSeconds, TimeAgoPipe } from './pipes';
+import { SafeHtmlPipe, DurationFromIsoPipe, FromNowPipe, ViewCountPipe, ThumbCountPipe, DurationFromSeconds, TimeAgoPipe } from './pipes';
 import { UnsortedComponent } from './modals/unsorted/unsorted.component';
 import { RulesListComponent } from './modals/rules-list/rules-list.component';
 import { ConfirmPromptComponent } from './modals/confirm-prompt/confirm-prompt.component';
@@ -84,12 +82,12 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     PrivacyPolicyComponent,
     FooterComponent,
     LegalComponent,
-    DeleteDataComponent
+    DeleteDataComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    StoreModule.forRoot(reducers, { 
+    StoreModule.forRoot(reducers, {
       metaReducers,
       runtimeChecks: {
         strictStateSerializability: true,
@@ -97,21 +95,11 @@ export const initApp = (provider: InitializerService) => () => provider.init();
         strictActionWithinNgZone: true,
         strictActionTypeUniqueness: true,
         strictStateImmutability: false,
-        strictActionImmutability: true
-      }
+        strictActionImmutability: true,
+      },
     }),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: false }),
-    EffectsModule.forRoot([
-      AuthEffects,
-      VideoEffects,
-      HistoryEffects,
-      RulesEffects,
-      NotificationEffects,
-      NavStateEffects,
-      RemoteEffects,
-      ListEffects,
-      PreferencesEffects
-    ]),
+    EffectsModule.forRoot([AuthEffects, VideoEffects, HistoryEffects, RulesEffects, NotificationEffects, NavStateEffects, RemoteEffects, ListEffects, PreferencesEffects]),
     HttpClientModule,
     NgbModule,
     FontAwesomeModule,
@@ -119,19 +107,18 @@ export const initApp = (provider: InitializerService) => () => provider.init();
     FormsModule,
     HttpClientXsrfModule,
     CoolSocialLoginButtonsModule,
-    DndModule
+    DndModule,
   ],
   providers: [
-    InitializerService, {
+    InitializerService,
+    {
       provide: APP_INITIALIZER,
       useFactory: initApp,
       deps: [InitializerService],
-      multi: true
+      multi: true,
     },
-    { provide: HTTP_INTERCEPTORS, useClass: CustomInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: CustomInterceptor, multi: true },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
-
-
+export class AppModule {}

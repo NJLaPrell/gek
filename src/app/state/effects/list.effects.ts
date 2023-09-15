@@ -8,41 +8,51 @@ import * as ListActions from '../actions/list.actions';
 import * as VideoActions from '../actions/video.actions';
 import { Playlist } from '../models/list.model';
 
-
 @Injectable()
 export class ListEffects {
+  get$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ListActions.getLists),
+      mergeMap(() =>
+        this.listService.getLists().pipe(
+          mergeMap((response: any) =>
+            [ListActions.getListsSuccess({ items: response.items })].concat(response.items.map((i: Playlist) => VideoActions.getPlaylistVideos({ playlistId: i.playlistId || '', bypassCache: false })))
+          ),
+          catchError((error: HttpErrorResponse) => of(ListActions.getListsFail({ error: error.message })))
+        )
+      )
+    )
+  );
 
-  get$ = createEffect(() => this.actions$.pipe(
-    ofType(ListActions.getLists),
-    mergeMap(() => this.listService.getLists().pipe(
-      mergeMap((response: any) => [ListActions.getListsSuccess({ items: response.items })]
-        .concat(response.items.map((i: Playlist) => VideoActions.getPlaylistVideos({ playlistId: i.playlistId || '', bypassCache: false })))
-      ),
-      catchError((error: HttpErrorResponse) => of(ListActions.getListsFail({ error: error.message })))
-    ))
-  ));
+  getNocache$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ListActions.getUncachedLists),
+      mergeMap(() =>
+        this.listService.getLists(true).pipe(
+          mergeMap((response: any) =>
+            [ListActions.getListsSuccess({ items: response.items })].concat(response.items.map((i: Playlist) => VideoActions.getPlaylistVideos({ playlistId: i.playlistId || '', bypassCache: false })))
+          ),
+          catchError((error: HttpErrorResponse) => of(ListActions.getListsFail({ error: error.message })))
+        )
+      )
+    )
+  );
 
-  getNocache$ = createEffect(() => this.actions$.pipe(
-    ofType(ListActions.getUncachedLists),
-    mergeMap(() => this.listService.getLists(true).pipe(
-      mergeMap((response: any) => [ListActions.getListsSuccess({ items: response.items })]
-        .concat(response.items.map((i: Playlist) => VideoActions.getPlaylistVideos({ playlistId: i.playlistId || '', bypassCache: false })))
-      ),
-      catchError((error: HttpErrorResponse) => of(ListActions.getListsFail({ error: error.message })))
-    ))
-  ));
-
-  getSubscriptions$ = createEffect(() => this.actions$.pipe(
-    ofType(ListActions.getSubscriptions),
-    mergeMap(() => this.resourcesService.getResource('subscriptions').pipe(
-      map((response: any) => ListActions.getSubscriptionsSuccess({ response })),
-      catchError((error: HttpErrorResponse) => of(ListActions.getSubscriptionsFail({ error: error.message })))
-    ))
-  ));
+  getSubscriptions$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ListActions.getSubscriptions),
+      mergeMap(() =>
+        this.resourcesService.getResource('subscriptions').pipe(
+          map((response: any) => ListActions.getSubscriptionsSuccess({ response })),
+          catchError((error: HttpErrorResponse) => of(ListActions.getSubscriptionsFail({ error: error.message })))
+        )
+      )
+    )
+  );
 
   constructor(
-        private actions$: Actions,
-        private listService: ListService,
-        private resourcesService: ResourcesService
-  ) { }
+    private actions$: Actions,
+    private listService: ListService,
+    private resourcesService: ResourcesService
+  ) {}
 }

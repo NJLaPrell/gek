@@ -7,5 +7,12 @@ branch: dev
 gha_enabled: True
 # This is the description of your project. It will be used by sweep when creating PRs. You can tell Sweep what's unique about your project, what frameworks you use, or anything else you want.
 # Here's an example: sweepai/sweep is a python project. The main api endpoints are in sweepai/api.py. Write code that adheres to PEP8.
-description: ""
-# Default Values: https://github.com/sweepai/sweep/blob/main/sweep.yaml
+description: "Gek is an application for sorting YouTube videos into user defined categories based on rules. The sort regularly runs for the user's subscribed channels and sorts new videos based on the rules. The application is built on NodeJS, using express as the backend. Firebase is used for storage, the YouTube Google API for accessing YouTube, and Google's OAuth2 for handling user authentication. The backend is located in /server and is written in typescript which is converted to javascript when deployed. The frontend uses angular 14."
+blocked_dirs: [".github"]
+rules:
+  - Documentation in README.MD should be updated for new or changed features.
+sandbox:
+  install:
+    - npm install
+  check:
+    - npm run lint

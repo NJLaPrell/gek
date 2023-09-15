@@ -173,10 +173,7 @@
       "Undefined",
       "undefined"
     ],
-    "indent": [
-      "warn",
-      2
-    ],
+    "indent": "off",
     "max-len": "off",
     "no-empty-function": "off",
     "no-shadow": "off",

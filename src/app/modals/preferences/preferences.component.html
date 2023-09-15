@@ -1,10 +1,9 @@
 <div class="modal-header bg-dark text-light">
   <h4 class="modal-title">User Preferences</h4>
-  <button type="button" class="btn-close  btn-dark" style="background-color: #AAA;" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+  <button type="button" class="btn-close btn-dark" style="background-color: #aaa" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
-<div class="modal-body  bg-dark text-light">
+<div class="modal-body bg-dark text-light">
   <div class="container">
-
     <div class="row">
       <div class="col-md-6">
         <div class="form-check form-switch">
@@ -53,15 +52,14 @@
         <label class="d-inline-block">"Keep" Playlist:</label>
         <div class="d-inline-block" ngbDropdown container="body">
           <button id="keepPlaylist" type="button" class="btn btn-sm btn-dark mt-1" ngbDropdownToggle>{{ getKeepPlaylistName() }}</button>
-          <div ngbDropdownMenu style="max-height: 60vh; overflow-y:auto" aria-labelledby="keepPlaylist">
-              <ng-container *ngFor="let pl of playlists">
-                  <button ngbDropdownItem (click)="setKeepPlaylist(pl.id)">{{ pl.title }}</button>
-              </ng-container>
+          <div ngbDropdownMenu style="max-height: 60vh; overflow-y: auto" aria-labelledby="keepPlaylist">
+            <ng-container *ngFor="let pl of playlists">
+              <button ngbDropdownItem (click)="setKeepPlaylist(pl.id)">{{ pl.title }}</button>
+            </ng-container>
           </div>
         </div>
-        <div class="form-text">Assign a playlist to use when keeping a video with the keep (<fa-icon [icon]="faArrowTurnUp"></fa-icon>) button. </div>
+        <div class="form-text">Assign a playlist to use when keeping a video with the keep (<fa-icon [icon]="faArrowTurnUp"></fa-icon>) button.</div>
       </div>
-      
     </div>
 
     <div class="row mt-2">
@@ -77,9 +75,7 @@
         <div class="form-text">Delete all user data retained by Gek.</div>
       </div>
     </div>
-
   </div>
-
 </div>
 <div class="modal-footer bg-dark">
   <button type="button" class="btn btn-primary" (click)="activeModal.close('Close click')">Close</button>

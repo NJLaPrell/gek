@@ -2,7 +2,6 @@ import { Playlist, Subscription } from './shared/list.model';
 import { Rule } from './shared/rules.model';
 import { Video } from './shared/video.model';
 
-
 export interface BasicResource {
   lastUpdated: number;
 }
@@ -47,12 +46,7 @@ export interface HistoryResource extends BasicResource {
 }
 
 export interface PreferencesResource extends BasicResource {
-  items: { name: string, value: any }[];
+  items: { name: string; value: any }[];
 }
 
-export type UserResource = RulesResource | SubscriptionResource | PlaylistResource | EmptyResource | ErrorQueueResource | UnsortedVideosResource | HistoryResource |PreferencesResource;
-
-
-
-
-
+export type UserResource = RulesResource | SubscriptionResource | PlaylistResource | EmptyResource | ErrorQueueResource | UnsortedVideosResource | HistoryResource | PreferencesResource;

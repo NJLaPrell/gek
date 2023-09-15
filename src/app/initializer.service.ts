@@ -1,21 +1,10 @@
 import { Injectable, Injector, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import {
-  concat,
-  Observable,
-  of,
-  interval,
-  merge,
-  Subscription,
-  switchMap,
-} from 'rxjs';
+import { concat, Observable, of, interval, merge, Subscription, switchMap } from 'rxjs';
 import { AppState } from './state';
 import { getAuthState } from './state/actions/auth.actions';
 import { getHistory } from './state/actions/history.actions';
-import {
-  getSubscriptions,
-  getUncachedLists,
-} from './state/actions/list.actions';
+import { getSubscriptions, getUncachedLists } from './state/actions/list.actions';
 import { getPreferences } from './state/actions/preferences.actions';
 import { getRules } from './state/actions/rules.actions';
 import { selectAuthenticated } from './state/selectors/auth.selectors';
@@ -24,14 +13,11 @@ import { selectAuthenticated } from './state/selectors/auth.selectors';
   providedIn: 'root',
 })
 export class InitializerService implements OnDestroy {
-  constructor(private injector: Injector, private store: Store<AppState>) {
-    this.store
-      .select(selectAuthenticated)
-      .subscribe((authenticated) =>
-        typeof authenticated === 'undefined'
-          ? null
-          : this.initApp(authenticated)
-      );
+  constructor(
+    private injector: Injector,
+    private store: Store<AppState>
+  ) {
+    this.store.select(selectAuthenticated).subscribe(authenticated => (typeof authenticated === 'undefined' ? null : this.initApp(authenticated)));
   }
 
   private historyUpdateSubscription: Subscription = new Subscription();

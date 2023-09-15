@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import * as RulesActions from '../actions/rules.actions';
-import { initialRulesState, Rule } from '../models/rules.model';
+import { initialRulesState } from '../models/rules.model';
 
 export const rulesFeatureKey = 'rules';
 
@@ -27,10 +27,8 @@ export const rulesReducer = createReducer(
     const currentIx = rules.findIndex(r => r.id === action.id);
     const item = Object.assign({}, rules[currentIx]);
     rules.splice(action.index, 0, item);
-    rules.splice((currentIx > action.index ? currentIx + 1 : currentIx), 1);
-
+    rules.splice(currentIx > action.index ? currentIx + 1 : currentIx, 1);
 
     return { rules };
   })
-
 );
