@@ -11,6 +11,10 @@ services:
     networks:
     - "gek"
     restart: unless-stopped
+    logging:
+      driver: journald
+      options:
+        tag: gek-ui
 
   server:
     build: server
@@ -24,10 +28,16 @@ services:
     container_name: 'gek-server'
     networks:
     - "gek"
+    dns:
+    - 8.8.8.8
     restart: unless-stopped
+    logging:
+      driver: journald
+      options:
+        tag: gek-server
 #    env_file: ../.env
 
 networks:
   gek:
-    name: nginx-proxy-manager_default
+    name: proxy-manager
     external: true

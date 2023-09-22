@@ -2,6 +2,8 @@
   "name": "gek",
   "version": "0.11.0",
   "scripts": {
+    "prestart": "ts-appversion",
+    "prebuild": "ts-appversion",
     "restart-all": "npm-run-all stop-all start-all",
     "lint": "eslint server src --fix",
     "prettier": "prettier -w .",
@@ -11,7 +13,7 @@
     "watch-logs": "pm2 logs",
     "start-all": "pm2 start",
     "build:package": "npm-run-all build:prod make-deploy-package",
-    "deploy-package": "scp dist/gek.tar.gz doubleplusgood:/home/nlaprell",
+    "deploy-package": "deploy.sh",
     "clean": "rimraf dist/* && rimraf gek-docker/server/dist/* && rimraf gek-docker/ui/dist/*",
     "copy-shared-resources": "ts-node utils/copySharedResources",
     "gen-env": "ts-node-dev --project tsconfig.server.json utils/generateEnvironmentSettings.ts",
